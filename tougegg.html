@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Northern California Scenic Driving Routes Map</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" crossorigin=""/>
+  <style>
+    #map { height: 100vh; width: 100vw; margin: 0; padding: 0; }
+  </style>
+</head>
+ <h1 style="text-align:center;">UC Berkeley touge spots by Justin Suo</h1>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script>
+    var map = L.map('map').setView([37.8, -122.2], 8);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    function addRouteMarker(lat, lon, label, routeUrl) {
+      var popupContent = '<a href="' + routeUrl + '" target="_blank">' + label + '</a>';
+      L.marker([lat, lon]).addTo(map).bindPopup(popupContent);
+    }
+
+    // Redwood Road – Rating 4/5
+    addRouteMarker(37.8077, -122.1860,
+      'Redwood Road (Rating: 4/5)',
+      'https://www.google.com/maps/dir/CA-13+%26+Skyline+Blvd,+Oakland,+CA/37.8098,-122.1759/Redwood+Rd,+Castro+Valley,+CA');
+
+    // Skyline Boulevard (CA‑35) – Rating 4/5
+    addRouteMarker(37.322, -122.250,
+      'Skyline Boulevard (Rating: 4/5)',
+      'https://www.google.com/maps/dir/CA-92+%26+Skyline+Blvd,+San+Mateo,+CA/CA-9+%26+Skyline+Blvd,+Saratoga,+CA');
+
+    // Mount Hamilton Road via Quimby – Rating 4.5/5
+    addRouteMarker(37.332, -121.789,
+      'Mount Hamilton Road (Rating: 4.5/5)',
+      'https://www.google.com/maps/dir/Quimby+Rd+%26+Murillo+Ave,+San+Jose,+CA/Lick+Observatory,+Mount+Hamilton+Road,+Mount+Hamilton,+CA');
+
+    // Highway 9 via Boulder Creek – Rating 3.5/5
+    addRouteMarker(37.220, -122.064,
+      'Highway 9 via Boulder Creek (Rating: 3.5/5)',
+      'https://www.google.com/maps/dir/Los+Gatos,+CA/Boulder+Creek,+CA/Santa+Cruz,+CA');
+
+    // Palomares Road – Rating 3.5/5
+    addRouteMarker(37.668, -122.044,
+      'Palomares Road (Rating: 3.5/5)',
+      'https://www.google.com/maps/dir/Castro+Valley,+CA/Sunol,+CA');
+
+    // Panoramic Highway – Rating 4/5
+    addRouteMarker(37.905, -122.596,
+      'Panoramic Highway (Rating: 4/5)',
+      'https://www.google.com/maps/dir/Panoramic+Hwy+%26+Muir+Woods+Rd,+Mill+Valley,+CA/Stinson+Beach,+CA');
+
+    // Silverado Trail (Napa Valley) – Rating 4.5/5
+    addRouteMarker(38.298, -122.285,
+      'Silverado Trail (Rating: 4.5/5)',
+      'https://www.google.com/maps/dir/Napa,+CA/Calistoga,+CA');
+
+    // Napa–Lake Berryessa Loop – Rating 4/5
+    addRouteMarker(38.297, -122.300,
+      'Napa–Lake Berryessa Loop (Rating: 4/5)',
+      'https://www.google.com/maps/dir/Napa,+CA/Lake+Berryessa,+CA/Rutherford,+CA');
+
+    // Mines Road (corrected) – Rating 4/5
+    addRouteMarker(37.675, -121.745,
+      'Mines Road (Rating: 4/5)',
+      'https://maps.app.goo.gl/aGk6R4cKV8HLF7Sh8');
+
+  </script>
+<</body>
+</html>script src="scripts.js"></script>
+</body>
+</html>
+<script src="scripts.js"></script>body>
+</html>
+
+<
