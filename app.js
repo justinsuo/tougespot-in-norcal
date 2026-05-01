@@ -154,7 +154,7 @@
   let activeId = null;
   let heatLayer = null;
   let heatVisible = false;
-  let filters = { rating: 0, region: "all" };
+  let filters = { rating: 0, region: "all", type: "all" };
 
   // ─── Map init ───────────────────────────────────────────────
   function initMap() {
@@ -402,6 +402,7 @@
       iconKind === "crash" ? "💥"
       : iconKind === "vista" ? "📷"
       : iconKind === "donut" ? "🍩"
+      : iconKind === "golf" ? "🏌"
       : "📍";
     const labelText = poi.title || "";
 
@@ -476,11 +477,14 @@
   // ─── Sidebar list ───────────────────────────────────────────
   function visibleRoutes() {
     if (!routesData) return [];
-    return routesData.routes.filter(
-      (r) =>
-        r.rating >= filters.rating &&
-        (filters.region === "all" || r.region === filters.region)
-    );
+    return routesData.routes.filter((r) => {
+      if (r.rating < filters.rating) return false;
+      if (filters.region !== "all" && r.region !== filters.region) return false;
+      const isDragStrip = Array.isArray(r.tags) && r.tags.includes("drag-strip");
+      if (filters.type === "drag-strip" && !isDragStrip) return false;
+      if (filters.type === "touge" && isDragStrip) return false;
+      return true;
+    });
   }
 
   function renderRouteList() {
@@ -504,6 +508,10 @@
       const diffBadge = r.difficulty
         ? `<span class="diff-badge diff-${r.difficulty}">${r.difficulty}</span>`
         : "";
+      const typeBadge =
+        Array.isArray(r.tags) && r.tags.includes("drag-strip")
+          ? `<span class="type-badge tag-drag-strip">🏁 drag strip</span>`
+          : "";
       card.innerHTML = `
         <div class="row">
           <h3 class="name">${r.name}</h3>
@@ -514,6 +522,7 @@
           <span>↔ ${distStr}</span>
           <span>🚗 ${fromB} from Berkeley</span>
           ${diffBadge}
+          ${typeBadge}
         </div>
       `;
       card.addEventListener("click", () => openDetail(r.id));
@@ -655,6 +664,16 @@
           .forEach((c) => c.classList.remove("active"));
         chip.classList.add("active");
         filters.region = chip.dataset.region;
+        applyFilters();
+      });
+    });
+    document.querySelectorAll("#type-chips .chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        document
+          .querySelectorAll("#type-chips .chip")
+          .forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
+        filters.type = chip.dataset.type;
         applyFilters();
       });
     });

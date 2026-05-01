@@ -419,6 +419,10 @@ a:hover { text-decoration: underline; }
   background: #d946ef;
   box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.25), 0 4px 12px rgba(0, 0, 0, 0.6);
 }
+.poi-golf {
+  background: #16a34a;
+  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.25), 0 4px 12px rgba(0, 0, 0, 0.6);
+}
 
 .diff-badge {
   display: inline-block;
@@ -439,6 +443,23 @@ a:hover { text-decoration: underline; }
   border-color: #ef4444;
   background: linear-gradient(90deg, #b91c1c, #ef4444);
   box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.4);
+}
+
+/* Type badges (drag strip, etc.) */
+.type-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 999px;
+  border: 1px solid;
+}
+.tag-drag-strip {
+  color: #f0f9ff;
+  border-color: #3b82f6;
+  background: linear-gradient(90deg, #1e40af, #3b82f6);
 }
 @keyframes poi-pulse {
   0%, 100% { transform: scale(1); }
@@ -467,6 +488,7 @@ a:hover { text-decoration: underline; }
 }
 .poi-wrap:has(.poi-donut) .poi-label { border-color: #d946ef; color: #fdf4ff; }
 .poi-wrap:has(.poi-vista) .poi-label { border-color: #0ea5e9; color: #f0f9ff; }
+.poi-wrap:has(.poi-golf) .poi-label { border-color: #16a34a; color: #f0fdf4; }
 
 /* Warning popup styling for crash / hazard POIs */
 .leaflet-popup.popup-warning .leaflet-popup-content-wrapper {
