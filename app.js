@@ -501,6 +501,9 @@
       const distStr = r._distance ? fmtDistance(r._distance) : "—";
       const fromB = r._fromBerkeley ? fmtDuration(r._fromBerkeley) : "—";
 
+      const diffBadge = r.difficulty
+        ? `<span class="diff-badge diff-${r.difficulty}">${r.difficulty}</span>`
+        : "";
       card.innerHTML = `
         <div class="row">
           <h3 class="name">${r.name}</h3>
@@ -510,6 +513,7 @@
           <span>📍 ${r.region}</span>
           <span>↔ ${distStr}</span>
           <span>🚗 ${fromB} from Berkeley</span>
+          ${diffBadge}
         </div>
       `;
       card.addEventListener("click", () => openDetail(r.id));
@@ -564,6 +568,7 @@
           <span>${route.region}</span>
           <span>·</span>
           <span>${route.surface}</span>
+          ${route.difficulty ? `<span>·</span><span class="diff-badge diff-${route.difficulty}">${route.difficulty}</span>` : ""}
         </div>
         <div class="detail-stats">
           <div>

@@ -419,6 +419,27 @@ a:hover { text-decoration: underline; }
   background: #d946ef;
   box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.25), 0 4px 12px rgba(0, 0, 0, 0.6);
 }
+
+.diff-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 999px;
+  border: 1px solid;
+  background: transparent;
+}
+.diff-easy { color: #16a34a; border-color: #16a34a; background: rgba(22, 163, 74, 0.1); }
+.diff-moderate { color: #eab308; border-color: #eab308; background: rgba(234, 179, 8, 0.1); }
+.diff-hard { color: #f97316; border-color: #f97316; background: rgba(249, 115, 22, 0.12); }
+.diff-expert {
+  color: #fef2f2;
+  border-color: #ef4444;
+  background: linear-gradient(90deg, #b91c1c, #ef4444);
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.4);
+}
 @keyframes poi-pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.08); }
