@@ -381,6 +381,66 @@ a:hover { text-decoration: underline; }
 }
 .loading.hidden { display: none; }
 
+/* POI markers (incident points, vistas, etc.) */
+.poi-icon {
+  background: transparent !important;
+  border: none !important;
+  pointer-events: none;
+}
+.poi-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.poi-glyph {
+  width: 30px;
+  height: 30px;
+  background: #ef4444;
+  border: 2px solid #0b1015;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25), 0 4px 12px rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
+  animation: poi-pulse 2s ease-in-out infinite;
+}
+.poi-crash {
+  background: #dc2626;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.3), 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+.poi-vista {
+  background: #0ea5e9;
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.25), 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+@keyframes poi-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.poi-label {
+  margin-left: 8px;
+  background: rgba(11, 16, 21, 0.92);
+  color: #fef2f2;
+  border: 1px solid #ef4444;
+  padding: 4px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  opacity: 0;
+  transform: translateX(-4px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.poi-wrap:hover .poi-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 /* Leaflet overrides */
 .leaflet-container {
   background: #0e1620;

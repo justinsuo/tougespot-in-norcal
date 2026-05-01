@@ -326,7 +326,61 @@
     });
     marker.on("click", () => marker.openPopup());
 
-    routeLayers[route.id] = { polyline, marker, route };
+    // POIs (points of interest) along the route — incidents, vista points, etc.
+    const poiMarkers = [];
+    if (Array.isArray(route.pois)) {
+      for (const poi of route.pois) {
+        poiMarkers.push(renderPoi(poi, route));
+      }
+    }
+
+    routeLayers[route.id] = { polyline, marker, poiMarkers, route };
+  }
+
+  function renderPoi(poi, route) {
+    const iconKind = poi.icon || "pin";
+    const glyph =
+      iconKind === "crash" ? "💥" : iconKind === "vista" ? "📷" : "📍";
+    const labelText = poi.title || "";
+
+    // Marker uses an HTML divIcon so we get the glyph + a permanent label
+    // text alongside it. The label is always visible (not just on hover) so
+    // the user immediately sees what's special about this point.
+    const html = `
+      <div class="poi-wrap">
+        <div class="poi-glyph poi-${iconKind}">${glyph}</div>
+        <div class="poi-label">${escapeHtml(labelText)}</div>
+      </div>
+    `;
+    const icon = L.divIcon({
+      className: "poi-icon",
+      html,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+    });
+
+    const marker = L.marker([poi.lat, poi.lon], {
+      icon,
+      zIndexOffset: 1500,
+    }).addTo(map);
+
+    const popupHtml = `
+      <strong>${escapeHtml(labelText)}</strong>
+      <div style="color:#8b96a3;font-size:11px;margin-bottom:6px;">
+        On <em>${escapeHtml(route.name)}</em> · ${poi.lat.toFixed(5)}, ${poi.lon.toFixed(5)}
+      </div>
+      ${poi.description ? `<div style="font-size:12px;line-height:1.4;margin-bottom:8px;">${escapeHtml(poi.description)}</div>` : ""}
+      <a href="https://www.google.com/maps?q=${poi.lat},${poi.lon}" target="_blank" rel="noopener">Open in Google Maps ↗</a>
+    `;
+    marker.bindPopup(popupHtml);
+    marker.on("click", () => marker.openPopup());
+    return marker;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+    }[c]));
   }
 
   function fitMapToVisibleRoutes() {
@@ -520,9 +574,15 @@
       if (shouldShow) {
         if (!map.hasLayer(layer.polyline)) layer.polyline.addTo(map);
         if (!map.hasLayer(layer.marker)) layer.marker.addTo(map);
+        (layer.poiMarkers || []).forEach((m) => {
+          if (!map.hasLayer(m)) m.addTo(map);
+        });
       } else {
         if (map.hasLayer(layer.polyline)) map.removeLayer(layer.polyline);
         if (map.hasLayer(layer.marker)) map.removeLayer(layer.marker);
+        (layer.poiMarkers || []).forEach((m) => {
+          if (map.hasLayer(m)) map.removeLayer(m);
+        });
       }
     });
     renderRouteList();
