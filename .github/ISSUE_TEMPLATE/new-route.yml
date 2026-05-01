@@ -1,0 +1,93 @@
+name: Suggest a new road
+description: Propose a touge spot to add to the map
+title: "[Route] "
+labels: ["new-route"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Road name
+      placeholder: e.g. Old La Honda Road
+    validations:
+      required: true
+
+  - type: dropdown
+    id: region
+    attributes:
+      label: Region
+      options:
+        - East Bay
+        - Peninsula
+        - South Bay
+        - North Bay
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: rating
+    attributes:
+      label: Your rating (1–5)
+      options:
+        - "5"
+        - "4.5"
+        - "4"
+        - "3.5"
+        - "3"
+        - "2.5"
+        - "2"
+    validations:
+      required: true
+
+  - type: input
+    id: start
+    attributes:
+      label: Start coordinates (lat, lon) or address
+      placeholder: 37.4071, -122.2632  — or — Old La Honda Rd & Skyline
+    validations:
+      required: true
+
+  - type: input
+    id: end
+    attributes:
+      label: End coordinates (lat, lon) or address
+      placeholder: 37.3147, -122.2376  — or — Old La Honda Rd & Hwy 84
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What's the vibe? What makes this road worth driving?
+      placeholder: One short paragraph.
+    validations:
+      required: true
+
+  - type: input
+    id: best_time
+    attributes:
+      label: Best time to drive
+      placeholder: e.g. Sunday mornings before 9am
+    validations:
+      required: true
+
+  - type: textarea
+    id: watchouts
+    attributes:
+      label: Watch out for
+      placeholder: Cyclists, fog, blind apexes, enforcement, surface hazards
+    validations:
+      required: true
+
+  - type: input
+    id: photo_url
+    attributes:
+      label: Photo URL (optional)
+      placeholder: https://commons.wikimedia.org/...
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else?
+      placeholder: Optional — fuel-stop tips, scoring rubric notes, etc.

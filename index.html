@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorCal Touge Spots — by Justin Suo</title>
+  <meta name="description" content="A curated map of Northern California's best driving roads — touge-style scenic and technical routes hand-picked from UC Berkeley." />
+  <meta property="og:title" content="NorCal Touge Spots" />
+  <meta property="og:description" content="Curated NorCal driving roads with real road geometry, ratings, and notes." />
+  <meta property="og:type" content="website" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='14'%3E%F0%9F%97%BB%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <aside id="sidebar" aria-label="Route list and filters">
+    <header class="sidebar-header">
+      <h1>NorCal Touge Spots</h1>
+      <p class="subtitle">Curated by <a href="https://github.com/justinsuo" target="_blank" rel="noopener">Justin Suo</a> · UC Berkeley</p>
+    </header>
+
+    <section class="filters" aria-label="Filters">
+      <div class="filter-group">
+        <label class="filter-label">Min rating</label>
+        <div class="chip-row" id="rating-chips">
+          <button class="chip active" data-rating="0">All</button>
+          <button class="chip" data-rating="3.5">3.5+</button>
+          <button class="chip" data-rating="4">4+</button>
+          <button class="chip" data-rating="4.5">4.5+</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Region</label>
+        <div class="chip-row" id="region-chips">
+          <button class="chip active" data-region="all">All</button>
+          <button class="chip" data-region="East Bay">East Bay</button>
+          <button class="chip" data-region="Peninsula">Peninsula</button>
+          <button class="chip" data-region="South Bay">South Bay</button>
+          <button class="chip" data-region="North Bay">North Bay</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Layers</label>
+        <div class="chip-row">
+          <button class="chip toggle" id="toggle-heatmap" title="Toggle the personal-runs heatmap">My runs heatmap</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="route-list-wrap" aria-label="Routes">
+      <div id="route-list" class="route-list" role="listbox" aria-label="Routes"></div>
+    </section>
+
+    <footer class="sidebar-footer">
+      <a href="https://github.com/justinsuo/tougespot-in-norcal" target="_blank" rel="noopener">View on GitHub</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://github.com/justinsuo/tougespot-in-norcal/issues/new?template=new-route.yml" target="_blank" rel="noopener">Suggest a road</a>
+    </footer>
+  </aside>
+
+  <main id="map" role="application" aria-label="Map of NorCal touge spots"></main>
+
+  <button id="sidebar-toggle" aria-label="Toggle sidebar" aria-expanded="true">
+    <span class="bars" aria-hidden="true"></span>
+  </button>
+
+  <aside id="detail-panel" aria-hidden="true" aria-label="Route details">
+    <button class="detail-close" id="detail-close" aria-label="Close details">×</button>
+    <div id="detail-body"></div>
+  </aside>
+
+  <div id="loading" class="loading" aria-live="polite">Loading routes…</div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
