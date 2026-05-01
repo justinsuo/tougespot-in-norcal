@@ -17,12 +17,49 @@
     3.0: "#ef4444",
   };
 
+  const ROLL_RACING_COLOR = "#a855f7"; // purple
+  const DIG_RACING_COLOR = "#ec4899"; // pink/magenta
+
+  function isDragStrip(route) {
+    return Array.isArray(route?.tags) && route.tags.includes("drag-strip");
+  }
+  function isRollRacing(route) {
+    return Array.isArray(route?.tags) && route.tags.includes("roll-racing");
+  }
+  function isDigRacing(route) {
+    return Array.isArray(route?.tags) && route.tags.includes("dig-racing");
+  }
+
+  function colorForRoute(route) {
+    if (isRollRacing(route)) return ROLL_RACING_COLOR;
+    if (isDigRacing(route)) return DIG_RACING_COLOR;
+    if (isDragStrip(route)) return ROLL_RACING_COLOR; // fallback
+    return colorForRating(route.rating);
+  }
+
+  function dragStripLabel(route) {
+    if (isRollRacing(route)) return "🏁 Roll Racing";
+    if (isDigRacing(route)) return "🏁 Dig Racing";
+    return "🏁 Drag strip";
+  }
+
   function colorForRating(r) {
     if (r >= 5) return RATING_COLORS[5.0];
     if (r >= 4.5) return RATING_COLORS[4.5];
     if (r >= 4) return RATING_COLORS[4.0];
     if (r >= 3.5) return RATING_COLORS[3.5];
     return RATING_COLORS[3.0];
+  }
+
+  function classForRoute(route) {
+    if (isRollRacing(route)) return "r-roll";
+    if (isDigRacing(route)) return "r-dig";
+    if (isDragStrip(route)) return "r-roll";
+    if (route.rating >= 5) return "r-5";
+    if (route.rating >= 4.5) return "r-45";
+    if (route.rating >= 4) return "r-4";
+    if (route.rating >= 3.5) return "r-35";
+    return "r-3";
   }
 
   function ratingClass(r) {
@@ -284,7 +321,8 @@
   }
 
   function renderRouteOnMap(route) {
-    const color = colorForRating(route.rating);
+    const color = colorForRoute(route);
+    const dragStrip = isDragStrip(route);
     const coords = route._geom.coordinates.map(([lon, lat]) => [lat, lon]);
 
     const polyline = L.polyline(coords, {
@@ -293,6 +331,7 @@
       opacity: 0.85,
       lineJoin: "round",
       lineCap: "round",
+      dashArray: dragStrip ? "10 6" : null,
     }).addTo(map);
 
     polyline.on("click", () => openDetail(route.id));
@@ -307,17 +346,21 @@
     const midLatLon = coords[midIdx];
     const startLatLon = coords[0];
 
+    const startGlyph = dragStrip ? "🏁" : route.rating.toString().replace(".0", "");
     const startIcon = L.divIcon({
       className: "route-pin",
-      html: `<div style="background:${color};color:#0b1015;border:2px solid #0b1015;border-radius:50%;width:22px;height:22px;display:grid;place-items:center;font-size:10px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,0.5);">${route.rating.toString().replace(".0", "")}</div>`,
+      html: `<div style="background:${color};color:#0b1015;border:2px solid #0b1015;border-radius:50%;width:22px;height:22px;display:grid;place-items:center;font-size:10px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,0.5);">${startGlyph}</div>`,
       iconSize: [22, 22],
       iconAnchor: [11, 11],
     });
     const marker = L.marker(startLatLon, { icon: startIcon }).addTo(map);
 
+    const popupSubline = dragStrip
+      ? `${route.region} · 🏁 Roll Racing location`
+      : `${route.region} · ${route.rating}/5`;
     const popupHtml = `
       <strong>${route.name}</strong>
-      <div style="color:#8b96a3;font-size:11px;margin-bottom:6px;">${route.region} · ${route.rating}/5</div>
+      <div style="color:#8b96a3;font-size:11px;margin-bottom:6px;">${popupSubline}</div>
       <a href="#" data-route="${route.id}" class="popup-link">View details →</a>
     `;
     marker.bindPopup(popupHtml);
@@ -478,11 +521,19 @@
   function visibleRoutes() {
     if (!routesData) return [];
     return routesData.routes.filter((r) => {
-      if (r.rating < filters.rating) return false;
+      const ds = isDragStrip(r);
+      const roll = isRollRacing(r);
+      const dig = isDigRacing(r);
+      // Drag strips have no rating — they pass any rating filter except when
+      // user filters to >= some value (then drag strips are hidden because they
+      // don't compete on rating).
+      if (filters.rating > 0 && !ds && r.rating < filters.rating) return false;
+      if (filters.rating > 0 && ds) return false;
       if (filters.region !== "all" && r.region !== filters.region) return false;
-      const isDragStrip = Array.isArray(r.tags) && r.tags.includes("drag-strip");
-      if (filters.type === "drag-strip" && !isDragStrip) return false;
-      if (filters.type === "touge" && isDragStrip) return false;
+      if (filters.type === "touge" && ds) return false;
+      if (filters.type === "roll-racing" && !roll) return false;
+      if (filters.type === "dig-racing" && !dig) return false;
+      if (filters.type === "drag-strip" && !ds) return false;
       return true;
     });
   }
@@ -490,7 +541,12 @@
   function renderRouteList() {
     const container = document.getElementById("route-list");
     container.innerHTML = "";
-    const sorted = visibleRoutes().sort((a, b) => b.rating - a.rating);
+    const sorted = visibleRoutes().sort((a, b) => {
+      // Drag strips sort to the bottom (no rating to compare)
+      const aDs = isDragStrip(a), bDs = isDragStrip(b);
+      if (aDs !== bDs) return aDs ? 1 : -1;
+      return (b.rating || 0) - (a.rating || 0);
+    });
     if (!sorted.length) {
       container.innerHTML =
         '<p style="color:var(--text-dim);font-size:12px;padding:12px;text-align:center;">No routes match these filters.</p>';
@@ -498,31 +554,30 @@
     }
     for (const r of sorted) {
       const card = document.createElement("div");
-      card.className = `route-card ${ratingClass(r.rating)}`;
+      card.className = `route-card ${classForRoute(r)}`;
       card.dataset.id = r.id;
       if (r.id === activeId) card.classList.add("active");
 
       const distStr = r._distance ? fmtDistance(r._distance) : "—";
       const fromB = r._fromBerkeley ? fmtDuration(r._fromBerkeley) : "—";
+      const ds = isDragStrip(r);
 
+      const ratingChip = ds
+        ? `<span class="rating drag-rating">${dragStripLabel(r)}</span>`
+        : `<span class="rating">${r.rating}</span>`;
       const diffBadge = r.difficulty
         ? `<span class="diff-badge diff-${r.difficulty}">${r.difficulty}</span>`
         : "";
-      const typeBadge =
-        Array.isArray(r.tags) && r.tags.includes("drag-strip")
-          ? `<span class="type-badge tag-drag-strip">🏁 drag strip</span>`
-          : "";
       card.innerHTML = `
         <div class="row">
           <h3 class="name">${r.name}</h3>
-          <span class="rating">${r.rating}</span>
+          ${ratingChip}
         </div>
         <div class="meta">
           <span>📍 ${r.region}</span>
           <span>↔ ${distStr}</span>
           <span>🚗 ${fromB} from Berkeley</span>
           ${diffBadge}
-          ${typeBadge}
         </div>
       `;
       card.addEventListener("click", () => openDetail(r.id));
@@ -572,7 +627,9 @@
       <div class="detail-content">
         <h2>${route.name}</h2>
         <div class="detail-rating-row">
-          <span class="detail-rating" style="color:${colorForRating(route.rating)};">${route.rating}/5</span>
+          ${isDragStrip(route)
+            ? `<span class="detail-rating drag-rating" style="color:${colorForRoute(route)};border-color:${colorForRoute(route)};background:${colorForRoute(route)}22;">${dragStripLabel(route)} location</span>`
+            : `<span class="detail-rating" style="color:${colorForRating(route.rating)};">${route.rating}/5</span>`}
           <span>·</span>
           <span>${route.region}</span>
           <span>·</span>
