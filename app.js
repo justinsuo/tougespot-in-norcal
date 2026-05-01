@@ -341,7 +341,59 @@
       }
     }
 
-    routeLayers[route.id] = { polyline, marker, poiMarkers, route };
+    // Optional continuation polyline — rendered in a distinct color and dashed
+    let continuation = null;
+    if (route.optional_continuation && route.optional_continuation.geometry) {
+      continuation = renderContinuation(route);
+    }
+
+    routeLayers[route.id] = { polyline, marker, poiMarkers, continuation, route };
+  }
+
+  function renderContinuation(route) {
+    const cont = route.optional_continuation;
+    const color = cont.color || "#06b6d4";
+    const coords = cont.geometry.coordinates.map(([lon, lat]) => [lat, lon]);
+    const dashArray = cont.style === "dashed" ? "8 8" : null;
+
+    const polyline = L.polyline(coords, {
+      color,
+      weight: 4,
+      opacity: 0.9,
+      dashArray,
+      lineJoin: "round",
+      lineCap: "round",
+    }).addTo(map);
+
+    polyline.on("click", () => openDetail(route.id));
+    polyline.on("mouseover", () =>
+      polyline.setStyle({ weight: 6, opacity: 1 })
+    );
+    polyline.on("mouseout", () => {
+      if (activeId !== route.id)
+        polyline.setStyle({ weight: 4, opacity: 0.9 });
+    });
+
+    // Marker at the end of the continuation
+    const endLatLon = coords[coords.length - 1];
+    const endIcon = L.divIcon({
+      className: "continuation-end",
+      html: `<div style="background:${color};color:#0b1015;border:2px solid #0b1015;border-radius:50%;width:16px;height:16px;box-shadow:0 2px 6px rgba(0,0,0,0.5);"></div>`,
+      iconSize: [16, 16],
+      iconAnchor: [8, 8],
+    });
+    const endMarker = L.marker(endLatLon, { icon: endIcon }).addTo(map);
+    const lengthMi = cont.length_m ? (cont.length_m / 1609.344).toFixed(1) : "—";
+    const durMin = cont.duration_s ? Math.round(cont.duration_s / 60) : "—";
+    endMarker.bindPopup(`
+      <strong>${escapeHtml(cont.label || "Optional continuation")}</strong>
+      <div style="color:#8b96a3;font-size:11px;margin-top:4px;">
+        +${lengthMi} mi · +${durMin} min beyond the main route
+      </div>
+    `);
+    endMarker.on("click", () => endMarker.openPopup());
+
+    return { polyline, endMarker };
   }
 
   function renderPoi(poi, route) {
@@ -481,10 +533,14 @@
       }
     });
 
-    // Pan to route
+    // Pan to route — include the continuation in bounds if present
     const layer = routeLayers[id];
     if (layer && layer.polyline) {
-      map.fitBounds(layer.polyline.getBounds(), { padding: [80, 80] });
+      const bounds = layer.polyline.getBounds();
+      if (layer.continuation && layer.continuation.polyline) {
+        bounds.extend(layer.continuation.polyline.getBounds());
+      }
+      map.fitBounds(bounds, { padding: [80, 80] });
     }
 
     // Update sidebar active
@@ -539,6 +595,16 @@
           <h3>Watch out for</h3>
           <p>${route.watchouts}</p>
         </div>
+        ${route.optional_continuation && route.optional_continuation.geometry ? `
+        <div class="detail-section continuation-section" style="border-left: 3px solid ${route.optional_continuation.color || "#06b6d4"}; padding-left: 10px;">
+          <h3 style="color: ${route.optional_continuation.color || "#06b6d4"};">Optional continuation</h3>
+          <p>${escapeHtml(route.optional_continuation.label || "Optional extension")}</p>
+          <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">
+            +${route.optional_continuation.length_m ? (route.optional_continuation.length_m / 1609.344).toFixed(1) : "—"} mi ·
+            +${route.optional_continuation.duration_s ? Math.round(route.optional_continuation.duration_s / 60) : "—"} min
+          </p>
+        </div>
+        ` : ""}
         <div class="detail-actions">
           <a class="btn" href="${route.google_maps_url}" target="_blank" rel="noopener">Directions ↗</a>
           <button class="btn secondary" id="detail-close-btn">Close</button>
@@ -593,18 +659,23 @@
     const visibleIds = new Set(visibleRoutes().map((r) => r.id));
     Object.entries(routeLayers).forEach(([id, layer]) => {
       const shouldShow = visibleIds.has(id);
+      const ext = layer.continuation
+        ? [layer.continuation.polyline, layer.continuation.endMarker]
+        : [];
       if (shouldShow) {
         if (!map.hasLayer(layer.polyline)) layer.polyline.addTo(map);
         if (!map.hasLayer(layer.marker)) layer.marker.addTo(map);
         (layer.poiMarkers || []).forEach((m) => {
           if (!map.hasLayer(m)) m.addTo(map);
         });
+        ext.forEach((m) => { if (!map.hasLayer(m)) m.addTo(map); });
       } else {
         if (map.hasLayer(layer.polyline)) map.removeLayer(layer.polyline);
         if (map.hasLayer(layer.marker)) map.removeLayer(layer.marker);
         (layer.poiMarkers || []).forEach((m) => {
           if (map.hasLayer(m)) map.removeLayer(m);
         });
+        ext.forEach((m) => { if (map.hasLayer(m)) map.removeLayer(m); });
       }
     });
     renderRouteList();

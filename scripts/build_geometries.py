@@ -126,6 +126,23 @@ def main():
 
         time.sleep(0.5)
 
+        cont = route.get("optional_continuation")
+        if cont and cont.get("waypoints"):
+            try:
+                wpts = [tuple(p) for p in cont["waypoints"]]
+                geom, length_m, dur_s = trace(wpts)
+                cont["geometry"] = geom
+                cont["length_m"] = round(length_m)
+                cont["duration_s"] = round(dur_s)
+                print(
+                    f"   ✓ continuation: {len(geom['coordinates'])} pts, "
+                    f"{length_m/1609.344:.1f} mi, {dur_s/60:.0f} min",
+                    flush=True,
+                )
+            except Exception as e:
+                print(f"   ! continuation trace failed: {e}", flush=True)
+            time.sleep(0.5)
+
     with open(ROUTES_PATH, "w") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
         f.write("\n")
