@@ -60137,14 +60137,20 @@
           "lon": -122.230111,
           "title": "(Where Yanjie crashed part 1)",
           "icon": "crash",
-          "description": "First incident point along Grizzly Peak Blvd. Marker added by Justin."
+          "description": "First of the two infamous hairpin turns on Wildcat Canyon Road. Decreasing-radius. Off-camber on entry. Multiple wrecks here on file. Brake earlier than you think and don't trail-brake into the apex — that's how Yanjie went off the first time.",
+          "warning": true,
+          "warning_label": "⚠ WARNING",
+          "warning_subtitle": "Two deadly hairpins on Wildcat Canyon"
         },
         {
           "lat": 37.897681,
           "lon": -122.219262,
           "title": "(Where Yanjie crashed part 2)",
           "icon": "crash",
-          "description": "Mid-ridge waypoint along Grizzly Peak Blvd. Marker added by Justin."
+          "description": "Second of the two infamous hairpin turns on Wildcat Canyon Road. Tighter than it looks from the entry. Negative camber + gravel in the apex after rain. This is the one that got Yanjie the second time. Lift earlier, take the wide line, exit on the throttle — not before.",
+          "warning": true,
+          "warning_label": "⚠ WARNING",
+          "warning_subtitle": "Two deadly hairpins on Wildcat Canyon"
         }
       ],
       "geometry": {

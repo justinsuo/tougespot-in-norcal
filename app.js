@@ -364,15 +364,23 @@
       zIndexOffset: 1500,
     }).addTo(map);
 
+    const warningBlock = poi.warning
+      ? `<div class="poi-warning">
+           <div class="poi-warning-tag">${escapeHtml(poi.warning_label || "⚠ WARNING")}</div>
+           ${poi.warning_subtitle ? `<div class="poi-warning-sub">${escapeHtml(poi.warning_subtitle)}</div>` : ""}
+         </div>`
+      : "";
+
     const popupHtml = `
+      ${warningBlock}
       <strong>${escapeHtml(labelText)}</strong>
       <div style="color:#8b96a3;font-size:11px;margin-bottom:6px;">
         On <em>${escapeHtml(route.name)}</em> · ${poi.lat.toFixed(5)}, ${poi.lon.toFixed(5)}
       </div>
-      ${poi.description ? `<div style="font-size:12px;line-height:1.4;margin-bottom:8px;">${escapeHtml(poi.description)}</div>` : ""}
+      ${poi.description ? `<div style="font-size:12px;line-height:1.5;margin-bottom:10px;">${escapeHtml(poi.description)}</div>` : ""}
       <a href="https://www.google.com/maps?q=${poi.lat},${poi.lon}" target="_blank" rel="noopener">Open in Google Maps ↗</a>
     `;
-    marker.bindPopup(popupHtml);
+    marker.bindPopup(popupHtml, { maxWidth: 280, className: poi.warning ? "popup-warning" : "" });
     marker.on("click", () => marker.openPopup());
     return marker;
   }
