@@ -258,6 +258,13 @@
       await Promise.all(workers);
     }
 
+    // Standalone POIs (not tied to a route) — donut spots, hangouts, etc.
+    if (Array.isArray(routesData.pois)) {
+      for (const poi of routesData.pois) {
+        renderPoi(poi, null);
+      }
+    }
+
     renderRouteList();
     fitMapToVisibleRoutes();
     loading.classList.add("hidden");
@@ -340,7 +347,10 @@
   function renderPoi(poi, route) {
     const iconKind = poi.icon || "pin";
     const glyph =
-      iconKind === "crash" ? "💥" : iconKind === "vista" ? "📷" : "📍";
+      iconKind === "crash" ? "💥"
+      : iconKind === "vista" ? "📷"
+      : iconKind === "donut" ? "🍩"
+      : "📍";
     const labelText = poi.title || "";
 
     // Marker uses an HTML divIcon so we get the glyph + a permanent label
@@ -371,11 +381,15 @@
          </div>`
       : "";
 
+    const locationLine = route
+      ? `On <em>${escapeHtml(route.name)}</em> · ${poi.lat.toFixed(5)}, ${poi.lon.toFixed(5)}`
+      : `${poi.lat.toFixed(5)}, ${poi.lon.toFixed(5)}`;
+
     const popupHtml = `
       ${warningBlock}
       <strong>${escapeHtml(labelText)}</strong>
       <div style="color:#8b96a3;font-size:11px;margin-bottom:6px;">
-        On <em>${escapeHtml(route.name)}</em> · ${poi.lat.toFixed(5)}, ${poi.lon.toFixed(5)}
+        ${locationLine}
       </div>
       ${poi.description ? `<div style="font-size:12px;line-height:1.5;margin-bottom:10px;">${escapeHtml(poi.description)}</div>` : ""}
       <a href="https://www.google.com/maps?q=${poi.lat},${poi.lon}" target="_blank" rel="noopener">Open in Google Maps ↗</a>

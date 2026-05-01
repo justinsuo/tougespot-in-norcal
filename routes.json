@@ -61122,5 +61122,14 @@
       "duration_s": 287,
       "from_origin_s": 649
     }
+  ],
+  "pois": [
+    {
+      "lat": 37.806695,
+      "lon": -122.322303,
+      "title": "Good Donut Spot",
+      "icon": "donut",
+      "description": "Solid sideshow location — wide-open intersection, low foot traffic on weekends, good sight lines for spectators. Classic East Bay take-over spot. Bring a clean set of rears and a cheap car you don't love."
+    }
   ]
 }

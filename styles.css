@@ -415,6 +415,10 @@ a:hover { text-decoration: underline; }
   background: #0ea5e9;
   box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.25), 0 4px 12px rgba(0, 0, 0, 0.6);
 }
+.poi-donut {
+  background: #d946ef;
+  box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.25), 0 4px 12px rgba(0, 0, 0, 0.6);
+}
 @keyframes poi-pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.08); }
@@ -440,6 +444,8 @@ a:hover { text-decoration: underline; }
   opacity: 1;
   transform: translateX(0);
 }
+.poi-wrap:has(.poi-donut) .poi-label { border-color: #d946ef; color: #fdf4ff; }
+.poi-wrap:has(.poi-vista) .poi-label { border-color: #0ea5e9; color: #f0f9ff; }
 
 /* Warning popup styling for crash / hazard POIs */
 .leaflet-popup.popup-warning .leaflet-popup-content-wrapper {
