@@ -120,16 +120,17 @@
 
   function renderMarker(r) {
     const color = colorFor(r);
+    const emoji = emojiFor(r);
     const html = `
-      <div class="resto-pin" style="--c:${color};">
-        <div class="resto-glyph">🥢</div>
+      <div class="resto-pin" style="--c:${color};" title="${escapeHtml(r.cuisine)}">
+        <div class="resto-glyph">${emoji}</div>
       </div>
     `;
     const icon = L.divIcon({
       className: "resto-icon",
       html,
-      iconSize: [28, 28],
-      iconAnchor: [14, 14],
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
     });
     const marker = L.marker([r.lat, r.lon], { icon, zIndexOffset: 200 }).addTo(map);
 

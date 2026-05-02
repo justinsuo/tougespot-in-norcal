@@ -14,6 +14,62 @@
   --r3: #ef4444;
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
   --sidebar-w: 360px;
+  --tabs-h: 48px;
+}
+
+/* Persistent top tab bar — always visible, switches between Roads and Food */
+#app-tabs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--tabs-h);
+  background: rgba(11, 16, 21, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  z-index: 900;
+  padding: 0 8px;
+  gap: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+.app-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid transparent;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.app-tab:hover {
+  color: var(--text);
+  background: var(--panel-2);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+.app-tab.active {
+  color: #0b1015;
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 4px 14px rgba(255, 107, 53, 0.35);
+}
+.app-tab-glyph {
+  font-size: 16px;
+  line-height: 1;
+}
+.app-tab-label {
+  letter-spacing: 0.01em;
 }
 
 * { box-sizing: border-box; }
@@ -33,10 +89,10 @@ a:hover { text-decoration: underline; }
 
 #sidebar {
   position: fixed;
-  top: 0;
+  top: var(--tabs-h);
   left: 0;
   width: var(--sidebar-w);
-  height: 100vh;
+  height: calc(100vh - var(--tabs-h));
   background: var(--panel);
   border-right: 1px solid var(--border);
   display: flex;
@@ -240,7 +296,7 @@ a:hover { text-decoration: underline; }
 
 #map {
   position: fixed;
-  top: 0;
+  top: var(--tabs-h);
   left: var(--sidebar-w);
   right: 0;
   bottom: 0;
@@ -251,7 +307,7 @@ a:hover { text-decoration: underline; }
 
 #sidebar-toggle {
   position: fixed;
-  top: 14px;
+  top: calc(var(--tabs-h) + 10px);
   left: calc(var(--sidebar-w) + 12px);
   z-index: 700;
   background: var(--panel);
@@ -286,11 +342,11 @@ a:hover { text-decoration: underline; }
 
 #detail-panel {
   position: fixed;
-  top: 16px;
+  top: calc(var(--tabs-h) + 12px);
   right: 16px;
   width: 380px;
   max-width: calc(100vw - 32px);
-  max-height: calc(100vh - 32px);
+  max-height: calc(100vh - var(--tabs-h) - 24px);
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -444,8 +500,8 @@ a:hover { text-decoration: underline; }
   border: none !important;
 }
 .resto-pin {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   background: var(--c);
   border: 2px solid #0b1015;
   border-radius: 50%;
@@ -453,14 +509,16 @@ a:hover { text-decoration: underline; }
   place-items: center;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.5);
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .resto-pin:hover {
-  transform: scale(1.15);
+  transform: scale(1.2);
+  box-shadow: 0 0 0 4px var(--c), 0 0 0 6px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.6);
 }
 .resto-glyph {
-  font-size: 14px;
-  filter: brightness(0) saturate(100%);
+  font-size: 16px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
 }
 .resto-card {
   display: flex;
@@ -792,9 +850,12 @@ a:hover { text-decoration: underline; }
 
 /* Mobile */
 @media (max-width: 720px) {
-  :root { --sidebar-w: 100vw; }
+  :root { --sidebar-w: 100vw; --tabs-h: 44px; }
+  #app-tabs { padding: 0 4px; gap: 2px; }
+  .app-tab { padding: 0 12px; font-size: 12px; }
+  .app-tab-label { display: inline; }
   #sidebar {
-    height: 60vh;
+    height: 55vh;
     top: auto;
     bottom: 0;
     width: 100vw;
@@ -804,14 +865,14 @@ a:hover { text-decoration: underline; }
     transform: translateY(0);
   }
   #sidebar.collapsed {
-    transform: translateY(calc(60vh - 60px));
+    transform: translateY(calc(55vh - 60px));
   }
   #map {
     left: 0;
     bottom: 0;
   }
   #sidebar-toggle {
-    top: 14px;
+    top: calc(var(--tabs-h) + 10px);
     left: 14px;
   }
   #sidebar.collapsed ~ #sidebar-toggle { left: 14px; }
