@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorCal Chinese Food Map — by Justin Suo</title>
+  <meta name="description" content="A curated map of the best Chinese restaurants in Northern California — Cantonese, Sichuan, Shanghai, Taiwanese, dim sum, hot pot." />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='14'%3E%F0%9F%A5%A2%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <aside id="sidebar" aria-label="Restaurants and filters">
+    <header class="sidebar-header">
+      <nav class="page-nav" aria-label="Section navigation">
+        <a href="index.html" class="nav-tab">🗻 Roads</a>
+        <a href="food.html" class="nav-tab active" aria-current="page">🥢 Food</a>
+      </nav>
+      <h1>NorCal Chinese Food</h1>
+      <p class="subtitle">The good stuff · Curated by <a href="https://github.com/justinsuo" target="_blank" rel="noopener">Justin Suo</a></p>
+    </header>
+
+    <section class="filters" aria-label="Filters">
+      <div class="filter-group">
+        <label class="filter-label">Cuisine</label>
+        <div class="chip-row" id="cuisine-chips">
+          <button class="chip active" data-cuisine="all">All</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Region</label>
+        <div class="chip-row" id="region-chips">
+          <button class="chip active" data-region="all">All</button>
+          <button class="chip" data-region="San Francisco">SF</button>
+          <button class="chip" data-region="Oakland">Oakland</button>
+          <button class="chip" data-region="Berkeley">Berkeley</button>
+          <button class="chip" data-region="Peninsula">Peninsula</button>
+          <button class="chip" data-region="South Bay">South Bay</button>
+          <button class="chip" data-region="Sacramento">Sac</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Min rating</label>
+        <div class="chip-row" id="rating-chips">
+          <button class="chip active" data-rating="0">All</button>
+          <button class="chip" data-rating="4">4+</button>
+          <button class="chip" data-rating="4.5">4.5+</button>
+          <button class="chip" data-rating="5">5</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Price</label>
+        <div class="chip-row" id="price-chips">
+          <button class="chip active" data-price="all">All</button>
+          <button class="chip" data-price="$">$</button>
+          <button class="chip" data-price="$$">$$</button>
+          <button class="chip" data-price="$$$">$$$</button>
+          <button class="chip" data-price="$$$$">$$$$</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="route-list-wrap" aria-label="Restaurants">
+      <div id="restaurant-list" class="route-list" role="listbox" aria-label="Restaurants"></div>
+    </section>
+
+    <footer class="sidebar-footer">
+      <a href="https://github.com/justinsuo/tougespot-in-norcal" target="_blank" rel="noopener">GitHub</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://github.com/justinsuo/tougespot-in-norcal/issues/new" target="_blank" rel="noopener">Suggest a spot</a>
+    </footer>
+  </aside>
+
+  <main id="map" role="application" aria-label="Map of NorCal Chinese restaurants"></main>
+
+  <button id="sidebar-toggle" aria-label="Toggle sidebar" aria-expanded="true">
+    <span class="bars" aria-hidden="true"></span>
+  </button>
+
+  <aside id="detail-panel" aria-hidden="true" aria-label="Restaurant details">
+    <button class="detail-close" id="detail-close" aria-label="Close details">×</button>
+    <div id="detail-body"></div>
+  </aside>
+
+  <div id="loading" class="loading" aria-live="polite">Loading restaurants…</div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="food.js"></script>
+</body>
+</html>

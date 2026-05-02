@@ -48,9 +48,37 @@ a:hover { text-decoration: underline; }
 #sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
 
 .sidebar-header {
-  padding: 18px 20px 12px;
+  padding: 12px 20px 12px;
   border-bottom: 1px solid var(--border);
   background: linear-gradient(180deg, #131a23, var(--panel));
+}
+.page-nav {
+  display: flex;
+  gap: 4px;
+  margin: 0 -8px 12px;
+  padding: 0 8px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.nav-tab {
+  flex: 1;
+  text-align: center;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  background: transparent;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-tab:hover {
+  color: var(--text);
+  background: var(--panel-2);
+  text-decoration: none;
+}
+.nav-tab.active {
+  color: #0b1015;
+  background: var(--accent);
 }
 .sidebar-header h1 {
   margin: 0 0 2px;
@@ -409,6 +437,36 @@ a:hover { text-decoration: underline; }
   box-shadow: var(--shadow);
 }
 .loading.hidden { display: none; }
+
+/* Restaurant pins (food map) */
+.resto-icon {
+  background: transparent !important;
+  border: none !important;
+}
+.resto-pin {
+  width: 28px;
+  height: 28px;
+  background: var(--c);
+  border: 2px solid #0b1015;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.resto-pin:hover {
+  transform: scale(1.15);
+}
+.resto-glyph {
+  font-size: 14px;
+  filter: brightness(0) saturate(100%);
+}
+.resto-card .name { font-size: 13px; }
+.resto-card .meta {
+  flex-wrap: wrap;
+  gap: 6px 10px;
+}
 
 /* POI markers (incident points, vistas, etc.) */
 .poi-icon {
