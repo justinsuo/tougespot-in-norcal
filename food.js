@@ -78,6 +78,9 @@
     populateCuisineChips();
 
     for (const r of foodData.restaurants) {
+      // Restaurants attached to a featured area (Milpitas Square) are hidden
+      // from the main map — they appear inside the area's modal only.
+      if (r.at_area) continue;
       renderMarker(r);
     }
     renderFeaturedAreas();
@@ -90,28 +93,9 @@
   function renderFeaturedAreas() {
     const areas = foodData.featured_areas || {};
     for (const [id, area] of Object.entries(areas)) {
-      // Translucent halo polygon defining the area
-      if (Array.isArray(area.bounds) && area.bounds.length === 2) {
-        const sw = area.bounds[0];
-        const ne = area.bounds[1];
-        const ring = [
-          [sw[0], sw[1]],
-          [sw[0], ne[1]],
-          [ne[0], ne[1]],
-          [ne[0], sw[1]],
-        ];
-        L.polygon(ring, {
-          color: "#fbbf24",
-          weight: 2,
-          opacity: 0.9,
-          fillColor: "#fbbf24",
-          fillOpacity: 0.07,
-          dashArray: "6 6",
-          interactive: false,
-        }).addTo(map);
-      }
-
-      // Pulsing area marker
+      // Single pulsing dot — no polygon halo on the main map. The full
+      // Milpitas Square experience (mini-map + restaurants) lives behind
+      // the click. This is the easter egg.
       const html = `
         <div class="area-pin">
           <div class="area-pin-pulse"></div>
@@ -228,14 +212,28 @@
     areaMap = L.map("area-mini-map", {
       zoomControl: true,
       scrollWheelZoom: true,
-      attributionControl: false,
+      attributionControl: true,
       zoomSnap: 0.25,
     });
 
+    // Real satellite imagery so you can see the actual plaza, parking lot,
+    // and surrounding streets — not a generic dark void.
     L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       {
-        maxZoom: 20,
+        maxZoom: 22,
+        attribution:
+          '© <a href="https://www.esri.com">Esri</a> · Maxar · Earthstar Geographics',
+      }
+    ).addTo(areaMap);
+
+    // Street + label overlay so you can read the road names and place names
+    // on top of the satellite image
+    L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+      {
+        maxZoom: 22,
+        opacity: 0.85,
       }
     ).addTo(areaMap);
 
@@ -246,7 +244,7 @@
       areaMap.setView([area.lat, area.lon], 18);
     }
 
-    // Soft glowing area outline
+    // Subtle gold outline of the plaza so the area reads at a glance
     if (Array.isArray(area.bounds)) {
       const sw = area.bounds[0], ne = area.bounds[1];
       L.polygon(
@@ -258,11 +256,11 @@
         ],
         {
           color: "#fbbf24",
-          weight: 1.5,
-          opacity: 0.75,
+          weight: 2,
+          opacity: 0.9,
           fillColor: "#fbbf24",
-          fillOpacity: 0.06,
-          dashArray: "4 6",
+          fillOpacity: 0.04,
+          dashArray: "6 6",
           interactive: false,
         }
       ).addTo(areaMap);
@@ -404,6 +402,8 @@
   function visibleRestaurants() {
     if (!foodData) return [];
     return foodData.restaurants.filter((r) => {
+      // Featured-area restaurants are easter-egg only — never in the sidebar list.
+      if (r.at_area) return false;
       if (filters.cuisine !== "all" && r.cuisine !== filters.cuisine) return false;
       if (filters.region !== "all" && regionFor(r) !== filters.region) return false;
       if (filters.rating > 0 && r.rating < filters.rating) return false;
