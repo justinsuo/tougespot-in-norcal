@@ -114,6 +114,10 @@
     return foodData.cuisines[r.cuisine] || "#94a3b8";
   }
 
+  function emojiFor(r) {
+    return (foodData.cuisine_emoji && foodData.cuisine_emoji[r.cuisine]) || "🥢";
+  }
+
   function renderMarker(r) {
     const color = colorFor(r);
     const html = `
@@ -181,15 +185,29 @@
       card.dataset.id = r.id;
       card.style.borderLeftColor = colorFor(r);
       if (r.id === activeId) card.classList.add("active");
+
+      const sig = r.signature_dish ? `<div class="resto-sig">⭐ ${escapeHtml(r.signature_dish)}</div>` : "";
+      const tagPills = (r.tags || [])
+        .slice(0, 2)
+        .map((t) => `<span class="resto-tag">${escapeHtml(t)}</span>`)
+        .join("");
+
       card.innerHTML = `
-        <div class="row">
-          <h3 class="name">${escapeHtml(r.name)}</h3>
-          <span class="rating" style="color:${colorFor(r)};">${r.rating}</span>
+        <div class="resto-card-thumb" style="background:linear-gradient(135deg,${colorFor(r)},${colorFor(r)}88);">
+          <span class="resto-card-emoji">${emojiFor(r)}</span>
         </div>
-        <div class="meta">
-          <span style="color:${colorFor(r)};font-weight:700;">${escapeHtml(r.cuisine)}</span>
-          <span>📍 ${escapeHtml(r.neighborhood)}, ${escapeHtml(r.city)}</span>
-          <span>${r.price}</span>
+        <div class="resto-card-body">
+          <div class="row">
+            <h3 class="name">${escapeHtml(r.name)}</h3>
+            <span class="rating" style="color:${colorFor(r)};">${r.rating}</span>
+          </div>
+          <div class="meta">
+            <span style="color:${colorFor(r)};font-weight:700;">${escapeHtml(r.cuisine)}</span>
+            <span>📍 ${escapeHtml(r.neighborhood)}</span>
+            <span>${r.price}</span>
+          </div>
+          ${sig}
+          ${tagPills ? `<div class="resto-tag-row">${tagPills}</div>` : ""}
         </div>
       `;
       card.addEventListener("click", () => openDetail(r.id));
@@ -214,38 +232,58 @@
       .forEach((c) => c.classList.toggle("active", c.dataset.id === id));
 
     const color = colorFor(r);
+    const emoji = emojiFor(r);
     const body = document.getElementById("detail-body");
+
+    const dishes = (r.dishes || [])
+      .map((d) => `<li><span class="dish-bullet" style="background:${color};"></span>${escapeHtml(d)}</li>`)
+      .join("");
+    const tips = (r.tips || [])
+      .map((t) => `<li>💡 ${escapeHtml(t)}</li>`)
+      .join("");
+    const tags = (r.tags || [])
+      .map((t) => `<span class="resto-tag" style="border-color:${color}55;color:${color};background:${color}15;">${escapeHtml(t)}</span>`)
+      .join("");
+    const sig = r.signature_dish
+      ? `<div class="signature-callout" style="--c:${color};">
+           <div class="signature-label">⭐ ORDER THIS</div>
+           <div class="signature-name">${escapeHtml(r.signature_dish)}</div>
+         </div>`
+      : "";
+
     body.innerHTML = `
-      <div class="detail-photo-placeholder" style="background:linear-gradient(90deg,${color},${color}aa);"></div>
+      <div class="resto-hero" style="background: radial-gradient(ellipse at center, ${color}66 0%, ${color}22 50%, transparent 90%), linear-gradient(135deg, ${color} 0%, ${color}aa 100%);">
+        <div class="resto-hero-emoji">${emoji}</div>
+        <div class="resto-hero-cuisine" style="color:#fff;background:rgba(0,0,0,0.35);">${escapeHtml(r.cuisine)}</div>
+      </div>
       <div class="detail-content">
         <h2>${escapeHtml(r.name)}</h2>
         <div class="detail-rating-row">
           <span class="detail-rating" style="color:${color};">${r.rating}/5</span>
           <span>·</span>
-          <span style="color:${color};font-weight:700;">${escapeHtml(r.cuisine)}</span>
-          <span>·</span>
           <span>${r.price}</span>
+          <span>·</span>
+          <span>${escapeHtml(r.neighborhood)}, ${escapeHtml(r.city)}</span>
         </div>
-        <div class="detail-stats">
-          <div>
-            <div class="detail-stat-label">City</div>
-            <div class="detail-stat-val">${escapeHtml(r.city)}</div>
-          </div>
-          <div>
-            <div class="detail-stat-label">Neighborhood</div>
-            <div class="detail-stat-val">${escapeHtml(r.neighborhood)}</div>
-          </div>
-        </div>
+        ${tags ? `<div class="resto-tag-row resto-tag-row-detail">${tags}</div>` : ""}
+        ${sig}
         <div class="detail-section">
-          <h3>Known for</h3>
+          <h3>The story</h3>
           <p>${escapeHtml(r.known_for)}</p>
+          <p style="margin-top:6px;">${escapeHtml(r.vibe)}</p>
         </div>
+        ${dishes ? `
         <div class="detail-section">
-          <h3>Vibe</h3>
-          <p>${escapeHtml(r.vibe)}</p>
-        </div>
+          <h3>What to order</h3>
+          <ul class="dish-list">${dishes}</ul>
+        </div>` : ""}
+        ${tips ? `
+        <div class="detail-section">
+          <h3>Insider tips</h3>
+          <ul class="tip-list">${tips}</ul>
+        </div>` : ""}
         <div class="detail-actions">
-          <a class="btn" href="https://www.google.com/maps/search/${encodeURIComponent(r.name + ' ' + r.city)}" target="_blank" rel="noopener">Find on Google Maps ↗</a>
+          <a class="btn" href="https://www.google.com/maps/search/${encodeURIComponent(r.name + ' ' + r.city)}" target="_blank" rel="noopener">Open in Maps ↗</a>
           <button class="btn secondary" id="detail-close-btn">Close</button>
         </div>
       </div>

@@ -462,10 +462,163 @@ a:hover { text-decoration: underline; }
   font-size: 14px;
   filter: brightness(0) saturate(100%);
 }
+.resto-card {
+  display: flex;
+  padding: 0;
+  overflow: hidden;
+  gap: 10px;
+}
+.resto-card-thumb {
+  width: 64px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+.resto-card-emoji {
+  font-size: 28px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  transition: transform 0.2s ease;
+}
+.resto-card:hover .resto-card-emoji {
+  transform: scale(1.15) rotate(-5deg);
+}
+.resto-card-body {
+  padding: 10px 12px 10px 0;
+  flex: 1;
+  min-width: 0;
+}
 .resto-card .name { font-size: 13px; }
 .resto-card .meta {
   flex-wrap: wrap;
-  gap: 6px 10px;
+  gap: 4px 10px;
+}
+.resto-sig {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text);
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 4px 7px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+}
+.resto-tag-row {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.resto-tag-row-detail { margin: 8px 0 14px; }
+.resto-tag {
+  display: inline-block;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-dim);
+}
+
+/* Detail panel — rich food version */
+.resto-hero {
+  width: 100%;
+  height: 140px;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.resto-hero-emoji {
+  font-size: 84px;
+  line-height: 1;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+  animation: hero-float 4s ease-in-out infinite;
+}
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-6px) rotate(2deg); }
+}
+.resto-hero-cuisine {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+}
+
+.signature-callout {
+  margin: 12px 0 14px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--c, var(--accent));
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.signature-callout::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--c);
+}
+.signature-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--c);
+  margin-bottom: 4px;
+}
+.signature-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.dish-list, .tip-list {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0;
+}
+.dish-list li, .tip-list li {
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 5px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--text);
+}
+.dish-list li {
+  border-bottom: 1px dashed var(--border);
+}
+.dish-list li:last-child { border-bottom: none; }
+.dish-bullet {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+.tip-list li {
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 2px solid var(--accent-dim);
+  padding-left: 10px;
+  margin-bottom: 4px;
+  border-radius: 0 4px 4px 0;
 }
 
 /* POI markers (incident points, vistas, etc.) */

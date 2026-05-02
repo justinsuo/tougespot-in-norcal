@@ -32,7 +32,25 @@
       "price": "$$$$",
       "rating": 5.0,
       "known_for": "Modernized Cantonese banquet — roast duck, salt-and-pepper crab, hand-pulled noodles. Michelin star.",
-      "vibe": "Reservation-required upstairs dining room over Chinatown. The most ambitious Chinese restaurant in NorCal."
+      "vibe": "Reservation-required upstairs dining room over Chinatown. The most ambitious Chinese restaurant in NorCal.",
+      "signature_dish": "Whole roast duck (order ahead)",
+      "dishes": [
+        "Sourdough scallion pancake",
+        "Whole roast duck (24hr notice)",
+        "Salt and pepper crab",
+        "Wok-charred green beans",
+        "Hot mustard cocktail"
+      ],
+      "tips": [
+        "Reserve the back patio in summer",
+        "The whole duck feeds 4 — order ahead",
+        "Cocktail program is destination-level too"
+      ],
+      "tags": [
+        "Michelin",
+        "Reservations required",
+        "Date night"
+      ]
     },
     {
       "id": "z-and-y",
@@ -40,12 +58,31 @@
       "cuisine": "Sichuan",
       "neighborhood": "Chinatown",
       "city": "San Francisco",
-      "lat": 37.7960,
+      "lat": 37.796,
       "lon": -122.4067,
       "price": "$$",
       "rating": 4.5,
       "known_for": "Chongqing chicken, dan dan noodles, mapo tofu. Old-school Sichuan, full numbing heat.",
-      "vibe": "Loud, busy, no-frills. The benchmark for SF Sichuan."
+      "vibe": "Loud, busy, no-frills. The benchmark for SF Sichuan.",
+      "signature_dish": "Mr. Fish in flaming chili oil",
+      "dishes": [
+        "Chongqing dry chili chicken",
+        "Dan dan noodles",
+        "Tea-smoked duck",
+        "Mapo tofu",
+        "Mr. Fish in flaming oil",
+        "Cumin lamb"
+      ],
+      "tips": [
+        "Chongqing chicken is the lifeline order",
+        "Heat is real Sichuan numbing — bring water",
+        "Avoid Friday night rush"
+      ],
+      "tags": [
+        "Sichuan classic",
+        "Numbing heat",
+        "Cash + card"
+      ]
     },
     {
       "id": "rg-lounge",
@@ -53,12 +90,29 @@
       "cuisine": "Cantonese",
       "neighborhood": "Chinatown",
       "city": "San Francisco",
-      "lat": 37.7950,
+      "lat": 37.795,
       "lon": -122.4053,
       "price": "$$",
       "rating": 4.5,
       "known_for": "Salt and pepper crab. Just order it. Also clay pot, hot stone scallops.",
-      "vibe": "Two-story Chinatown stalwart. Locals on weeknights, banquets on weekends."
+      "vibe": "Two-story Chinatown stalwart. Locals on weeknights, banquets on weekends.",
+      "signature_dish": "Salt and pepper Dungeness crab",
+      "dishes": [
+        "Salt and pepper Dungeness crab (must)",
+        "Hot stone scallops with garlic",
+        "Beef chow fun",
+        "Honey walnut prawns",
+        "Clay pot rice"
+      ],
+      "tips": [
+        "Call ahead to reserve a live tank crab — they sell out",
+        "Two stories — upstairs is quieter",
+        "Banquet menu is great for groups of 6+"
+      ],
+      "tags": [
+        "Live tank seafood",
+        "Group friendly"
+      ]
     },
     {
       "id": "yank-sing",
@@ -67,11 +121,30 @@
       "neighborhood": "Embarcadero",
       "city": "San Francisco",
       "lat": 37.7892,
-      "lon": -122.3990,
+      "lon": -122.399,
       "price": "$$$",
       "rating": 4.5,
       "known_for": "Shanghai-style xiao long bao, Peking duck, Shanghai dumplings. Cart-style.",
-      "vibe": "Polished, expensive, weekday business lunch crowd. The premium SF dim sum."
+      "vibe": "Polished, expensive, weekday business lunch crowd. The premium SF dim sum.",
+      "signature_dish": "Shanghai juicy pork XLB",
+      "dishes": [
+        "Shanghai juicy pork XLB",
+        "Peking duck",
+        "Crystal shrimp dumplings",
+        "Pork siu mai",
+        "Custard tarts",
+        "Snow pea dumplings"
+      ],
+      "tips": [
+        "Stevenson location is bigger, less wait than Rincon",
+        "Brunch reservations book a week out",
+        "Cart service makes ordering visual — point at what you want"
+      ],
+      "tags": [
+        "Premium dim sum",
+        "Cart service",
+        "Reservations recommended"
+      ]
     },
     {
       "id": "hong-kong-lounge-ii",
@@ -79,12 +152,30 @@
       "cuisine": "Dim Sum",
       "neighborhood": "Inner Richmond",
       "city": "San Francisco",
-      "lat": 37.7820,
+      "lat": 37.782,
       "lon": -122.4536,
       "price": "$$",
       "rating": 4.5,
       "known_for": "Pineapple buns with BBQ pork (cha siu bao), shrimp dumplings, custard buns.",
-      "vibe": "Long weekend waits. Worth it. Sister restaurant to the original on Geary."
+      "vibe": "Long weekend waits. Worth it. Sister restaurant to the original on Geary.",
+      "signature_dish": "Pineapple cha siu bao",
+      "dishes": [
+        "Pineapple cha siu bao (BBQ pork pineapple buns)",
+        "Har gow (shrimp dumplings)",
+        "XO sauce rice rolls",
+        "Custard buns",
+        "Egg tarts",
+        "Pan-fried turnip cake"
+      ],
+      "tips": [
+        "Weekend wait is brutal — go Tuesday or Wednesday lunch",
+        "The pineapple bun is the photo dish, but har gow is the technical test",
+        "Cash + card both fine"
+      ],
+      "tags": [
+        "Iconic dim sum",
+        "Long weekend waits"
+      ]
     },
     {
       "id": "king-of-noodles",
@@ -97,7 +188,25 @@
       "price": "$",
       "rating": 4.0,
       "known_for": "Hand-pulled noodles, scallion pancakes, dumplings. Cheap and sharp.",
-      "vibe": "Tiny, busy, wait at the door. Cash-friendly."
+      "vibe": "Tiny, busy, wait at the door. Cash-friendly.",
+      "signature_dish": "Hand-pulled beef noodle soup",
+      "dishes": [
+        "Hand-pulled beef noodle soup",
+        "Scallion pancakes",
+        "Pork dumplings (8pc)",
+        "Cold sesame noodles",
+        "Stir-fried hand-pulled noodles"
+      ],
+      "tips": [
+        "Cash preferred",
+        "Tiny — expect to wait 20 min for a table at lunch",
+        "Dumplings are made in-house — order them"
+      ],
+      "tags": [
+        "Hand-pulled noodles",
+        "Cash friendly",
+        "Cheap eats"
+      ]
     },
     {
       "id": "san-tung",
@@ -110,7 +219,25 @@
       "price": "$$",
       "rating": 4.5,
       "known_for": "Dry-fried chicken wings — the dish that built its name. Also hand-shaved noodles.",
-      "vibe": "Always a line. Plan around it."
+      "vibe": "Always a line. Plan around it.",
+      "signature_dish": "Dry-fried chicken wings",
+      "dishes": [
+        "Dry-fried chicken wings (8 or 16pc)",
+        "Black bean noodles (jajangmyeon)",
+        "Mu shu pork",
+        "Dumplings",
+        "Seafood noodle soup"
+      ],
+      "tips": [
+        "The wings are why people line up — order 16 if you have 2+ people",
+        "Korean-Chinese hybrid menu — try the jajangmyeon",
+        "Lunch line shorter than dinner"
+      ],
+      "tags": [
+        "Famous wings",
+        "Korean-Chinese",
+        "Always a line"
+      ]
     },
     {
       "id": "spices-ii",
@@ -123,7 +250,25 @@
       "price": "$$",
       "rating": 4.0,
       "known_for": "Explosive chili oil dishes, fish in flaming chili oil, mouth-numbing chicken.",
-      "vibe": "Dim, loud, no-pretense. Order with caution if you don't tolerate Sichuan heat."
+      "vibe": "Dim, loud, no-pretense. Order with caution if you don't tolerate Sichuan heat.",
+      "signature_dish": "Mouth-watering chicken (mala)",
+      "dishes": [
+        "Mouth-watering chicken",
+        "Fish in flaming chili oil",
+        "Cold noodles with peanut sauce",
+        "Numbing braised beef",
+        "Cumin lamb skewers"
+      ],
+      "tips": [
+        "Ask for 'American spicy' if you can't take Sichuan numbing",
+        "Bring cold drinks — bottles only beat the heat",
+        "Order rice — you'll need it"
+      ],
+      "tags": [
+        "Numbing Sichuan",
+        "Heat warning",
+        "Cheap eats"
+      ]
     },
     {
       "id": "old-mandarin-islamic",
@@ -132,11 +277,29 @@
       "neighborhood": "Outer Sunset",
       "city": "San Francisco",
       "lat": 37.7378,
-      "lon": -122.4910,
+      "lon": -122.491,
       "price": "$$",
       "rating": 4.5,
       "known_for": "Lamb in everything — lamb hot pot, lamb skewers, hand-pulled noodles, sesame bread.",
-      "vibe": "Halal Muslim Chinese (Hui cuisine). One of a kind in SF."
+      "vibe": "Halal Muslim Chinese (Hui cuisine). One of a kind in SF.",
+      "signature_dish": "Lamb hot pot",
+      "dishes": [
+        "Lamb hot pot (the order)",
+        "Hand-pulled noodles in lamb soup",
+        "Fried sesame bread",
+        "Lamb skewers",
+        "Cumin lamb"
+      ],
+      "tips": [
+        "Halal — no pork on menu",
+        "Bring people — order family-style hot pot",
+        "One of the only Hui Muslim Chinese spots in NorCal"
+      ],
+      "tags": [
+        "Halal",
+        "Hui Muslim Chinese",
+        "Lamb specialist"
+      ]
     },
     {
       "id": "kingdom-of-dumpling",
@@ -145,11 +308,29 @@
       "neighborhood": "Outer Sunset",
       "city": "San Francisco",
       "lat": 37.7421,
-      "lon": -122.4760,
+      "lon": -122.476,
       "price": "$",
       "rating": 4.0,
       "known_for": "Pork XLB (xiao long bao), pan-fried pork buns, scallion pancake.",
-      "vibe": "Cash-only, blink-and-miss-it storefront. Get the take-home frozen dumplings."
+      "vibe": "Cash-only, blink-and-miss-it storefront. Get the take-home frozen dumplings.",
+      "signature_dish": "Pork XLB",
+      "dishes": [
+        "Pork XLB (8pc)",
+        "Pan-fried pork buns (sheng jian bao)",
+        "Scallion pancake",
+        "Wonton soup",
+        "Frozen XLB to take home"
+      ],
+      "tips": [
+        "Cash only",
+        "Take home a bag of frozen XLB — best in city",
+        "Blink and you'll miss the storefront"
+      ],
+      "tags": [
+        "Cash only",
+        "Hidden gem",
+        "Takeout friendly"
+      ]
     },
     {
       "id": "shanghai-dumpling-king",
@@ -157,12 +338,28 @@
       "cuisine": "Shanghai",
       "neighborhood": "Outer Richmond",
       "city": "San Francisco",
-      "lat": 37.7760,
+      "lat": 37.776,
       "lon": -122.4934,
       "price": "$",
       "rating": 4.0,
       "known_for": "XLB, pan-fried pork buns, beef noodle soup. Shanghai street food.",
-      "vibe": "Lines out the door on weekends. Mostly takeout."
+      "vibe": "Lines out the door on weekends. Mostly takeout.",
+      "signature_dish": "Pork XLB",
+      "dishes": [
+        "Pork XLB",
+        "Pan-fried pork buns",
+        "Beef noodle soup",
+        "Cold cucumber salad"
+      ],
+      "tips": [
+        "Lines weekends — call ahead for pickup",
+        "Mostly takeout-oriented",
+        "Don't expect ambience — go for the dough"
+      ],
+      "tags": [
+        "Takeout",
+        "Cheap eats"
+      ]
     },
     {
       "id": "ton-kiang",
@@ -170,12 +367,30 @@
       "cuisine": "Hunan",
       "neighborhood": "Outer Richmond",
       "city": "San Francisco",
-      "lat": 37.7800,
+      "lat": 37.78,
       "lon": -122.4825,
       "price": "$$",
       "rating": 4.0,
       "known_for": "Hakka cuisine — salt-baked chicken, stuffed tofu, dim sum on weekends.",
-      "vibe": "One of the few Hakka spots in SF. Family-run since 1977."
+      "vibe": "One of the few Hakka spots in SF. Family-run since 1977.",
+      "signature_dish": "Salt-baked chicken",
+      "dishes": [
+        "Salt-baked chicken (Hakka)",
+        "Stuffed tofu",
+        "Smoked duck",
+        "Weekend dim sum",
+        "Wine-fermented rice chicken"
+      ],
+      "tips": [
+        "One of the only Hakka spots in SF",
+        "Try the Hakka stuffed tofu — distinct cuisine you won't find elsewhere",
+        "Family-run since 1977"
+      ],
+      "tags": [
+        "Hakka cuisine",
+        "Rare cuisine",
+        "Family-run since 1977"
+      ]
     },
     {
       "id": "shan-dong-oakland",
@@ -188,7 +403,25 @@
       "price": "$",
       "rating": 4.5,
       "known_for": "Hand-pulled noodles, fried dumplings, mu shu pork. Dough is made fresh in the window.",
-      "vibe": "Old-school Oakland Chinatown classic. Cheap, fast, packed."
+      "vibe": "Old-school Oakland Chinatown classic. Cheap, fast, packed.",
+      "signature_dish": "Hand-pulled beef noodle soup",
+      "dishes": [
+        "Hand-pulled noodles (watch them stretch dough in window)",
+        "Beef noodle soup",
+        "Pan-fried dumplings (8pc)",
+        "Onion pancake",
+        "Dry-fried green beans"
+      ],
+      "tips": [
+        "Cash works — they take card too",
+        "Cheap and packed at lunch",
+        "Watch through the window before you sit — they pull noodles by hand on demand"
+      ],
+      "tags": [
+        "Hand-pulled noodles",
+        "Cheap eats",
+        "Oakland Chinatown classic"
+      ]
     },
     {
       "id": "gum-kuo",
@@ -197,11 +430,29 @@
       "neighborhood": "Chinatown",
       "city": "Oakland",
       "lat": 37.7984,
-      "lon": -122.2680,
+      "lon": -122.268,
       "price": "$",
       "rating": 4.0,
       "known_for": "Congee, chow fun, rice plates. The neighborhood breakfast spot.",
-      "vibe": "Open early, packed at 8am with regulars."
+      "vibe": "Open early, packed at 8am with regulars.",
+      "signature_dish": "Congee with century egg + lean pork",
+      "dishes": [
+        "Congee (century egg + lean pork)",
+        "Char siu over rice",
+        "Beef chow fun",
+        "Fish ball soup",
+        "Cantonese rice plates"
+      ],
+      "tips": [
+        "Open early — old-timers' breakfast spot",
+        "Comfort food, not destination food",
+        "Cheap and consistent"
+      ],
+      "tags": [
+        "Breakfast",
+        "Cheap eats",
+        "Old school"
+      ]
     },
     {
       "id": "china-village-albany",
@@ -209,12 +460,30 @@
       "cuisine": "Sichuan",
       "neighborhood": "Solano Ave",
       "city": "Albany",
-      "lat": 37.8910,
+      "lat": 37.891,
       "lon": -122.2978,
       "price": "$$",
       "rating": 4.5,
       "known_for": "Dry-cooked string beans, ma po tofu, fish-fragrant eggplant, smoked tea duck.",
-      "vibe": "Berkeley/Albany Sichuan reference point. Some claim it's the best in the East Bay."
+      "vibe": "Berkeley/Albany Sichuan reference point. Some claim it's the best in the East Bay.",
+      "signature_dish": "Smoked tea duck",
+      "dishes": [
+        "Smoked tea duck",
+        "Dry-cooked string beans",
+        "Mapo tofu",
+        "Fish-fragrant eggplant",
+        "Spicy fish in chili oil",
+        "Twice-cooked pork"
+      ],
+      "tips": [
+        "Worth the trip from anywhere in the East Bay",
+        "Street parking on Solano — plan extra time",
+        "Many claim this is the best Sichuan in the East Bay"
+      ],
+      "tags": [
+        "East Bay benchmark",
+        "Sichuan classic"
+      ]
     },
     {
       "id": "daimo-richmond",
@@ -227,7 +496,25 @@
       "price": "$$",
       "rating": 4.5,
       "known_for": "Roast duck, char siu, soy sauce chicken, BBQ over rice. Hong Kong-style siu mei.",
-      "vibe": "Pacific East Mall food court vibe. Get the BBQ combo."
+      "vibe": "Pacific East Mall food court vibe. Get the BBQ combo.",
+      "signature_dish": "BBQ combo (roast duck + char siu + crispy pork)",
+      "dishes": [
+        "BBQ combo (roast duck + char siu + crispy pork)",
+        "Roast duck noodle soup",
+        "Wonton noodles",
+        "Soy sauce chicken over rice",
+        "Crispy pork belly"
+      ],
+      "tips": [
+        "Pacific East Mall food court vibe — fast and cheap",
+        "BBQ combo over rice is the move",
+        "Skip the seafood, come for the rotisserie"
+      ],
+      "tags": [
+        "BBQ specialist",
+        "Cheap eats",
+        "Fast"
+      ]
     },
     {
       "id": "great-china-berkeley",
@@ -236,11 +523,30 @@
       "neighborhood": "Downtown Berkeley",
       "city": "Berkeley",
       "lat": 37.8678,
-      "lon": -122.2680,
+      "lon": -122.268,
       "price": "$$",
       "rating": 5.0,
       "known_for": "Peking duck (must be ordered ahead), double-cooked pork, walnut prawns, dry-fried green beans.",
-      "vibe": "Cal student dinner classic. Founded 1962. The duck is the order — takes 24 hr notice."
+      "vibe": "Cal student dinner classic. Founded 1962. The duck is the order — takes 24 hr notice.",
+      "signature_dish": "Peking duck (24-hr notice)",
+      "dishes": [
+        "Peking duck (must order 24hr ahead)",
+        "Double-cooked pork",
+        "Walnut prawns",
+        "Dry-fried green beans",
+        "Pea shoots in garlic",
+        "Hot and sour soup"
+      ],
+      "tips": [
+        "Reservations essential",
+        "Order Peking duck WHEN YOU BOOK — won't be available walk-in",
+        "Founded 1962. Cal alumni dinner ritual"
+      ],
+      "tags": [
+        "Peking duck destination",
+        "Reservations required",
+        "Berkeley institution"
+      ]
     },
     {
       "id": "imperial-tea-court",
@@ -253,7 +559,25 @@
       "price": "$$",
       "rating": 4.0,
       "known_for": "Gong-fu tea service paired with dim sum. Small plates, jiaozi, scallion pancakes.",
-      "vibe": "Tea ceremony focus. Quiet, slow, contemplative."
+      "vibe": "Tea ceremony focus. Quiet, slow, contemplative.",
+      "signature_dish": "Gong-fu tea + jiaozi pairing",
+      "dishes": [
+        "Gong-fu tea ceremony",
+        "Pork & chive jiaozi",
+        "Scallion pancakes",
+        "Cold sesame noodles",
+        "Mantou bread"
+      ],
+      "tips": [
+        "Slow and contemplative — not for rushed groups",
+        "Tea is the main event — order a flight",
+        "Tucked inside Emeryville Public Market"
+      ],
+      "tags": [
+        "Tea ceremony",
+        "Slow dining",
+        "Vegetarian friendly"
+      ]
     },
     {
       "id": "koi-palace",
@@ -261,12 +585,31 @@
       "cuisine": "Dim Sum",
       "neighborhood": "Serramonte",
       "city": "Daly City",
-      "lat": 37.6650,
+      "lat": 37.665,
       "lon": -122.4794,
       "price": "$$$",
       "rating": 5.0,
       "known_for": "Top-tier dim sum. Lobster XLB, BBQ pork buns, har gow done right. Off-menu specials.",
-      "vibe": "Banquet-hall scale, weekend wait can hit 90 min. The Bay Area dim sum benchmark."
+      "vibe": "Banquet-hall scale, weekend wait can hit 90 min. The Bay Area dim sum benchmark.",
+      "signature_dish": "Lobster XLB",
+      "dishes": [
+        "Lobster XLB (they invented it)",
+        "Custard buns",
+        "Har gow",
+        "BBQ pork buns",
+        "Suckling pig",
+        "Off-menu specials — ask"
+      ],
+      "tips": [
+        "Reservations essential — wait without is 90+ min on weekends",
+        "Ask the captain for off-menu items — there's a hidden menu",
+        "Bay Area dim sum benchmark"
+      ],
+      "tags": [
+        "Dim sum benchmark",
+        "Reservations required",
+        "Off-menu specials"
+      ]
     },
     {
       "id": "hk-flower-lounge",
@@ -275,11 +618,30 @@
       "neighborhood": "Millbrae",
       "city": "Millbrae",
       "lat": 37.5985,
-      "lon": -122.3870,
+      "lon": -122.387,
       "price": "$$$",
       "rating": 4.5,
       "known_for": "Cantonese banquet — Peking duck, lobster two ways, Maine lobster noodles.",
-      "vibe": "White tablecloths, big lazy susans. Wedding banquet energy."
+      "vibe": "White tablecloths, big lazy susans. Wedding banquet energy.",
+      "signature_dish": "Lobster two ways",
+      "dishes": [
+        "Peking duck",
+        "Lobster two ways (with noodles, then meat)",
+        "Maine lobster e-fu noodles",
+        "Steamed live fish",
+        "Bird's nest soup",
+        "Suckling pig"
+      ],
+      "tips": [
+        "Order lobster set, share family-style",
+        "Banquet hall scale — great for 8-12 people",
+        "Wedding banquets are common — call to check booking conflicts"
+      ],
+      "tags": [
+        "Cantonese banquet",
+        "Group friendly",
+        "Wedding venue"
+      ]
     },
     {
       "id": "the-kitchen-millbrae",
@@ -292,7 +654,25 @@
       "price": "$$",
       "rating": 4.5,
       "known_for": "Live seafood tank, salt and pepper soft shell crab, dim sum on weekends.",
-      "vibe": "Loud, fluorescent, packed. Worth the chaos."
+      "vibe": "Loud, fluorescent, packed. Worth the chaos.",
+      "signature_dish": "Salt and pepper soft shell crab",
+      "dishes": [
+        "Salt and pepper soft shell crab",
+        "Live tank lobster",
+        "Steamed garlic prawns",
+        "Weekend dim sum",
+        "Salt and pepper Dungeness"
+      ],
+      "tips": [
+        "Loud chaos — bring patient company",
+        "Live tank — point at what you want",
+        "Soft shell crab is the destination dish"
+      ],
+      "tags": [
+        "Live tank seafood",
+        "Loud",
+        "Dim sum weekends"
+      ]
     },
     {
       "id": "asian-pearl-millbrae",
@@ -305,7 +685,25 @@
       "price": "$$$",
       "rating": 4.5,
       "known_for": "Live tank seafood. Lobster e-fu noodles, salt and pepper Dungeness, abalone.",
-      "vibe": "Banquet-style Cantonese. Order big, share."
+      "vibe": "Banquet-style Cantonese. Order big, share.",
+      "signature_dish": "Lobster e-fu noodles",
+      "dishes": [
+        "Live abalone in oyster sauce",
+        "Salt and pepper Dungeness crab",
+        "Lobster e-fu noodles",
+        "Steamed live fish",
+        "Pipa duck"
+      ],
+      "tips": [
+        "Order family-style — banquet portions",
+        "Live tank is the move",
+        "Bring a group — solo not the play here"
+      ],
+      "tags": [
+        "Live tank seafood",
+        "Banquet style",
+        "Group friendly"
+      ]
     },
     {
       "id": "royal-feast",
@@ -318,7 +716,24 @@
       "price": "$$",
       "rating": 4.5,
       "known_for": "Beijing-style — sliced lamb, sesame pancakes, hand-shaved noodles, dumplings.",
-      "vibe": "Slightly upscale Northern Chinese. Less Cantonese crowd."
+      "vibe": "Slightly upscale Northern Chinese. Less Cantonese crowd.",
+      "signature_dish": "Beijing-style sliced lamb",
+      "dishes": [
+        "Beijing sliced lamb (with sesame paste dipping)",
+        "Sesame pancakes (shaobing)",
+        "Hand-shaved noodles",
+        "Lamb dumplings",
+        "Northern braised pork"
+      ],
+      "tips": [
+        "Northern Chinese specialist — different from typical SF Cantonese",
+        "Bring shaobing into the meal — sandwich the lamb",
+        "Worth the drive from SF"
+      ],
+      "tags": [
+        "Northern Chinese",
+        "Lamb specialist"
+      ]
     },
     {
       "id": "joy-luck-place-sm",
@@ -331,7 +746,24 @@
       "price": "$$",
       "rating": 4.0,
       "known_for": "Standard dim sum spread. Strong egg tarts and turnip cakes.",
-      "vibe": "Less crowded alternative to Millbrae. Reliable."
+      "vibe": "Less crowded alternative to Millbrae. Reliable.",
+      "signature_dish": "Egg tarts",
+      "dishes": [
+        "Egg tarts (perfect)",
+        "Turnip cakes",
+        "Har gow",
+        "Siu mai",
+        "BBQ pork buns"
+      ],
+      "tips": [
+        "Less crowded than Millbrae spots",
+        "Egg tarts and turnip cakes are the strongest items",
+        "Reliable, not destination"
+      ],
+      "tags": [
+        "Reliable dim sum",
+        "Easier wait"
+      ]
     },
     {
       "id": "din-tai-fung-sj",
@@ -344,7 +776,26 @@
       "price": "$$",
       "rating": 4.5,
       "known_for": "XLB (xiao long bao), truffle XLB, garlic green beans, shrimp & pork wontons.",
-      "vibe": "Reservation-based now. World-famous Taiwanese chain. Worth it."
+      "vibe": "Reservation-based now. World-famous Taiwanese chain. Worth it.",
+      "signature_dish": "Pork XLB",
+      "dishes": [
+        "Pork XLB (10 dumplings, perfect)",
+        "Truffle XLB",
+        "Garlic green beans",
+        "Shrimp & pork wontons",
+        "Spicy wontons in chili oil",
+        "Cucumber salad"
+      ],
+      "tips": [
+        "Reservations essential",
+        "Watch the dumpling-folders through the window — they're machines",
+        "Truffle XLB is luxury — the regular is just as good"
+      ],
+      "tags": [
+        "XLB world champion",
+        "Reservations required",
+        "Worth the hype"
+      ]
     },
     {
       "id": "hai-di-lao-cupertino",
@@ -353,11 +804,29 @@
       "neighborhood": "Cupertino",
       "city": "Cupertino",
       "lat": 37.3236,
-      "lon": -122.0150,
+      "lon": -122.015,
       "price": "$$$",
       "rating": 4.5,
       "known_for": "Service is the famous part — manicure while you wait, noodle dance, free snacks.",
-      "vibe": "Showy, fun, big group friendly. Hours-long wait without reservation."
+      "vibe": "Showy, fun, big group friendly. Hours-long wait without reservation.",
+      "signature_dish": "The hand-pulled noodle dance",
+      "dishes": [
+        "Mala broth (split pot recommended)",
+        "Hand-pulled noodle dance (the show)",
+        "Beef tendon",
+        "Lamb slices",
+        "House-made meatballs"
+      ],
+      "tips": [
+        "Free manicure during wait",
+        "Free fruit/snacks/games during wait",
+        "Show up an hour before reservation — half the fun is the waiting room"
+      ],
+      "tags": [
+        "Service legendary",
+        "Big group friendly",
+        "Reservations required"
+      ]
     },
     {
       "id": "sichuan-home-mv",
@@ -365,12 +834,30 @@
       "cuisine": "Sichuan",
       "neighborhood": "Mountain View",
       "city": "Mountain View",
-      "lat": 37.4050,
-      "lon": -122.0790,
+      "lat": 37.405,
+      "lon": -122.079,
       "price": "$$",
       "rating": 4.5,
       "known_for": "Authentic Sichuan — water-boiled fish, dan dan noodles, mapo tofu, twice-cooked pork.",
-      "vibe": "Strong heat. Order with respect."
+      "vibe": "Strong heat. Order with respect.",
+      "signature_dish": "Water-boiled fish",
+      "dishes": [
+        "Water-boiled fish (the must)",
+        "Dan dan noodles",
+        "Mapo tofu",
+        "Twice-cooked pork",
+        "Cumin lamb",
+        "Dry-fried green beans"
+      ],
+      "tips": [
+        "Heat is no joke — order rice",
+        "Call to ask spice level if you're unsure",
+        "Sichuan peppercorn is heavy — it numbs"
+      ],
+      "tags": [
+        "Sichuan classic",
+        "Numbing heat"
+      ]
     },
     {
       "id": "liangs-kitchen-mv",
@@ -379,11 +866,28 @@
       "neighborhood": "Castro St",
       "city": "Mountain View",
       "lat": 37.3911,
-      "lon": -122.0810,
+      "lon": -122.081,
       "price": "$",
       "rating": 4.0,
       "known_for": "Beef noodle soup, scallion pancakes, three-cup chicken, popcorn chicken.",
-      "vibe": "Casual Taiwanese cafe. Lunch crowd of tech workers."
+      "vibe": "Casual Taiwanese cafe. Lunch crowd of tech workers.",
+      "signature_dish": "Beef noodle soup",
+      "dishes": [
+        "Beef noodle soup (the staple)",
+        "Three-cup chicken",
+        "Popcorn chicken",
+        "Scallion pancake",
+        "Bubble tea"
+      ],
+      "tips": [
+        "Casual lunch spot — quick service",
+        "Three-cup chicken is the underrated order",
+        "Bubble tea actually solid"
+      ],
+      "tags": [
+        "Taiwanese comfort",
+        "Quick lunch"
+      ]
     },
     {
       "id": "chef-chu-los-altos",
@@ -396,7 +900,25 @@
       "price": "$$",
       "rating": 4.0,
       "known_for": "Old-school Chinese-American fine — Peking duck, kung pao, walnut prawns.",
-      "vibe": "Founded 1970. Steve Jobs ate here. Family-run institution."
+      "vibe": "Founded 1970. Steve Jobs ate here. Family-run institution.",
+      "signature_dish": "Peking duck",
+      "dishes": [
+        "Peking duck",
+        "Honey walnut prawns",
+        "Kung pao chicken",
+        "Mongolian beef",
+        "Hot and sour soup"
+      ],
+      "tips": [
+        "Founded 1970",
+        "Steve Jobs ate here regularly",
+        "Family-run institution — old-school Chinese-American done right"
+      ],
+      "tags": [
+        "Institution since 1970",
+        "Steve Jobs ate here",
+        "Family-run"
+      ]
     },
     {
       "id": "joy-luck-palace-cupertino",
@@ -404,12 +926,31 @@
       "cuisine": "Dim Sum",
       "neighborhood": "Cupertino",
       "city": "Cupertino",
-      "lat": 37.3300,
-      "lon": -122.0150,
+      "lat": 37.33,
+      "lon": -122.015,
       "price": "$$",
       "rating": 4.0,
       "known_for": "South Bay dim sum — har gow, siu mai, BBQ pork buns. Carts at peak.",
-      "vibe": "Big Cantonese banquet hall. Reliable South Bay dim sum."
+      "vibe": "Big Cantonese banquet hall. Reliable South Bay dim sum.",
+      "signature_dish": "Dim sum cart spread",
+      "dishes": [
+        "Har gow",
+        "Siu mai",
+        "BBQ pork buns",
+        "Egg tarts",
+        "Turnip cakes",
+        "Chicken feet"
+      ],
+      "tips": [
+        "Carts at peak weekend hours",
+        "Big banquet hall — fits big groups",
+        "Cheap relative to dim sum elsewhere"
+      ],
+      "tags": [
+        "Cart service",
+        "Big groups",
+        "Cheap dim sum"
+      ]
     },
     {
       "id": "spicy-king-fremont",
@@ -422,7 +963,24 @@
       "price": "$$",
       "rating": 4.5,
       "known_for": "Boiled fish in chili oil, ma po tofu, dry-fried string beans. Heavy on the heat.",
-      "vibe": "South Bay Sichuan specialist. Order water with bread."
+      "vibe": "South Bay Sichuan specialist. Order water with bread.",
+      "signature_dish": "Boiled fish in chili oil",
+      "dishes": [
+        "Boiled fish in chili oil (must)",
+        "Mapo tofu",
+        "Dry-fried string beans",
+        "Cumin lamb",
+        "Dan dan noodles"
+      ],
+      "tips": [
+        "Fremont Sichuan specialist",
+        "Heat is no joke — bring tolerant company",
+        "Order rice and water generously"
+      ],
+      "tags": [
+        "Numbing Sichuan",
+        "Heat warning"
+      ]
     },
     {
       "id": "champagne-newark",
@@ -435,7 +993,25 @@
       "price": "$$",
       "rating": 4.0,
       "known_for": "Live tank seafood, lobster noodles, salt-and-pepper everything. Banquet-style.",
-      "vibe": "South Bay Cantonese banquet hall. Loud, big tables."
+      "vibe": "South Bay Cantonese banquet hall. Loud, big tables.",
+      "signature_dish": "Salt and pepper Dungeness crab",
+      "dishes": [
+        "Live tank crab (salt and pepper)",
+        "Lobster noodles",
+        "Steamed live fish",
+        "Pipa duck",
+        "House special seafood combo"
+      ],
+      "tips": [
+        "Order from the tank for best price",
+        "South Bay Cantonese banquet vibe",
+        "Bring a group — lobster is the play"
+      ],
+      "tags": [
+        "Live tank seafood",
+        "Banquet style",
+        "Big groups"
+      ]
     },
     {
       "id": "tasty-pot-cupertino",
@@ -448,7 +1024,24 @@
       "price": "$$",
       "rating": 4.0,
       "known_for": "Individual hot pots, customizable broth and ingredients.",
-      "vibe": "Walk-in friendly alternative to Hai Di Lao."
+      "vibe": "Walk-in friendly alternative to Hai Di Lao.",
+      "signature_dish": "Individual hot pot",
+      "dishes": [
+        "Individual hot pots (customizable)",
+        "Spicy mala broth",
+        "Beef and lamb slices",
+        "Hand-rolled noodles",
+        "Soft tofu"
+      ],
+      "tips": [
+        "Walk-in friendly alternative to Hai Di Lao",
+        "Individual pot per person — no shared broth wars",
+        "Cheaper than Hai Di Lao"
+      ],
+      "tags": [
+        "Hot pot",
+        "Walk-in friendly"
+      ]
     },
     {
       "id": "frank-fats-sac",
@@ -461,7 +1054,25 @@
       "price": "$$$",
       "rating": 4.0,
       "known_for": "Banana cream pie (yes really), honey walnut prawns, classic Cantonese-American.",
-      "vibe": "Capitol institution since 1939. Lobbyists, legislators, tradition."
+      "vibe": "Capitol institution since 1939. Lobbyists, legislators, tradition.",
+      "signature_dish": "Banana cream pie",
+      "dishes": [
+        "Banana cream pie (yes, pie)",
+        "Honey walnut prawns",
+        "Kung pao chicken",
+        "Crab cheese wontons",
+        "Frank's special steak"
+      ],
+      "tips": [
+        "Capitol institution since 1939",
+        "The pie is the surprise destination order",
+        "Order in the bar room for the old-Sacramento vibe"
+      ],
+      "tags": [
+        "Institution since 1939",
+        "Capitol vibe",
+        "Pie destination"
+      ]
     },
     {
       "id": "hunan-homes",
@@ -474,7 +1085,23 @@
       "price": "$$",
       "rating": 4.0,
       "known_for": "Crispy chicken with garlic sauce, hot braised fish, smoked pork.",
-      "vibe": "Chinatown Hunan classic. Less hyped, consistently solid."
+      "vibe": "Chinatown Hunan classic. Less hyped, consistently solid.",
+      "signature_dish": "Crispy chicken with garlic sauce",
+      "dishes": [
+        "Crispy chicken with garlic sauce",
+        "Hot braised fish",
+        "Smoked pork",
+        "Chairman Mao's pork belly"
+      ],
+      "tips": [
+        "Less hyped than Z&Y but consistently solid",
+        "Hunan ≠ Sichuan — different heat profile, more chili less numbing",
+        "Try the smoked pork — distinct Hunan technique"
+      ],
+      "tags": [
+        "Hunan classic",
+        "Less crowded"
+      ]
     },
     {
       "id": "tao-yuen-pastry",
@@ -482,12 +1109,42 @@
       "cuisine": "Noodle / Dumpling",
       "neighborhood": "Chinatown",
       "city": "Oakland",
-      "lat": 37.7960,
+      "lat": 37.796,
       "lon": -122.2674,
       "price": "$",
       "rating": 4.0,
       "known_for": "Pork buns, taro buns, savory pastries. Bakery-style takeout.",
-      "vibe": "Counter service, cash, fast turnover. Cheap snacks for the road."
+      "vibe": "Counter service, cash, fast turnover. Cheap snacks for the road.",
+      "signature_dish": "BBQ pork buns",
+      "dishes": [
+        "BBQ pork buns (cha siu bao)",
+        "Taro buns",
+        "Egg tarts",
+        "Coconut buns",
+        "Sesame balls"
+      ],
+      "tips": [
+        "Cash works, counter service, fast",
+        "Cheap snacks for the road",
+        "Buy a dozen — eat while driving"
+      ],
+      "tags": [
+        "Cheap eats",
+        "Counter service",
+        "Snacks for road"
+      ]
     }
-  ]
+  ],
+  "cuisine_emoji": {
+    "Cantonese": "🍤",
+    "Dim Sum": "🥟",
+    "Sichuan": "🌶️",
+    "Hunan": "🌶️",
+    "Shanghai": "🥟",
+    "Northern": "🍜",
+    "Taiwanese": "🧋",
+    "Hot Pot": "🍲",
+    "Noodle / Dumpling": "🍜",
+    "Modern": "✨"
+  }
 }
