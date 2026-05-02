@@ -80,9 +80,139 @@
     for (const r of foodData.restaurants) {
       renderMarker(r);
     }
+    renderFeaturedAreas();
     renderList();
     fitMapToVisible();
     document.getElementById("loading").classList.add("hidden");
+  }
+
+  // ─── Featured-area easter egg (Milpitas Square) ─────────────
+  function renderFeaturedAreas() {
+    const areas = foodData.featured_areas || {};
+    for (const [id, area] of Object.entries(areas)) {
+      // Translucent halo polygon defining the area
+      if (Array.isArray(area.bounds) && area.bounds.length === 2) {
+        const sw = area.bounds[0];
+        const ne = area.bounds[1];
+        const ring = [
+          [sw[0], sw[1]],
+          [sw[0], ne[1]],
+          [ne[0], ne[1]],
+          [ne[0], sw[1]],
+        ];
+        L.polygon(ring, {
+          color: "#fbbf24",
+          weight: 2,
+          opacity: 0.9,
+          fillColor: "#fbbf24",
+          fillOpacity: 0.07,
+          dashArray: "6 6",
+          interactive: false,
+        }).addTo(map);
+      }
+
+      // Pulsing area marker
+      const html = `
+        <div class="area-pin">
+          <div class="area-pin-pulse"></div>
+          <div class="area-pin-pulse area-pin-pulse-2"></div>
+          <div class="area-pin-core">${area.icon || "✨"}</div>
+          <div class="area-pin-label">${escapeHtml(area.name)}</div>
+        </div>
+      `;
+      const icon = L.divIcon({
+        className: "area-icon",
+        html,
+        iconSize: [48, 48],
+        iconAnchor: [24, 24],
+      });
+      const marker = L.marker([area.lat, area.lon], { icon, zIndexOffset: 2000 }).addTo(map);
+      marker.on("click", () => openAreaModal(id));
+    }
+  }
+
+  function openAreaModal(areaId) {
+    const area = foodData.featured_areas[areaId];
+    if (!area) return;
+    const restos = foodData.restaurants
+      .filter((r) => r.at_area === areaId)
+      .slice()
+      .sort((a, b) => b.rating - a.rating);
+
+    const heatRows = restos
+      .map((r, i) => {
+        const c = colorFor(r);
+        const e = emojiFor(r);
+        const widthPct = Math.min(100, (r.rating / 5) * 100);
+        return `
+          <button class="heat-row" data-id="${r.id}" style="--c:${c}; --w:${widthPct}%;">
+            <div class="heat-rank">#${i + 1}</div>
+            <div class="heat-emoji">${e}</div>
+            <div class="heat-meat">
+              <div class="heat-name">${escapeHtml(r.name)}</div>
+              <div class="heat-sub">
+                <span style="color:${c};">${escapeHtml(r.cuisine)}</span>
+                <span class="heat-dot">·</span>
+                <span>${r.price}</span>
+                <span class="heat-dot">·</span>
+                <span class="heat-sig">⭐ ${escapeHtml(r.signature_dish || "")}</span>
+              </div>
+              <div class="heat-bar"><div class="heat-bar-fill"></div></div>
+            </div>
+            <div class="heat-rating">${r.rating}</div>
+          </button>
+        `;
+      })
+      .join("");
+
+    const body = document.getElementById("area-modal-body");
+    body.innerHTML = `
+      <div class="area-hero">
+        <div class="area-hero-glow"></div>
+        <div class="area-hero-icon">${area.icon || "✨"}</div>
+        <div class="area-hero-text">
+          <div class="area-hero-eyebrow">EASTER EGG · CLICK A RESTAURANT</div>
+          <h2 class="area-hero-name">${escapeHtml(area.name)}</h2>
+          <p class="area-hero-sub">${escapeHtml(area.subtitle || "")}</p>
+        </div>
+      </div>
+      <div class="area-content">
+        ${area.description ? `<p class="area-description">${escapeHtml(area.description)}</p>` : ""}
+        ${area.the_move ? `<div class="area-move"><span class="area-move-label">The move</span><p>${escapeHtml(area.the_move)}</p></div>` : ""}
+        <div class="area-heatmap-header">
+          <span>The Heatmap</span>
+          <span class="area-heatmap-count">${restos.length} spots, ranked</span>
+        </div>
+        <div class="area-heatmap">${heatRows}</div>
+        <div class="area-footer">${area.tagline ? escapeHtml(area.tagline) : ""}</div>
+      </div>
+    `;
+
+    const modal = document.getElementById("area-modal");
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+
+    // Animate the bars in
+    requestAnimationFrame(() => {
+      body.querySelectorAll(".heat-bar-fill").forEach((el, i) => {
+        setTimeout(() => el.classList.add("filled"), 80 + i * 40);
+      });
+    });
+
+    // Wire row clicks → open the regular detail panel
+    body.querySelectorAll(".heat-row").forEach((row) => {
+      row.addEventListener("click", () => {
+        const id = row.dataset.id;
+        closeAreaModal();
+        openDetail(id);
+      });
+    });
+  }
+
+  function closeAreaModal() {
+    const modal = document.getElementById("area-modal");
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
   }
 
   function populateCuisineChips() {
@@ -374,8 +504,15 @@
       .getElementById("detail-close")
       .addEventListener("click", closeDetail);
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeDetail();
+      if (e.key === "Escape") {
+        closeDetail();
+        closeAreaModal();
+      }
     });
+    const areaClose = document.getElementById("area-modal-close");
+    if (areaClose) areaClose.addEventListener("click", closeAreaModal);
+    const areaBackdrop = document.querySelector("#area-modal .area-modal-backdrop");
+    if (areaBackdrop) areaBackdrop.addEventListener("click", closeAreaModal);
   }
 
   document.addEventListener("DOMContentLoaded", async () => {

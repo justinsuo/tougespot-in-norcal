@@ -95,6 +95,15 @@
 
   <div id="loading" class="loading" aria-live="polite">Loading restaurants…</div>
 
+  <!-- Easter-egg modal for Milpitas Square -->
+  <div id="area-modal" class="area-modal" aria-hidden="true" role="dialog" aria-label="Milpitas Square">
+    <div class="area-modal-backdrop"></div>
+    <div class="area-modal-card">
+      <button class="area-modal-close" id="area-modal-close" aria-label="Close">×</button>
+      <div id="area-modal-body"></div>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="food.js"></script>
