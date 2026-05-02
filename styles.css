@@ -732,7 +732,7 @@ a:hover { text-decoration: underline; }
   position: absolute;
   top: 100%;
   left: 50%;
-  transform: translateX(-50%) translateY(2px);
+  transform: translateX(-50%) translateY(-2px);
   background: rgba(11, 16, 21, 0.92);
   color: #fde047;
   border: 1px solid #f59e0b;
@@ -745,7 +745,13 @@ a:hover { text-decoration: underline; }
   white-space: nowrap;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   z-index: 3;
-  opacity: 0.95;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.area-pin:hover .area-pin-label {
+  opacity: 1;
+  transform: translateX(-50%) translateY(4px);
 }
 
 /* Easter-egg modal */
@@ -769,8 +775,8 @@ a:hover { text-decoration: underline; }
 }
 .area-modal-card {
   position: relative;
-  width: min(640px, 100%);
-  max-height: calc(100vh - 80px);
+  width: min(720px, 100%);
+  max-height: calc(100vh - 60px);
   background: var(--panel);
   border: 1px solid #f59e0b;
   border-radius: 16px;
@@ -846,6 +852,79 @@ a:hover { text-decoration: underline; }
   color: #fef3c7;
   margin: 0;
   opacity: 0.95;
+}
+
+/* Embedded mini-map inside the easter-egg modal */
+.area-mini-map {
+  width: 100%;
+  height: 320px;
+  background: #0e1620;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+}
+.area-resto-icon { background: transparent !important; border: none !important; }
+.area-resto-pin {
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.area-resto-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--c);
+  opacity: calc(0.45 * var(--intensity));
+  animation: area-resto-pulse 2.4s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes area-resto-pulse {
+  0%   { transform: scale(0.7); opacity: calc(0.55 * var(--intensity, 0.5)); }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+.area-resto-core {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--c), color-mix(in srgb, var(--c) 70%, #000));
+  border: 2px solid #0b1015;
+  display: grid;
+  place-items: center;
+  font-size: calc(var(--size) * 0.45);
+  box-shadow: 0 0 calc(var(--size) * 0.4) color-mix(in srgb, var(--c) 70%, transparent),
+              0 4px 10px rgba(0, 0, 0, 0.55);
+  z-index: 2;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.area-resto-pin:hover .area-resto-core,
+.area-resto-pin.pin-highlighted .area-resto-core {
+  transform: scale(1.18);
+  box-shadow: 0 0 calc(var(--size) * 0.6) var(--c),
+              0 6px 16px rgba(0, 0, 0, 0.6);
+}
+.area-resto-rating {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: rgba(11, 16, 21, 0.95);
+  color: var(--c);
+  border: 1.5px solid var(--c);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 999px;
+  z-index: 3;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+/* Pin highlighted state from row hover */
+.area-resto-pin.pin-highlighted .area-resto-pulse {
+  animation-duration: 1.2s;
+  opacity: calc(0.75 * var(--intensity));
 }
 
 .area-content { padding: 18px 22px 22px; }

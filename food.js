@@ -131,6 +131,9 @@
     }
   }
 
+  let areaMap = null;
+  let areaPinByRestoId = {};
+
   function openAreaModal(areaId) {
     const area = foodData.featured_areas[areaId];
     if (!area) return;
@@ -176,6 +179,7 @@
           <p class="area-hero-sub">${escapeHtml(area.subtitle || "")}</p>
         </div>
       </div>
+      <div class="area-mini-map" id="area-mini-map" aria-label="Map of ${escapeHtml(area.name)}"></div>
       <div class="area-content">
         ${area.description ? `<p class="area-description">${escapeHtml(area.description)}</p>` : ""}
         ${area.the_move ? `<div class="area-move"><span class="area-move-label">The move</span><p>${escapeHtml(area.the_move)}</p></div>` : ""}
@@ -192,6 +196,9 @@
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
 
+    // Build the embedded mini-map
+    initAreaMiniMap(area, restos);
+
     // Animate the bars in
     requestAnimationFrame(() => {
       body.querySelectorAll(".heat-bar-fill").forEach((el, i) => {
@@ -201,18 +208,122 @@
 
     // Wire row clicks → open the regular detail panel
     body.querySelectorAll(".heat-row").forEach((row) => {
+      const id = row.dataset.id;
       row.addEventListener("click", () => {
-        const id = row.dataset.id;
         closeAreaModal();
         openDetail(id);
       });
+      row.addEventListener("mouseenter", () => highlightAreaPin(id, true));
+      row.addEventListener("mouseleave", () => highlightAreaPin(id, false));
     });
+  }
+
+  function initAreaMiniMap(area, restos) {
+    if (areaMap) {
+      areaMap.remove();
+      areaMap = null;
+    }
+    areaPinByRestoId = {};
+
+    areaMap = L.map("area-mini-map", {
+      zoomControl: true,
+      scrollWheelZoom: true,
+      attributionControl: false,
+      zoomSnap: 0.25,
+    });
+
+    L.tileLayer(
+      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+      {
+        maxZoom: 20,
+      }
+    ).addTo(areaMap);
+
+    // Fit to the area bounds with a snug padding
+    if (Array.isArray(area.bounds) && area.bounds.length === 2) {
+      areaMap.fitBounds(area.bounds, { padding: [20, 20] });
+    } else {
+      areaMap.setView([area.lat, area.lon], 18);
+    }
+
+    // Soft glowing area outline
+    if (Array.isArray(area.bounds)) {
+      const sw = area.bounds[0], ne = area.bounds[1];
+      L.polygon(
+        [
+          [sw[0], sw[1]],
+          [sw[0], ne[1]],
+          [ne[0], ne[1]],
+          [ne[0], sw[1]],
+        ],
+        {
+          color: "#fbbf24",
+          weight: 1.5,
+          opacity: 0.75,
+          fillColor: "#fbbf24",
+          fillOpacity: 0.06,
+          dashArray: "4 6",
+          interactive: false,
+        }
+      ).addTo(areaMap);
+    }
+
+    // Plot each restaurant as a glowing pin sized by rating
+    for (const r of restos) {
+      const c = colorFor(r);
+      const e = emojiFor(r);
+      // Rating 3.0 → 28px, 5.0 → 50px (linear)
+      const size = Math.round(28 + ((r.rating - 3.0) / 2.0) * 22);
+      const half = Math.round(size / 2);
+      const intensity = ((r.rating - 3.0) / 2.0).toFixed(2);
+
+      const html = `
+        <div class="area-resto-pin" style="--c:${c}; --size:${size}px; --intensity:${intensity};">
+          <div class="area-resto-pulse"></div>
+          <div class="area-resto-core">${e}</div>
+          <div class="area-resto-rating">${r.rating}</div>
+        </div>
+      `;
+      const icon = L.divIcon({
+        className: "area-resto-icon",
+        html,
+        iconSize: [size, size],
+        iconAnchor: [half, half],
+      });
+      const marker = L.marker([r.lat, r.lon], { icon, zIndexOffset: 500 }).addTo(areaMap);
+      marker.bindTooltip(
+        `<strong>${escapeHtml(r.name)}</strong><br/><span style="color:${c}">${escapeHtml(r.cuisine)}</span> · ${r.price} · ${r.rating}/5`,
+        { direction: "top", offset: [0, -half + 4], opacity: 0.95 }
+      );
+      marker.on("click", () => {
+        closeAreaModal();
+        openDetail(r.id);
+      });
+      areaPinByRestoId[r.id] = marker;
+    }
+
+    // Force resize after the modal animation settles
+    setTimeout(() => areaMap.invalidateSize(), 300);
+  }
+
+  function highlightAreaPin(restoId, on) {
+    const m = areaPinByRestoId[restoId];
+    if (!m) return;
+    const el = m.getElement();
+    if (el) el.classList.toggle("pin-highlighted", on);
+    if (on) m.openTooltip();
+    else m.closeTooltip();
   }
 
   function closeAreaModal() {
     const modal = document.getElementById("area-modal");
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden", "true");
+    if (areaMap) {
+      areaMap.remove();
+      areaMap = null;
+    }
+    areaPinByRestoId = {};
   }
 
   function populateCuisineChips() {
