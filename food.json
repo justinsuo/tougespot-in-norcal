@@ -1165,7 +1165,11 @@
         "Late night"
       ],
       "known_for": "Sea salt coffee + the Taiwanese-style pineapple bun. Pastries pulled hourly, lines move fast.",
-      "vibe": "Buzzing bakery counter. Open late, packed all day."
+      "vibe": "Buzzing bakery counter. Open late, packed all day.",
+      "diagram_pos": {
+        "x": 50,
+        "y": 75
+      }
     },
     {
       "id": "kee-wah-milpitas",
@@ -1196,7 +1200,11 @@
         "Cheap eats"
       ],
       "known_for": "Hong Kong–style bakery chain. Wife cake, BBQ pork buns, mooncakes in season.",
-      "vibe": "Counter service, fast turnover. Smaller than 85°C but more traditional HK style."
+      "vibe": "Counter service, fast turnover. Smaller than 85°C but more traditional HK style.",
+      "diagram_pos": {
+        "x": 22,
+        "y": 65
+      }
     },
     {
       "id": "tea-era-milpitas",
@@ -1227,7 +1235,11 @@
         "Late night"
       ],
       "known_for": "Solid Taiwanese boba chain. Brown sugar boba is the destination order.",
-      "vibe": "Quick boba stop. Standing-room only at peak."
+      "vibe": "Quick boba stop. Standing-room only at peak.",
+      "diagram_pos": {
+        "x": 60,
+        "y": 75
+      }
     },
     {
       "id": "quickly-milpitas",
@@ -1259,7 +1271,11 @@
         "Cheap eats"
       ],
       "known_for": "Old-school Taiwanese boba chain. Popcorn chicken is the food order.",
-      "vibe": "Counter service, plastic chairs. The OG boba experience."
+      "vibe": "Counter service, plastic chairs. The OG boba experience.",
+      "diagram_pos": {
+        "x": 70,
+        "y": 75
+      }
     },
     {
       "id": "boiling-hot-pot-milpitas",
@@ -1292,7 +1308,11 @@
         "AYCE option"
       ],
       "known_for": "Solid mid-tier hot pot. Split-pot mala is the order. AYCE at lunch.",
-      "vibe": "Big group friendly. Loud. Long waits on weekends."
+      "vibe": "Big group friendly. Loud. Long waits on weekends.",
+      "diagram_pos": {
+        "x": 80,
+        "y": 32
+      }
     },
     {
       "id": "hk-eatery-milpitas",
@@ -1324,7 +1344,11 @@
         "Quick lunch"
       ],
       "known_for": "Cantonese BBQ over rice. Quick, cheap, consistent.",
-      "vibe": "Casual diner-style. Lunch crowd of locals."
+      "vibe": "Casual diner-style. Lunch crowd of locals.",
+      "diagram_pos": {
+        "x": 80,
+        "y": 50
+      }
     },
     {
       "id": "sang-kee-milpitas",
@@ -1356,7 +1380,11 @@
         "Comfort food"
       ],
       "known_for": "Cantonese congee + wonton noodles. Breakfast comfort.",
-      "vibe": "Quiet, old-school noodle shop. Solo-friendly."
+      "vibe": "Quiet, old-school noodle shop. Solo-friendly.",
+      "diagram_pos": {
+        "x": 22,
+        "y": 78
+      }
     },
     {
       "id": "chef-liu-milpitas",
@@ -1388,7 +1416,11 @@
         "Cash friendly"
       ],
       "known_for": "Northern Chinese hand-pulled noodles, made fresh in the open kitchen.",
-      "vibe": "Tiny, packed at lunch. Watch the noodle-puller through the window."
+      "vibe": "Tiny, packed at lunch. Watch the noodle-puller through the window.",
+      "diagram_pos": {
+        "x": 22,
+        "y": 73
+      }
     },
     {
       "id": "mango-mango-milpitas",
@@ -1420,7 +1452,11 @@
         "Group share"
       ],
       "known_for": "HK-style mango shaved ice + sago desserts. The end-of-meal stop at Milpitas Square.",
-      "vibe": "Bright, casual dessert café. Date-night and end-of-meal crowd."
+      "vibe": "Bright, casual dessert café. Date-night and end-of-meal crowd.",
+      "diagram_pos": {
+        "x": 80,
+        "y": 75
+      }
     },
     {
       "id": "tasty-place-milpitas",
@@ -1452,7 +1488,11 @@
         "Weekend brunch"
       ],
       "known_for": "Hong Kong–style cafe. Salt and pepper wings + HK milk tea is the combo.",
-      "vibe": "HK cafe energy — brisk, busy, bilingual menu."
+      "vibe": "HK cafe energy — brisk, busy, bilingual menu.",
+      "diagram_pos": {
+        "x": 80,
+        "y": 60
+      }
     }
   ],
   "cuisine_emoji": {

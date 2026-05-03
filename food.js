@@ -115,8 +115,96 @@
     }
   }
 
-  let areaMap = null;
   let areaPinByRestoId = {};
+
+  // ─── Custom SVG diagram of Milpitas Square ──────────────────
+  function buildPlazaDiagramSvg() {
+    return `
+      <svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <!-- Asphalt background -->
+        <rect width="720" height="320" fill="#0e1620"/>
+
+        <!-- Calaveras Blvd (top street) -->
+        <rect x="0" y="0" width="720" height="32" fill="#1f2937"/>
+        <line x1="0" y1="16" x2="720" y2="16" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="14 14" opacity="0.55"/>
+        <text x="360" y="20" fill="#cbd5e1" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="2.5">CALAVERAS BLVD</text>
+
+        <!-- Right edge: McCarthy Blvd -->
+        <rect x="688" y="0" width="32" height="320" fill="#1f2937"/>
+        <text x="704" y="180" fill="#cbd5e1" text-anchor="middle" font-size="10" font-weight="700" letter-spacing="2"
+              transform="rotate(90 704 180)">N MCCARTHY BLVD</text>
+
+        <!-- Left edge: Barber Lane -->
+        <rect x="0" y="0" width="32" height="320" fill="#1f2937"/>
+        <text x="16" y="180" fill="#cbd5e1" text-anchor="middle" font-size="10" font-weight="700" letter-spacing="2"
+              transform="rotate(-90 16 180)">BARBER LANE</text>
+
+        <!-- Plaza outline (gold dashed) -->
+        <rect x="40" y="40" width="640" height="260" fill="rgba(251, 191, 36, 0.04)"
+              stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="8 6" rx="4"/>
+
+        <!-- Building: 99 Ranch (anchor) -->
+        <g class="bldg-anchor">
+          <rect x="60" y="60" width="240" height="100" fill="#3a1a14" stroke="#dc2626" stroke-width="2" rx="3"/>
+          <text x="180" y="100" fill="#fef2f2" text-anchor="middle" font-size="15" font-weight="800" letter-spacing="1">99 RANCH MARKET</text>
+          <text x="180" y="120" fill="#fca5a5" text-anchor="middle" font-size="10" letter-spacing="0.5">Asian grocery · plaza anchor</text>
+          <text x="180" y="148" fill="#7f1d1d" text-anchor="middle" font-size="8" letter-spacing="1">★ ★ ★</text>
+        </g>
+
+        <!-- East wing -->
+        <g class="bldg-east">
+          <rect x="320" y="60" width="320" height="100" fill="#1f2a37" stroke="#475569" stroke-width="1.5" rx="3"/>
+          <line x1="320" y1="100" x2="640" y2="100" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
+          <line x1="320" y1="125" x2="640" y2="125" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
+          <text x="480" y="80" fill="#94a3b8" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1.3">EAST WING — RESTAURANTS &amp; HOT POT</text>
+        </g>
+
+        <!-- Parking lot stripe (between buildings) -->
+        <g class="parking">
+          <rect x="40" y="170" width="640" height="14" fill="#0e1620" opacity="0.0"/>
+          <g stroke="#334155" stroke-width="0.9" opacity="0.5">
+            <line x1="80"  y1="170" x2="80"  y2="184"/>
+            <line x1="120" y1="170" x2="120" y2="184"/>
+            <line x1="160" y1="170" x2="160" y2="184"/>
+            <line x1="200" y1="170" x2="200" y2="184"/>
+            <line x1="240" y1="170" x2="240" y2="184"/>
+            <line x1="320" y1="170" x2="320" y2="184"/>
+            <line x1="360" y1="170" x2="360" y2="184"/>
+            <line x1="400" y1="170" x2="400" y2="184"/>
+            <line x1="440" y1="170" x2="440" y2="184"/>
+            <line x1="480" y1="170" x2="480" y2="184"/>
+            <line x1="520" y1="170" x2="520" y2="184"/>
+            <line x1="560" y1="170" x2="560" y2="184"/>
+            <line x1="600" y1="170" x2="600" y2="184"/>
+            <line x1="640" y1="170" x2="640" y2="184"/>
+          </g>
+          <text x="280" y="182" fill="#64748b" text-anchor="middle" font-size="8" font-style="italic" opacity="0.7">P A R K I N G</text>
+        </g>
+
+        <!-- West wing -->
+        <g class="bldg-west">
+          <rect x="60" y="200" width="240" height="100" fill="#1f2a37" stroke="#475569" stroke-width="1.5" rx="3"/>
+          <line x1="60" y1="240" x2="300" y2="240" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
+          <line x1="60" y1="265" x2="300" y2="265" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
+          <text x="180" y="220" fill="#94a3b8" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1.3">WEST WING — NOODLES &amp; BAKERY</text>
+        </g>
+
+        <!-- South arcade -->
+        <g class="bldg-south">
+          <rect x="320" y="200" width="320" height="100" fill="#1f2a37" stroke="#475569" stroke-width="1.5" rx="3"/>
+          <line x1="320" y1="240" x2="640" y2="240" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
+          <line x1="320" y1="265" x2="640" y2="265" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
+          <text x="480" y="220" fill="#94a3b8" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1.3">SOUTH ARCADE — BAKERY · BOBA · DESSERT</text>
+        </g>
+
+        <!-- North compass + corner labels -->
+        <g class="overlays" font-family="-apple-system, BlinkMacSystemFont, sans-serif">
+          <text x="46" y="54" fill="#fbbf24" font-size="9" font-weight="800" letter-spacing="0.8">N ↑</text>
+          <text x="676" y="312" fill="#94a3b8" text-anchor="end" font-size="9" font-style="italic" opacity="0.75">Milpitas Square · Justin's favorite</text>
+        </g>
+      </svg>
+    `;
+  }
 
   function openAreaModal(areaId) {
     const area = foodData.featured_areas[areaId];
@@ -153,6 +241,26 @@
       .join("");
 
     const body = document.getElementById("area-modal-body");
+    const pinsHtml = restos
+      .map((r) => {
+        const pos = r.diagram_pos || { x: 50, y: 50 };
+        const c = colorFor(r);
+        const e = emojiFor(r);
+        const size = Math.round(28 + ((r.rating - 3.0) / 2.0) * 18);
+        const intensity = ((r.rating - 3.0) / 2.0).toFixed(2);
+        return `
+          <button class="ms-pin" data-id="${r.id}"
+                  style="left:${pos.x}%; top:${pos.y}%; --c:${c}; --size:${size}px; --intensity:${intensity};"
+                  aria-label="${escapeHtml(r.name)}">
+            <span class="ms-pin-pulse"></span>
+            <span class="ms-pin-core">${e}</span>
+            <span class="ms-pin-rating">${r.rating}</span>
+            <span class="ms-pin-label">${escapeHtml(r.name)}</span>
+          </button>
+        `;
+      })
+      .join("");
+
     body.innerHTML = `
       <div class="area-hero">
         <div class="area-hero-glow"></div>
@@ -163,7 +271,10 @@
           <p class="area-hero-sub">${escapeHtml(area.subtitle || "")}</p>
         </div>
       </div>
-      <div class="area-mini-map" id="area-mini-map" aria-label="Map of ${escapeHtml(area.name)}"></div>
+      <div class="ms-diagram" aria-label="Diagram of ${escapeHtml(area.name)}">
+        ${buildPlazaDiagramSvg()}
+        <div class="ms-pin-layer">${pinsHtml}</div>
+      </div>
       <div class="area-content">
         ${area.description ? `<p class="area-description">${escapeHtml(area.description)}</p>` : ""}
         ${area.the_move ? `<div class="area-move"><span class="area-move-label">The move</span><p>${escapeHtml(area.the_move)}</p></div>` : ""}
@@ -180,8 +291,16 @@
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
 
-    // Build the embedded mini-map
-    initAreaMiniMap(area, restos);
+    // Index diagram pins so we can highlight from heatmap row hover
+    areaPinByRestoId = {};
+    body.querySelectorAll(".ms-pin").forEach((pin) => {
+      areaPinByRestoId[pin.dataset.id] = pin;
+      pin.addEventListener("click", () => {
+        const id = pin.dataset.id;
+        closeAreaModal();
+        openDetail(id);
+      });
+    });
 
     // Animate the bars in
     requestAnimationFrame(() => {
@@ -190,137 +309,27 @@
       });
     });
 
-    // Wire row clicks → open the regular detail panel
+    // Wire row clicks → open the regular detail panel; hover → highlight pin
     body.querySelectorAll(".heat-row").forEach((row) => {
       const id = row.dataset.id;
       row.addEventListener("click", () => {
         closeAreaModal();
         openDetail(id);
       });
-      row.addEventListener("mouseenter", () => highlightAreaPin(id, true));
-      row.addEventListener("mouseleave", () => highlightAreaPin(id, false));
+      row.addEventListener("mouseenter", () => highlightDiagramPin(id, true));
+      row.addEventListener("mouseleave", () => highlightDiagramPin(id, false));
     });
   }
 
-  function initAreaMiniMap(area, restos) {
-    if (areaMap) {
-      areaMap.remove();
-      areaMap = null;
-    }
-    areaPinByRestoId = {};
-
-    areaMap = L.map("area-mini-map", {
-      zoomControl: true,
-      scrollWheelZoom: true,
-      attributionControl: true,
-      zoomSnap: 0.25,
-    });
-
-    // Real satellite imagery so you can see the actual plaza, parking lot,
-    // and surrounding streets — not a generic dark void.
-    L.tileLayer(
-      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-      {
-        maxZoom: 22,
-        attribution:
-          '© <a href="https://www.esri.com">Esri</a> · Maxar · Earthstar Geographics',
-      }
-    ).addTo(areaMap);
-
-    // Street + label overlay so you can read the road names and place names
-    // on top of the satellite image
-    L.tileLayer(
-      "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-      {
-        maxZoom: 22,
-        opacity: 0.85,
-      }
-    ).addTo(areaMap);
-
-    // Fit to the area bounds with a snug padding
-    if (Array.isArray(area.bounds) && area.bounds.length === 2) {
-      areaMap.fitBounds(area.bounds, { padding: [20, 20] });
-    } else {
-      areaMap.setView([area.lat, area.lon], 18);
-    }
-
-    // Subtle gold outline of the plaza so the area reads at a glance
-    if (Array.isArray(area.bounds)) {
-      const sw = area.bounds[0], ne = area.bounds[1];
-      L.polygon(
-        [
-          [sw[0], sw[1]],
-          [sw[0], ne[1]],
-          [ne[0], ne[1]],
-          [ne[0], sw[1]],
-        ],
-        {
-          color: "#fbbf24",
-          weight: 2,
-          opacity: 0.9,
-          fillColor: "#fbbf24",
-          fillOpacity: 0.04,
-          dashArray: "6 6",
-          interactive: false,
-        }
-      ).addTo(areaMap);
-    }
-
-    // Plot each restaurant as a glowing pin sized by rating
-    for (const r of restos) {
-      const c = colorFor(r);
-      const e = emojiFor(r);
-      // Rating 3.0 → 28px, 5.0 → 50px (linear)
-      const size = Math.round(28 + ((r.rating - 3.0) / 2.0) * 22);
-      const half = Math.round(size / 2);
-      const intensity = ((r.rating - 3.0) / 2.0).toFixed(2);
-
-      const html = `
-        <div class="area-resto-pin" style="--c:${c}; --size:${size}px; --intensity:${intensity};">
-          <div class="area-resto-pulse"></div>
-          <div class="area-resto-core">${e}</div>
-          <div class="area-resto-rating">${r.rating}</div>
-        </div>
-      `;
-      const icon = L.divIcon({
-        className: "area-resto-icon",
-        html,
-        iconSize: [size, size],
-        iconAnchor: [half, half],
-      });
-      const marker = L.marker([r.lat, r.lon], { icon, zIndexOffset: 500 }).addTo(areaMap);
-      marker.bindTooltip(
-        `<strong>${escapeHtml(r.name)}</strong><br/><span style="color:${c}">${escapeHtml(r.cuisine)}</span> · ${r.price} · ${r.rating}/5`,
-        { direction: "top", offset: [0, -half + 4], opacity: 0.95 }
-      );
-      marker.on("click", () => {
-        closeAreaModal();
-        openDetail(r.id);
-      });
-      areaPinByRestoId[r.id] = marker;
-    }
-
-    // Force resize after the modal animation settles
-    setTimeout(() => areaMap.invalidateSize(), 300);
-  }
-
-  function highlightAreaPin(restoId, on) {
-    const m = areaPinByRestoId[restoId];
-    if (!m) return;
-    const el = m.getElement();
-    if (el) el.classList.toggle("pin-highlighted", on);
-    if (on) m.openTooltip();
-    else m.closeTooltip();
+  function highlightDiagramPin(id, on) {
+    const el = areaPinByRestoId[id];
+    if (el) el.classList.toggle("highlighted", on);
   }
 
   function closeAreaModal() {
     const modal = document.getElementById("area-modal");
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden", "true");
-    if (areaMap) {
-      areaMap.remove();
-      areaMap = null;
-    }
     areaPinByRestoId = {};
   }
 
