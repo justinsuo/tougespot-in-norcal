@@ -18,7 +18,9 @@
     "Taiwanese": "#ec4899",
     "Hot Pot": "#f43f5e",
     "Noodle / Dumpling": "#16a34a",
-    "Modern": "#a855f7"
+    "Modern": "#a855f7",
+    "Japanese": "#64748b",
+    "Indian": "#ca8a04"
   },
   "restaurants": [
     {
@@ -1135,364 +1137,727 @@
       ]
     },
     {
-      "id": "85c-milpitas",
-      "name": "85°C Bakery Cafe",
-      "cuisine": "Taiwanese",
+      "id": "mala-town-ms",
+      "name": "Mala Town 自选麻辣烫",
+      "cuisine": "Sichuan",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.4226,
-      "lon": -121.918,
+      "lat": 37.4221,
+      "lon": -121.9185,
       "price": "$",
-      "rating": 4.5,
+      "rating": 4.0,
       "at_area": "milpitas-square",
-      "signature_dish": "Sea salt coffee + brioche pineapple bun",
+      "signature_dish": "Build-your-own malatang (spicy bone-broth hot pot)",
       "dishes": [
-        "Sea salt coffee (hot or iced)",
-        "Brioche pineapple bun",
-        "Taro bread",
-        "Marble taro bun",
-        "Sausage bread",
-        "Hokkaido cheese tart"
+        "Pick-your-own malatang (priced by weight)",
+        "Beef tendon",
+        "Bean curd skin",
+        "Fish balls",
+        "Hand-pulled noodles",
+        "Sichuan vegetables"
       ],
       "tips": [
-        "Pull a tray, point at what you want, pay at the counter",
-        "Pastries pulled hourly — the late evening batch is fresher than mid-afternoon",
-        "The sea salt coffee is the chain's signature — get it"
+        "Pick a tray, fill with what you want, weigh + pay at the counter",
+        "Ask for 'less spicy' first time — full Sichuan numbing",
+        "Add bean curd skin and fish balls"
       ],
       "tags": [
-        "Famous Taiwanese chain",
-        "Cheap eats",
-        "Late night"
+        "Build-your-own",
+        "Numbing heat",
+        "Cheap eats"
       ],
-      "known_for": "Sea salt coffee + the Taiwanese-style pineapple bun. Pastries pulled hourly, lines move fast.",
-      "vibe": "Buzzing bakery counter. Open late, packed all day.",
+      "known_for": "Sichuan-style malatang. Pick ingredients by weight, served in a numbing bone-broth.",
+      "vibe": "Quick-serve counter. Casual, in-and-out.",
       "diagram_pos": {
-        "x": 42,
-        "y": 72
+        "x": 14,
+        "y": 67
       }
     },
     {
-      "id": "sheng-kee-milpitas",
-      "name": "Sheng Kee Bakery",
-      "cuisine": "Cantonese",
+      "id": "ygf-malatang-ms",
+      "name": "YGF Malatang",
+      "cuisine": "Sichuan",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
       "lat": 37.4222,
       "lon": -121.9182,
       "price": "$",
-      "rating": 4.0,
-      "at_area": "milpitas-square",
-      "signature_dish": "BBQ pork bun (cha siu bao)",
-      "dishes": [
-        "BBQ pork bun (cha siu bao)",
-        "Egg tarts",
-        "Cocktail bun (gai mei bao)",
-        "Wife cake",
-        "Pineapple bun"
-      ],
-      "tips": [
-        "Counter service — point and pay",
-        "Open early, fresh batches all day",
-        "Cake by the slice in back"
-      ],
-      "tags": [
-        "HK pastry",
-        "Cheap eats",
-        "Open early"
-      ],
-      "known_for": "Hong Kong–style bakery chain. Cocktail buns and BBQ pork buns are the staples.",
-      "vibe": "Counter service, fast turnover. The bakery half of any Milpitas Square run.",
-      "diagram_pos": {
-        "x": 15,
-        "y": 72
-      }
-    },
-    {
-      "id": "tea-era-milpitas",
-      "name": "Tea Era",
-      "cuisine": "Taiwanese",
-      "neighborhood": "Milpitas Square",
-      "city": "Milpitas",
-      "lat": 37.4228,
-      "lon": -121.9178,
-      "price": "$",
-      "rating": 4.0,
-      "at_area": "milpitas-square",
-      "signature_dish": "Brown sugar boba milk",
-      "dishes": [
-        "Brown sugar boba milk",
-        "Honey jasmine green tea",
-        "Taro slush with boba",
-        "Popcorn chicken (small bites)",
-        "Cheese tea foam"
-      ],
-      "tips": [
-        "Customize sugar level (try 50%)",
-        "Fresh boba — they cook it through the day",
-        "Late-night boba spot"
-      ],
-      "tags": [
-        "Boba",
-        "Late night"
-      ],
-      "known_for": "Solid Taiwanese boba chain. Brown sugar boba is the destination order.",
-      "vibe": "Quick boba stop. Standing-room only at peak.",
-      "diagram_pos": {
-        "x": 51,
-        "y": 72
-      }
-    },
-    {
-      "id": "quickly-milpitas",
-      "name": "Quickly",
-      "cuisine": "Taiwanese",
-      "neighborhood": "Milpitas Square",
-      "city": "Milpitas",
-      "lat": 37.4224,
-      "lon": -121.917,
-      "price": "$",
       "rating": 3.5,
       "at_area": "milpitas-square",
-      "signature_dish": "Popcorn chicken + boba",
+      "signature_dish": "Custom malatang bowl",
       "dishes": [
-        "Taiwanese popcorn chicken (with basil)",
-        "Salt and pepper squid",
-        "Curly fries",
-        "Brown sugar boba",
-        "Mango slush"
+        "Pick-your-own malatang",
+        "Beef slices",
+        "Spinach",
+        "Tofu skin",
+        "Glass noodles",
+        "Quail eggs"
       ],
       "tips": [
-        "Get the popcorn chicken with the basil garnish — that's the move",
-        "Combo with boba is the cheap dinner play",
-        "Fast counter service"
+        "Big national malatang chain — consistent if not deep",
+        "More spice levels than Mala Town",
+        "Cheaper bowls than the sit-down options"
       ],
       "tags": [
-        "Popcorn chicken",
-        "Boba",
+        "Chain",
+        "Build-your-own",
         "Cheap eats"
       ],
-      "known_for": "Old-school Taiwanese boba chain. Popcorn chicken is the food order.",
-      "vibe": "Counter service, plastic chairs. The OG boba experience.",
+      "known_for": "National Chinese malatang chain. Pick ingredients, customize broth heat.",
+      "vibe": "Fast, modern counter. Lunch-rush friendly.",
       "diagram_pos": {
-        "x": 60,
-        "y": 72
+        "x": 21,
+        "y": 67
       }
     },
     {
-      "id": "boiling-hot-pot-milpitas",
-      "name": "Boiling Hot Pot",
-      "cuisine": "Hot Pot",
-      "neighborhood": "Milpitas Square",
-      "city": "Milpitas",
-      "lat": 37.4231,
-      "lon": -121.9162,
-      "price": "$$",
-      "rating": 4.0,
-      "at_area": "milpitas-square",
-      "signature_dish": "Mala spicy broth + thin-sliced beef",
-      "dishes": [
-        "Mala spicy broth (split with mushroom)",
-        "Thin-sliced beef",
-        "Lamb slices",
-        "Hand-cut noodles",
-        "Soft tofu",
-        "Wagyu upgrade (worth it)"
-      ],
-      "tips": [
-        "Split-pot is the play — mala on one side, mushroom on the other",
-        "All-you-can-eat option exists at lunch — plan accordingly",
-        "Bring layers — they crank the AC"
-      ],
-      "tags": [
-        "Hot pot",
-        "Group friendly",
-        "AYCE option"
-      ],
-      "known_for": "Solid mid-tier hot pot. Split-pot mala is the order. AYCE at lunch.",
-      "vibe": "Big group friendly. Loud. Long waits on weekends.",
-      "diagram_pos": {
-        "x": 78,
-        "y": 72
-      }
-    },
-    {
-      "id": "ten-ren-milpitas",
-      "name": "Ten Ren's Tea",
-      "cuisine": "Taiwanese",
+      "id": "chili-garden-ms",
+      "name": "Chili Garden",
+      "cuisine": "Sichuan",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
       "lat": 37.422,
-      "lon": -121.9163,
-      "price": "$",
+      "lon": -121.918,
+      "price": "$$",
       "rating": 4.0,
       "at_area": "milpitas-square",
-      "signature_dish": "King's Oolong 913 (loose-leaf)",
+      "signature_dish": "Water-boiled fish in chili oil",
       "dishes": [
-        "King's Oolong 913",
-        "High Mountain Oolong",
-        "Pearl milk tea (boba) — house roast",
-        "Tea eggs",
-        "Mochi"
+        "Water-boiled fish in chili oil",
+        "Mapo tofu",
+        "Dan dan noodles",
+        "Twice-cooked pork",
+        "Fish-fragrant eggplant",
+        "Cumin lamb"
       ],
       "tips": [
-        "Loose-leaf tea bar in the back — get a flight",
-        "Buy tea by the can to take home",
-        "Boba here uses better-than-average tea base"
+        "Sit-down Sichuan classic — order family style",
+        "Heat level 3+ is real",
+        "Get the dry-fried green beans as a palate cleanser"
       ],
       "tags": [
-        "Taiwanese tea house",
-        "Tea shop",
-        "Boba"
+        "Sichuan classic",
+        "Numbing heat"
       ],
-      "known_for": "Old-school Taiwanese tea house. Loose-leaf oolong + boba made with real tea.",
-      "vibe": "Quiet tea-shop counter. Smells like roasted oolong.",
+      "known_for": "Solid mid-tier Sichuan. Hits all the classics — water-boiled fish, mapo, dan dan.",
+      "vibe": "Sit-down Chinese restaurant, family-style.",
       "diagram_pos": {
-        "x": 90,
-        "y": 72
+        "x": 28,
+        "y": 67
       }
     },
     {
-      "id": "sang-kee-milpitas",
-      "name": "Sang Kee Congee Noodle House",
-      "cuisine": "Cantonese",
+      "id": "liu-roast-fish-ms",
+      "name": "Liu Roast Fish 老劉家烤魚烤串",
+      "cuisine": "Sichuan",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.4216,
-      "lon": -121.9181,
-      "price": "$",
+      "lat": 37.4221,
+      "lon": -121.9178,
+      "price": "$$",
       "rating": 4.0,
       "at_area": "milpitas-square",
-      "signature_dish": "Century egg + pork congee",
+      "signature_dish": "Whole grilled fish in Sichuan chili oil",
       "dishes": [
-        "Century egg + lean pork congee",
-        "Wonton noodle soup",
-        "Beef brisket noodle soup",
-        "Pan-fried noodles",
-        "Crispy fried dough sticks (you tiao)"
+        "Whole grilled fish (sea bass / catfish, in chili oil)",
+        "Lamb skewers (chuan'r)",
+        "Cumin chicken wings",
+        "Roasted vegetables",
+        "Cold beer"
       ],
       "tips": [
-        "Pair the congee with you tiao (fried dough)",
-        "Open early — breakfast destination",
-        "Low-key, no fuss"
+        "The fish is the order — pick your size",
+        "Add side ingredients into the fish broth as it cools",
+        "Late-night skewer crowd"
       ],
       "tags": [
-        "Breakfast",
-        "Cheap eats",
-        "Comfort food"
+        "Sichuan grilled fish",
+        "Skewers",
+        "Late night"
       ],
-      "known_for": "Cantonese congee + wonton noodles. Breakfast comfort.",
-      "vibe": "Quiet, old-school noodle shop. Solo-friendly.",
+      "known_for": "Sichuan-style whole roast fish in chili oil + grilled chuan'r skewers.",
+      "vibe": "Loud, smoky grill spot. Beer-and-skewers energy.",
       "diagram_pos": {
-        "x": 31,
-        "y": 72
+        "x": 35,
+        "y": 67
       }
     },
     {
-      "id": "chef-liu-milpitas",
-      "name": "Chef Liu Hand-Made Noodles",
+      "id": "si-jie-noodle-ms",
+      "name": "四姐 Special Noodle",
       "cuisine": "Noodle / Dumpling",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
       "lat": 37.422,
-      "lon": -121.9185,
+      "lon": -121.9183,
       "price": "$",
-      "rating": 4.5,
+      "rating": 4.0,
       "at_area": "milpitas-square",
-      "signature_dish": "Hand-pulled beef noodle soup",
+      "signature_dish": "Chongqing xiao mian (small noodle bowl)",
       "dishes": [
-        "Hand-pulled beef noodle soup (the order)",
-        "Pan-fried pork dumplings",
-        "Knife-cut noodles in scallion oil",
-        "Cumin lamb skewers",
-        "Cold cucumber salad"
+        "Chongqing xiao mian (spicy)",
+        "Dan dan noodles",
+        "Beef noodle soup",
+        "Wontons in chili oil",
+        "Cold sliced tripe"
       ],
       "tips": [
-        "Watch them pull noodles in the open kitchen",
-        "Order the spicy beef variant if you can take heat",
-        "Cash works"
+        "Chongqing-style heat — not for first-timers",
+        "Wontons in chili oil are the underrated order",
+        "Solo-friendly counter seating"
       ],
       "tags": [
-        "Hand-pulled noodles",
-        "Cheap eats",
-        "Cash friendly"
+        "Chongqing noodles",
+        "Numbing heat",
+        "Cheap eats"
       ],
-      "known_for": "Northern Chinese hand-pulled noodles, made fresh in the open kitchen.",
-      "vibe": "Tiny, packed at lunch. Watch the noodle-puller through the window.",
+      "known_for": "Authentic Chongqing-style noodle shop. Xiao mian is the order.",
+      "vibe": "Tiny noodle joint. Quick lunches, mostly Chinese clientele.",
       "diagram_pos": {
-        "x": 23,
-        "y": 72
+        "x": 18,
+        "y": 80
       }
     },
     {
-      "id": "mango-mango-milpitas",
-      "name": "Mango Mango Dessert",
-      "cuisine": "Taiwanese",
+      "id": "shancheng-lameizi-ms",
+      "name": "Shancheng Lameizi",
+      "cuisine": "Hot Pot",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.4218,
-      "lon": -121.9165,
+      "lat": 37.4222,
+      "lon": -121.9185,
+      "price": "$$$",
+      "rating": 4.0,
+      "at_area": "milpitas-square",
+      "signature_dish": "Chongqing nine-grid hot pot",
+      "dishes": [
+        "Chongqing nine-grid hot pot (mala)",
+        "Sliced beef tongue",
+        "Black goat slices",
+        "Hand-cut noodles",
+        "Beef tripe",
+        "Tofu skin"
+      ],
+      "tips": [
+        "The nine-grid pot lets you cook ingredients at different heat zones",
+        "Chongqing heat — the real numbing kind",
+        "Reservations on weekends"
+      ],
+      "tags": [
+        "Chongqing hot pot",
+        "Numbing heat",
+        "Group friendly"
+      ],
+      "known_for": "Chongqing-style mala hot pot. Nine-grid pot is the play.",
+      "vibe": "Loud, smoky, packed weekends. Bring friends, plan to sweat.",
+      "diagram_pos": {
+        "x": 25,
+        "y": 80
+      }
+    },
+    {
+      "id": "darda-seafood-ms",
+      "name": "Darda Seafood Restaurant",
+      "cuisine": "Northern",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.4221,
+      "lon": -121.918,
+      "price": "$$",
+      "rating": 4.5,
+      "at_area": "milpitas-square",
+      "signature_dish": "Cumin lamb",
+      "dishes": [
+        "Cumin lamb (the order)",
+        "Hand-pulled noodles",
+        "Fish-flavored eggplant",
+        "Lamb skewers",
+        "Sesame bread",
+        "Boneless lamb chops"
+      ],
+      "tips": [
+        "Halal — no pork",
+        "Cumin lamb is the dish that put it on the map",
+        "Bring a group, order family-style — portions are big"
+      ],
+      "tags": [
+        "Halal",
+        "Hui Muslim Chinese",
+        "Lamb specialist"
+      ],
+      "known_for": "Bay Area's go-to halal Muslim-Chinese restaurant. Cumin lamb is iconic.",
+      "vibe": "Sit-down, banquet-friendly. Loud and family-packed at dinner.",
+      "diagram_pos": {
+        "x": 32,
+        "y": 80
+      }
+    },
+    {
+      "id": "uncle-cha-ms",
+      "name": "Uncle Cha Fusion Cafe",
+      "cuisine": "Cantonese",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.4226,
+      "lon": -121.9175,
       "price": "$$",
       "rating": 4.0,
       "at_area": "milpitas-square",
-      "signature_dish": "Mango sago with pomelo",
+      "signature_dish": "HK milk tea + baked pork chop rice",
       "dishes": [
-        "Mango sago with pomelo",
-        "Shaved ice (mango + condensed milk)",
-        "Durian pancakes",
-        "Black sesame soup",
-        "Mango glutinous rice"
+        "Baked pork chop rice",
+        "Hong Kong milk tea (silk-stocking)",
+        "Borscht soup",
+        "Soy sauce chow mein",
+        "French toast (HK style)"
       ],
       "tips": [
-        "Late-night dessert spot — open till 11pm+",
-        "Shaved ice is enormous — share",
-        "Durian pancakes are the polarizing order"
+        "Classic Hong Kong cha chaan teng (cafe)",
+        "All-day breakfast menu",
+        "The HK milk tea is the gold-standard order"
       ],
       "tags": [
-        "Dessert",
-        "Late night",
-        "Group share"
+        "HK cafe",
+        "All-day menu",
+        "Comfort food"
       ],
-      "known_for": "HK-style mango shaved ice + sago desserts. The end-of-meal stop at Milpitas Square.",
-      "vibe": "Bright, casual dessert café. Date-night and end-of-meal crowd.",
+      "known_for": "Hong Kong cha chaan teng cafe. Baked pork chop rice + silky milk tea.",
+      "vibe": "Casual diner-style HK cafe. Bilingual menu, brisk service.",
       "diagram_pos": {
-        "x": 68,
-        "y": 72
+        "x": 42,
+        "y": 67
       }
     },
     {
-      "id": "verde-tea-milpitas",
-      "name": "Verde Tea Cafe",
+      "id": "jun-bistro-ms",
+      "name": "Jun Bistro",
+      "cuisine": "Modern",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.4225,
+      "lon": -121.9173,
+      "price": "$$",
+      "rating": 3.5,
+      "at_area": "milpitas-square",
+      "signature_dish": "Asian fusion lunch combo",
+      "dishes": [
+        "Lunch bento combos",
+        "Stir-fried noodles",
+        "Rice plates",
+        "Bubble tea"
+      ],
+      "tips": [
+        "Quick lunch spot for office workers",
+        "Combo meals are the value",
+        "Walk-in friendly, never crowded mid-afternoon"
+      ],
+      "tags": [
+        "Asian fusion",
+        "Lunch combo"
+      ],
+      "known_for": "Pan-Asian fusion lunch spot. Bento + rice + noodles menu.",
+      "vibe": "Quick, casual sit-down.",
+      "diagram_pos": {
+        "x": 50,
+        "y": 67
+      }
+    },
+    {
+      "id": "shihlin-ms",
+      "name": "Shihlin Taiwan Street Snacks",
       "cuisine": "Taiwanese",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
       "lat": 37.4225,
+      "lon": -121.917,
+      "price": "$",
+      "rating": 4.0,
+      "at_area": "milpitas-square",
+      "signature_dish": "XXL crispy chicken",
+      "dishes": [
+        "XXL crispy chicken (face-sized)",
+        "Oyster mee sua",
+        "Stinky tofu",
+        "Bubble tea",
+        "Popcorn chicken"
+      ],
+      "tips": [
+        "The XXL chicken is bigger than your face — split if you have a normal appetite",
+        "Order it 'spicy + cheese' for the full experience",
+        "Famous Shihlin Night Market-style chain"
+      ],
+      "tags": [
+        "Famous chain",
+        "Street snacks",
+        "Cheap eats"
+      ],
+      "known_for": "Replicates Shihlin Night Market in Taipei. XXL crispy chicken is the icon.",
+      "vibe": "Counter service. Quick snack spot, popular with students.",
+      "diagram_pos": {
+        "x": 58,
+        "y": 67
+      }
+    },
+    {
+      "id": "the-bento-box-ms",
+      "name": "The Bento Box",
+      "cuisine": "Japanese",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.4224,
+      "lon": -121.9168,
+      "price": "$",
+      "rating": 3.5,
+      "at_area": "milpitas-square",
+      "signature_dish": "Chicken katsu bento",
+      "dishes": [
+        "Chicken katsu bento",
+        "Teriyaki chicken bento",
+        "Salmon teriyaki bento",
+        "Spam musubi",
+        "Edamame"
+      ],
+      "tips": [
+        "Quick takeout bento",
+        "Lunch-only menu — closes early",
+        "Order ahead at peak"
+      ],
+      "tags": [
+        "Bento",
+        "Quick lunch",
+        "Takeout"
+      ],
+      "known_for": "Japanese-style takeout bento boxes. Quick lunch.",
+      "vibe": "Counter service, mostly takeout.",
+      "diagram_pos": {
+        "x": 66,
+        "y": 67
+      }
+    },
+    {
+      "id": "hui-lau-shan-ms",
+      "name": "Hui Lau Shan",
+      "cuisine": "Cantonese",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.422,
+      "lon": -121.917,
+      "price": "$",
+      "rating": 4.5,
+      "at_area": "milpitas-square",
+      "signature_dish": "Mango sago with pomelo",
+      "dishes": [
+        "Mango sago with pomelo",
+        "Mango pancakes",
+        "Mango pomelo with grass jelly",
+        "Fresh mango juice",
+        "Mango glutinous rice"
+      ],
+      "tips": [
+        "Iconic HK dessert chain — mango is the obsession",
+        "Late-night dessert open till 11pm+",
+        "Don't go if mango isn't your thing"
+      ],
+      "tags": [
+        "HK dessert chain",
+        "Mango specialist",
+        "Late night"
+      ],
+      "known_for": "Hong Kong's most famous mango dessert chain. Founded 1960 in HK.",
+      "vibe": "Bright, casual dessert café. Always-bumping.",
+      "diagram_pos": {
+        "x": 46,
+        "y": 80
+      }
+    },
+    {
+      "id": "anjappar-ms",
+      "name": "Anjappar Chettinad Indian Restaurant",
+      "cuisine": "Indian",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.4221,
+      "lon": -121.917,
+      "price": "$$",
+      "rating": 4.5,
+      "at_area": "milpitas-square",
+      "signature_dish": "Chettinad chicken",
+      "dishes": [
+        "Chettinad chicken (the must)",
+        "Kothu parotta (chopped flatbread stir-fry)",
+        "Chicken 65",
+        "Mutton biryani",
+        "Masala dosa"
+      ],
+      "tips": [
+        "South Indian Chettinad cuisine — different from typical Punjabi",
+        "Spicy is real here — ask for 'medium' if unsure",
+        "Mutton biryani is the rare find"
+      ],
+      "tags": [
+        "South Indian",
+        "Chettinad",
+        "Famous chain"
+      ],
+      "known_for": "Famous Chettinad (Tamil South Indian) chain. The most authentic Chettinad in NorCal.",
+      "vibe": "Sit-down Indian restaurant. Family-style portions.",
+      "diagram_pos": {
+        "x": 54,
+        "y": 80
+      }
+    },
+    {
+      "id": "sumiya-bento-ms",
+      "name": "Sumiya Bento",
+      "cuisine": "Japanese",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.4223,
+      "lon": -121.9168,
+      "price": "$",
+      "rating": 3.5,
+      "at_area": "milpitas-square",
+      "signature_dish": "Charcoal-grilled chicken bento",
+      "dishes": [
+        "Charcoal-grilled chicken bento",
+        "Salmon teriyaki bento",
+        "Pork katsu bento",
+        "Beef bowl",
+        "Onigiri"
+      ],
+      "tips": [
+        "Sumiya = 'charcoal house' — they actually grill over charcoal",
+        "Lunch-focused",
+        "Faster than The Bento Box"
+      ],
+      "tags": [
+        "Bento",
+        "Charcoal grilled",
+        "Quick lunch"
+      ],
+      "known_for": "Charcoal-grilled Japanese bento. The chicken is the order.",
+      "vibe": "Counter service Japanese spot.",
+      "diagram_pos": {
+        "x": 62,
+        "y": 80
+      }
+    },
+    {
+      "id": "mayflower-ms",
+      "name": "Mayflower Seafood Restaurant",
+      "cuisine": "Cantonese",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.4231,
+      "lon": -121.9162,
+      "price": "$$$",
+      "rating": 4.5,
+      "at_area": "milpitas-square",
+      "signature_dish": "Weekend dim sum + Peking duck",
+      "dishes": [
+        "Dim sum (weekend brunch)",
+        "Peking duck",
+        "Lobster two ways",
+        "Steamed live fish",
+        "Crispy chicken",
+        "Salt and pepper crab"
+      ],
+      "tips": [
+        "Famous Cantonese banquet chain — reservations essential",
+        "Weekend dim sum is a destination",
+        "Order Peking duck a day ahead for best version"
+      ],
+      "tags": [
+        "Cantonese banquet",
+        "Dim sum weekends",
+        "Reservations required"
+      ],
+      "known_for": "Cantonese banquet hall. Dim sum on weekends, banquet seafood any night.",
+      "vibe": "Big banquet hall. Loud, festive, lazy susans, big groups.",
+      "diagram_pos": {
+        "x": 74,
+        "y": 67
+      }
+    },
+    {
+      "id": "ocean-pearl-ms",
+      "name": "Ocean Pearl Restaurant",
+      "cuisine": "Cantonese",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.4232,
+      "lon": -121.916,
+      "price": "$$",
+      "rating": 4.0,
+      "at_area": "milpitas-square",
+      "signature_dish": "Live tank Dungeness crab",
+      "dishes": [
+        "Live tank Dungeness crab",
+        "Honey walnut prawns",
+        "Salt and pepper squid",
+        "Beef chow fun",
+        "Steamed live fish"
+      ],
+      "tips": [
+        "Order from the live tank — that's the play",
+        "Cantonese seafood at lower price than Mayflower",
+        "Group friendly"
+      ],
+      "tags": [
+        "Live tank seafood",
+        "Group friendly"
+      ],
+      "known_for": "Cantonese seafood with live tank. Solid mid-tier alternative to Mayflower.",
+      "vibe": "Sit-down banquet style. Mostly Chinese clientele.",
+      "diagram_pos": {
+        "x": 82,
+        "y": 67
+      }
+    },
+    {
+      "id": "shanghai-delight-ms",
+      "name": "Shanghai Delight",
+      "cuisine": "Shanghai",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.4231,
+      "lon": -121.9158,
+      "price": "$$",
+      "rating": 4.0,
+      "at_area": "milpitas-square",
+      "signature_dish": "Pork XLB (xiao long bao)",
+      "dishes": [
+        "Pork XLB",
+        "Sheng jian bao (pan-fried pork buns)",
+        "Lion's head meatballs",
+        "Drunken chicken (cold)",
+        "Scallion pancake",
+        "Shanghai-style noodles"
+      ],
+      "tips": [
+        "XLB is the order",
+        "Sheng jian bao is the underrated cousin to XLB — get both",
+        "Cold drunken chicken is a Shanghai classic"
+      ],
+      "tags": [
+        "Shanghai classic",
+        "XLB"
+      ],
+      "known_for": "Shanghai cuisine — XLB, sheng jian bao, cold appetizers.",
+      "vibe": "Casual sit-down, Shanghainese family vibe.",
+      "diagram_pos": {
+        "x": 90,
+        "y": 67
+      }
+    },
+    {
+      "id": "xian-kitchen-ms",
+      "name": "Xian Kitchen",
+      "cuisine": "Northern",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.4222,
       "lon": -121.9163,
       "price": "$$",
       "rating": 4.0,
       "at_area": "milpitas-square",
-      "signature_dish": "Honey green tea + popcorn chicken combo",
+      "signature_dish": "Biang biang noodles",
       "dishes": [
-        "Honey green tea",
-        "Popcorn chicken",
-        "Crispy salt & pepper tofu",
-        "Three-cup chicken rice plate",
-        "Beef noodle soup"
+        "Biang biang noodles (hand-ripped wide noodles)",
+        "Rou jia mo (Xi'an spicy lamb burger)",
+        "Cold liang pi noodles",
+        "Cumin lamb",
+        "Pao mo (lamb soup with bread)"
       ],
       "tips": [
-        "Sit-down Taiwanese cafe — lunch combos are the value",
-        "Tea quality above the typical chain",
-        "Quieter than the boba spots up front"
+        "Biang biang noodles are the destination order",
+        "Rou jia mo is the original 'Chinese hamburger'",
+        "Don't miss the cold liang pi if it's hot out"
       ],
       "tags": [
-        "Taiwanese cafe",
-        "Lunch combo",
-        "Sit-down"
+        "Xi'an cuisine",
+        "Hand-ripped noodles",
+        "Northwestern Chinese"
       ],
-      "known_for": "Sit-down Taiwanese cafe — lunch combos with quality tea.",
-      "vibe": "Brighter, calmer than the boba shops. Solo and small-group friendly.",
+      "known_for": "Xi'an / Shaanxi cuisine. Biang biang noodles + rou jia mo.",
+      "vibe": "Casual, hand-pulled noodles in the open kitchen.",
+      "diagram_pos": {
+        "x": 76,
+        "y": 80
+      }
+    },
+    {
+      "id": "kusan-bazaar-ms",
+      "name": "Kusan Bazaar | Silk Road Grill & Noodles 龜茲集市",
+      "cuisine": "Northern",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.4223,
+      "lon": -121.9162,
+      "price": "$$",
+      "rating": 4.5,
+      "at_area": "milpitas-square",
+      "signature_dish": "Da pan ji (big plate chicken)",
+      "dishes": [
+        "Da pan ji (big plate chicken with hand-pulled noodles)",
+        "Lamb skewers (chuan'r)",
+        "Hand-pulled lamian",
+        "Naan",
+        "Polo (Uyghur lamb pilaf)",
+        "Cumin lamb"
+      ],
+      "tips": [
+        "Uyghur cuisine — Silk Road / Xinjiang region",
+        "Da pan ji is the destination — share between 3-4 people",
+        "Halal — no pork"
+      ],
+      "tags": [
+        "Uyghur",
+        "Halal",
+        "Silk Road cuisine",
+        "Lamb specialist"
+      ],
+      "known_for": "Rare Uyghur (Xinjiang) cuisine. Da pan ji and chuan'r skewers.",
+      "vibe": "Sit-down with skewer grill. Family- and group-friendly.",
       "diagram_pos": {
         "x": 84,
-        "y": 72
+        "y": 80
+      }
+    },
+    {
+      "id": "taishoken-ms",
+      "name": "Taishoken Milpitas",
+      "cuisine": "Japanese",
+      "neighborhood": "Milpitas Square",
+      "city": "Milpitas",
+      "lat": 37.4224,
+      "lon": -121.916,
+      "price": "$$",
+      "rating": 4.5,
+      "at_area": "milpitas-square",
+      "signature_dish": "Tsukemen (dipping ramen)",
+      "dishes": [
+        "Tsukemen — original (the order)",
+        "Spicy tsukemen",
+        "Shoyu ramen",
+        "Karaage (fried chicken)",
+        "Half-boiled egg add-on"
+      ],
+      "tips": [
+        "Founded by ramen legend Kazuo Yamagishi — invented modern tsukemen",
+        "Order the original tsukemen first; the broth is fish-bone-rich and thick",
+        "Free noodle refill (add 'kaedama')"
+      ],
+      "tags": [
+        "Tsukemen specialist",
+        "Famous ramen brand",
+        "Japan original"
+      ],
+      "known_for": "World-famous Tokyo tsukemen (dipping ramen) shop. Bay Area outpost.",
+      "vibe": "Quiet ramen shop. Bench seating. Eat fast, pay fast, leave fast.",
+      "diagram_pos": {
+        "x": 90,
+        "y": 80
       }
     }
   ],
@@ -1506,7 +1871,9 @@
     "Taiwanese": "🧋",
     "Hot Pot": "🍲",
     "Noodle / Dumpling": "🍜",
-    "Modern": "✨"
+    "Modern": "✨",
+    "Japanese": "🍣",
+    "Indian": "🍛"
   },
   "featured_areas": {
     "milpitas-square": {

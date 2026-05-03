@@ -277,7 +277,7 @@
         const pos = r.diagram_pos || { x: 50, y: 50 };
         const c = colorFor(r);
         const e = emojiFor(r);
-        const size = Math.round(28 + ((r.rating - 3.0) / 2.0) * 18);
+        const size = Math.round(22 + ((r.rating - 3.0) / 2.0) * 14);
         const intensity = ((r.rating - 3.0) / 2.0).toFixed(2);
         return `
           <button class="ms-pin" data-id="${r.id}"
