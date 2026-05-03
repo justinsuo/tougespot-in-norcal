@@ -1140,8 +1140,8 @@
       "cuisine": "Taiwanese",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.4361,
-      "lon": -121.9105,
+      "lat": 37.4226,
+      "lon": -121.918,
       "price": "$",
       "rating": 4.5,
       "at_area": "milpitas-square",
@@ -1167,18 +1167,18 @@
       "known_for": "Sea salt coffee + the Taiwanese-style pineapple bun. Pastries pulled hourly, lines move fast.",
       "vibe": "Buzzing bakery counter. Open late, packed all day.",
       "diagram_pos": {
-        "x": 50,
-        "y": 75
+        "x": 42,
+        "y": 72
       }
     },
     {
-      "id": "kee-wah-milpitas",
-      "name": "Kee Wah Bakery",
+      "id": "sheng-kee-milpitas",
+      "name": "Sheng Kee Bakery",
       "cuisine": "Cantonese",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.4357,
-      "lon": -121.9102,
+      "lat": 37.4222,
+      "lon": -121.9182,
       "price": "$",
       "rating": 4.0,
       "at_area": "milpitas-square",
@@ -1186,24 +1186,25 @@
       "dishes": [
         "BBQ pork bun (cha siu bao)",
         "Egg tarts",
-        "Pineapple bun",
-        "Wife cake (lao po bing)",
-        "Mooncakes (seasonal)"
+        "Cocktail bun (gai mei bao)",
+        "Wife cake",
+        "Pineapple bun"
       ],
       "tips": [
-        "Hong Kong–style chain — different style from 85°C",
-        "Wife cake is the underrated order",
-        "Mooncake season (Aug–Sep) is the destination time"
+        "Counter service — point and pay",
+        "Open early, fresh batches all day",
+        "Cake by the slice in back"
       ],
       "tags": [
         "HK pastry",
-        "Cheap eats"
+        "Cheap eats",
+        "Open early"
       ],
-      "known_for": "Hong Kong–style bakery chain. Wife cake, BBQ pork buns, mooncakes in season.",
-      "vibe": "Counter service, fast turnover. Smaller than 85°C but more traditional HK style.",
+      "known_for": "Hong Kong–style bakery chain. Cocktail buns and BBQ pork buns are the staples.",
+      "vibe": "Counter service, fast turnover. The bakery half of any Milpitas Square run.",
       "diagram_pos": {
-        "x": 22,
-        "y": 65
+        "x": 15,
+        "y": 72
       }
     },
     {
@@ -1212,8 +1213,8 @@
       "cuisine": "Taiwanese",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.4364,
-      "lon": -121.9099,
+      "lat": 37.4228,
+      "lon": -121.9178,
       "price": "$",
       "rating": 4.0,
       "at_area": "milpitas-square",
@@ -1237,8 +1238,8 @@
       "known_for": "Solid Taiwanese boba chain. Brown sugar boba is the destination order.",
       "vibe": "Quick boba stop. Standing-room only at peak.",
       "diagram_pos": {
-        "x": 60,
-        "y": 75
+        "x": 51,
+        "y": 72
       }
     },
     {
@@ -1247,8 +1248,8 @@
       "cuisine": "Taiwanese",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.4355,
-      "lon": -121.9094,
+      "lat": 37.4224,
+      "lon": -121.917,
       "price": "$",
       "rating": 3.5,
       "at_area": "milpitas-square",
@@ -1273,8 +1274,8 @@
       "known_for": "Old-school Taiwanese boba chain. Popcorn chicken is the food order.",
       "vibe": "Counter service, plastic chairs. The OG boba experience.",
       "diagram_pos": {
-        "x": 70,
-        "y": 75
+        "x": 60,
+        "y": 72
       }
     },
     {
@@ -1283,8 +1284,8 @@
       "cuisine": "Hot Pot",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.435,
-      "lon": -121.909,
+      "lat": 37.4231,
+      "lon": -121.9162,
       "price": "$$",
       "rating": 4.0,
       "at_area": "milpitas-square",
@@ -1310,44 +1311,44 @@
       "known_for": "Solid mid-tier hot pot. Split-pot mala is the order. AYCE at lunch.",
       "vibe": "Big group friendly. Loud. Long waits on weekends.",
       "diagram_pos": {
-        "x": 80,
-        "y": 32
+        "x": 78,
+        "y": 72
       }
     },
     {
-      "id": "hk-eatery-milpitas",
-      "name": "HK Eatery",
-      "cuisine": "Cantonese",
+      "id": "ten-ren-milpitas",
+      "name": "Ten Ren's Tea",
+      "cuisine": "Taiwanese",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.4368,
-      "lon": -121.9105,
-      "price": "$$",
+      "lat": 37.422,
+      "lon": -121.9163,
+      "price": "$",
       "rating": 4.0,
       "at_area": "milpitas-square",
-      "signature_dish": "BBQ duck over rice",
+      "signature_dish": "King's Oolong 913 (loose-leaf)",
       "dishes": [
-        "BBQ duck over rice",
-        "Char siu BBQ pork over rice",
-        "Soy sauce chicken",
-        "Wonton noodle soup",
-        "Beef chow fun"
+        "King's Oolong 913",
+        "High Mountain Oolong",
+        "Pearl milk tea (boba) — house roast",
+        "Tea eggs",
+        "Mochi"
       ],
       "tips": [
-        "Lunch combo plates are the cheap-eats champion",
-        "BBQ in the window is freshly cut to order",
-        "Cash + card"
+        "Loose-leaf tea bar in the back — get a flight",
+        "Buy tea by the can to take home",
+        "Boba here uses better-than-average tea base"
       ],
       "tags": [
-        "BBQ",
-        "Cheap eats",
-        "Quick lunch"
+        "Taiwanese tea house",
+        "Tea shop",
+        "Boba"
       ],
-      "known_for": "Cantonese BBQ over rice. Quick, cheap, consistent.",
-      "vibe": "Casual diner-style. Lunch crowd of locals.",
+      "known_for": "Old-school Taiwanese tea house. Loose-leaf oolong + boba made with real tea.",
+      "vibe": "Quiet tea-shop counter. Smells like roasted oolong.",
       "diagram_pos": {
-        "x": 80,
-        "y": 50
+        "x": 90,
+        "y": 72
       }
     },
     {
@@ -1356,8 +1357,8 @@
       "cuisine": "Cantonese",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.4347,
-      "lon": -121.9095,
+      "lat": 37.4216,
+      "lon": -121.9181,
       "price": "$",
       "rating": 4.0,
       "at_area": "milpitas-square",
@@ -1382,8 +1383,8 @@
       "known_for": "Cantonese congee + wonton noodles. Breakfast comfort.",
       "vibe": "Quiet, old-school noodle shop. Solo-friendly.",
       "diagram_pos": {
-        "x": 22,
-        "y": 78
+        "x": 31,
+        "y": 72
       }
     },
     {
@@ -1392,8 +1393,8 @@
       "cuisine": "Noodle / Dumpling",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.4366,
-      "lon": -121.9112,
+      "lat": 37.422,
+      "lon": -121.9185,
       "price": "$",
       "rating": 4.5,
       "at_area": "milpitas-square",
@@ -1418,8 +1419,8 @@
       "known_for": "Northern Chinese hand-pulled noodles, made fresh in the open kitchen.",
       "vibe": "Tiny, packed at lunch. Watch the noodle-puller through the window.",
       "diagram_pos": {
-        "x": 22,
-        "y": 73
+        "x": 23,
+        "y": 72
       }
     },
     {
@@ -1428,8 +1429,8 @@
       "cuisine": "Taiwanese",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.4348,
-      "lon": -121.9105,
+      "lat": 37.4218,
+      "lon": -121.9165,
       "price": "$$",
       "rating": 4.0,
       "at_area": "milpitas-square",
@@ -1454,44 +1455,44 @@
       "known_for": "HK-style mango shaved ice + sago desserts. The end-of-meal stop at Milpitas Square.",
       "vibe": "Bright, casual dessert café. Date-night and end-of-meal crowd.",
       "diagram_pos": {
-        "x": 80,
-        "y": 75
+        "x": 68,
+        "y": 72
       }
     },
     {
-      "id": "tasty-place-milpitas",
-      "name": "Tasty Place",
-      "cuisine": "Cantonese",
+      "id": "verde-tea-milpitas",
+      "name": "Verde Tea Cafe",
+      "cuisine": "Taiwanese",
       "neighborhood": "Milpitas Square",
       "city": "Milpitas",
-      "lat": 37.4359,
-      "lon": -121.9087,
+      "lat": 37.4225,
+      "lon": -121.9163,
       "price": "$$",
       "rating": 4.0,
       "at_area": "milpitas-square",
-      "signature_dish": "Salt and pepper chicken wings",
+      "signature_dish": "Honey green tea + popcorn chicken combo",
       "dishes": [
-        "Salt and pepper chicken wings",
-        "Beef chow fun",
-        "Honey walnut prawns",
-        "Black pepper beef",
-        "Pan-fried noodles"
+        "Honey green tea",
+        "Popcorn chicken",
+        "Crispy salt & pepper tofu",
+        "Three-cup chicken rice plate",
+        "Beef noodle soup"
       ],
       "tips": [
-        "HK-style cafe — coffee + tea + Chinese food on the same menu",
-        "Late-night menu different from lunch — check both",
-        "Weekend brunch is solid"
+        "Sit-down Taiwanese cafe — lunch combos are the value",
+        "Tea quality above the typical chain",
+        "Quieter than the boba spots up front"
       ],
       "tags": [
-        "HK cafe",
-        "Late night",
-        "Weekend brunch"
+        "Taiwanese cafe",
+        "Lunch combo",
+        "Sit-down"
       ],
-      "known_for": "Hong Kong–style cafe. Salt and pepper wings + HK milk tea is the combo.",
-      "vibe": "HK cafe energy — brisk, busy, bilingual menu.",
+      "known_for": "Sit-down Taiwanese cafe — lunch combos with quality tea.",
+      "vibe": "Brighter, calmer than the boba shops. Solo and small-group friendly.",
       "diagram_pos": {
-        "x": 80,
-        "y": 60
+        "x": 84,
+        "y": 72
       }
     }
   ],
@@ -1511,20 +1512,20 @@
     "milpitas-square": {
       "name": "Milpitas Square",
       "subtitle": "Justin's favorite Chinese food destination in NorCal",
-      "lat": 37.4358,
-      "lon": -121.91,
+      "lat": 37.4223838,
+      "lon": -121.9174211,
       "bounds": [
         [
-          37.4338,
-          -121.9135
+          37.421,
+          -121.9195
         ],
         [
-          37.438,
-          -121.907
+          37.4238,
+          -121.9155
         ]
       ],
       "icon": "✨",
-      "description": "The Asian shopping plaza at Calaveras & McCarthy. 99 Ranch anchors it and dozens of cafés, bakeries, hot pot, and noodle shops orbit. If you want to graze through Chinese (and Taiwanese) food in a single parking lot — this is the place.",
+      "description": "Asian shopping plaza anchored by 99 Ranch Market, on Milpitas Blvd between Calaveras and Yosemite. Bakeries, boba, hot pot, dessert spots and noodle houses all in one parking lot.",
       "tagline": "💫 Click any restaurant to dig in.",
       "the_move": "Park once. Start at 85°C for a sea salt coffee + bun. Hit Quickly for popcorn chicken. Sit down for hot pot. End at Mango Mango for shaved ice."
     }

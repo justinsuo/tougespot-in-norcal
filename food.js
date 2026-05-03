@@ -118,89 +118,120 @@
   let areaPinByRestoId = {};
 
   // ─── Custom SVG diagram of Milpitas Square ──────────────────
+  // Based on the actual plaza footprint at N Milpitas Blvd & Yosemite Dr.
+  // Ranch 99 is the large anchor on the north side; restaurants ring the
+  // central parking lot from west, south, and east.
   function buildPlazaDiagramSvg() {
     return `
-      <svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <svg viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <pattern id="ranchPattern" patternUnits="userSpaceOnUse" width="8" height="8">
+            <rect width="8" height="8" fill="#3a1a14"/>
+            <circle cx="4" cy="4" r="0.4" fill="#7f1d1d" opacity="0.6"/>
+          </pattern>
+          <linearGradient id="bldgGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1f2a37"/>
+            <stop offset="1" stop-color="#172033"/>
+          </linearGradient>
+          <linearGradient id="anchorGlow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#dc2626" stop-opacity="0.0"/>
+            <stop offset="1" stop-color="#dc2626" stop-opacity="0.15"/>
+          </linearGradient>
+        </defs>
+
         <!-- Asphalt background -->
-        <rect width="720" height="320" fill="#0e1620"/>
+        <rect width="720" height="360" fill="#0e1620"/>
 
-        <!-- Calaveras Blvd (top street) -->
-        <rect x="0" y="0" width="720" height="32" fill="#1f2937"/>
-        <line x1="0" y1="16" x2="720" y2="16" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="14 14" opacity="0.55"/>
-        <text x="360" y="20" fill="#cbd5e1" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="2.5">CALAVERAS BLVD</text>
+        <!-- North street: N Milpitas Blvd -->
+        <rect x="0" y="0" width="720" height="34" fill="#1f2937"/>
+        <line x1="0" y1="17" x2="720" y2="17" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="14 14" opacity="0.55"/>
+        <text x="360" y="22" fill="#cbd5e1" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="2.5">N MILPITAS BLVD</text>
 
-        <!-- Right edge: McCarthy Blvd -->
-        <rect x="688" y="0" width="32" height="320" fill="#1f2937"/>
+        <!-- South street: Yosemite Dr -->
+        <rect x="0" y="326" width="720" height="34" fill="#1f2937"/>
+        <line x1="0" y1="343" x2="720" y2="343" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="14 14" opacity="0.55"/>
+        <text x="360" y="348" fill="#cbd5e1" text-anchor="middle" font-size="10" font-weight="700" letter-spacing="2.2">YOSEMITE DR</text>
+
+        <!-- Right edge: Calaveras Blvd direction -->
+        <rect x="688" y="0" width="32" height="360" fill="#1f2937"/>
         <text x="704" y="180" fill="#cbd5e1" text-anchor="middle" font-size="10" font-weight="700" letter-spacing="2"
-              transform="rotate(90 704 180)">N MCCARTHY BLVD</text>
+              transform="rotate(90 704 180)">→ TO CALAVERAS BLVD</text>
 
-        <!-- Left edge: Barber Lane -->
-        <rect x="0" y="0" width="32" height="320" fill="#1f2937"/>
-        <text x="16" y="180" fill="#cbd5e1" text-anchor="middle" font-size="10" font-weight="700" letter-spacing="2"
-              transform="rotate(-90 16 180)">BARBER LANE</text>
+        <!-- Left edge -->
+        <rect x="0" y="0" width="32" height="360" fill="#1f2937"/>
 
         <!-- Plaza outline (gold dashed) -->
-        <rect x="40" y="40" width="640" height="260" fill="rgba(251, 191, 36, 0.04)"
+        <rect x="40" y="42" width="640" height="280" fill="rgba(251, 191, 36, 0.04)"
               stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="8 6" rx="4"/>
 
-        <!-- Building: 99 Ranch (anchor) -->
+        <!-- Anchor: 99 RANCH MARKET (north side, large) -->
         <g class="bldg-anchor">
-          <rect x="60" y="60" width="240" height="100" fill="#3a1a14" stroke="#dc2626" stroke-width="2" rx="3"/>
-          <text x="180" y="100" fill="#fef2f2" text-anchor="middle" font-size="15" font-weight="800" letter-spacing="1">99 RANCH MARKET</text>
-          <text x="180" y="120" fill="#fca5a5" text-anchor="middle" font-size="10" letter-spacing="0.5">Asian grocery · plaza anchor</text>
-          <text x="180" y="148" fill="#7f1d1d" text-anchor="middle" font-size="8" letter-spacing="1">★ ★ ★</text>
+          <rect x="60" y="56" width="600" height="98" fill="url(#ranchPattern)" stroke="#dc2626" stroke-width="2" rx="3"/>
+          <rect x="60" y="56" width="600" height="98" fill="url(#anchorGlow)" rx="3"/>
+          <text x="360" y="92" fill="#fef2f2" text-anchor="middle" font-size="22" font-weight="800" letter-spacing="3">99 RANCH MARKET</text>
+          <text x="360" y="114" fill="#fca5a5" text-anchor="middle" font-size="10.5" letter-spacing="2">PLAZA ANCHOR · ASIAN GROCERY</text>
+          <text x="360" y="138" fill="#fbbf24" text-anchor="middle" font-size="11" letter-spacing="3">★ ★ ★ ★ ★</text>
+          <!-- Entrance markers -->
+          <rect x="340" y="148" width="40" height="6" fill="#fbbf24" opacity="0.7"/>
+          <text x="360" y="148" fill="#fbbf24" text-anchor="middle" font-size="7" letter-spacing="1.5" dy="-2">ENTRANCE</text>
         </g>
 
-        <!-- East wing -->
-        <g class="bldg-east">
-          <rect x="320" y="60" width="320" height="100" fill="#1f2a37" stroke="#475569" stroke-width="1.5" rx="3"/>
-          <line x1="320" y1="100" x2="640" y2="100" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
-          <line x1="320" y1="125" x2="640" y2="125" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
-          <text x="480" y="80" fill="#94a3b8" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1.3">EAST WING — RESTAURANTS &amp; HOT POT</text>
-        </g>
-
-        <!-- Parking lot stripe (between buildings) -->
+        <!-- Parking lot (center, large) -->
         <g class="parking">
-          <rect x="40" y="170" width="640" height="14" fill="#0e1620" opacity="0.0"/>
-          <g stroke="#334155" stroke-width="0.9" opacity="0.5">
-            <line x1="80"  y1="170" x2="80"  y2="184"/>
-            <line x1="120" y1="170" x2="120" y2="184"/>
-            <line x1="160" y1="170" x2="160" y2="184"/>
-            <line x1="200" y1="170" x2="200" y2="184"/>
-            <line x1="240" y1="170" x2="240" y2="184"/>
-            <line x1="320" y1="170" x2="320" y2="184"/>
-            <line x1="360" y1="170" x2="360" y2="184"/>
-            <line x1="400" y1="170" x2="400" y2="184"/>
-            <line x1="440" y1="170" x2="440" y2="184"/>
-            <line x1="480" y1="170" x2="480" y2="184"/>
-            <line x1="520" y1="170" x2="520" y2="184"/>
-            <line x1="560" y1="170" x2="560" y2="184"/>
-            <line x1="600" y1="170" x2="600" y2="184"/>
-            <line x1="640" y1="170" x2="640" y2="184"/>
+          <rect x="60" y="166" width="600" height="58" fill="#0b1018" stroke="#1f2937" stroke-width="1" opacity="0.7"/>
+          <!-- Parking row dividers -->
+          <line x1="60" y1="195" x2="660" y2="195" stroke="#334155" stroke-width="0.4" stroke-dasharray="4 4" opacity="0.4"/>
+          <!-- Parking spot ticks -->
+          <g stroke="#334155" stroke-width="0.7" opacity="0.55">
+            ${Array.from({length: 30}, (_, i) => {
+              const x = 70 + i * 20;
+              return `<line x1="${x}" y1="166" x2="${x}" y2="195"/><line x1="${x}" y1="195" x2="${x}" y2="224"/>`;
+            }).join("")}
           </g>
-          <text x="280" y="182" fill="#64748b" text-anchor="middle" font-size="8" font-style="italic" opacity="0.7">P A R K I N G</text>
+          <text x="360" y="200" fill="#475569" text-anchor="middle" font-size="9" letter-spacing="6" font-weight="700" opacity="0.65">P A R K I N G   L O T</text>
         </g>
 
-        <!-- West wing -->
+        <!-- WEST WING — bakery, congee, noodles -->
         <g class="bldg-west">
-          <rect x="60" y="200" width="240" height="100" fill="#1f2a37" stroke="#475569" stroke-width="1.5" rx="3"/>
-          <line x1="60" y1="240" x2="300" y2="240" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
-          <line x1="60" y1="265" x2="300" y2="265" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
-          <text x="180" y="220" fill="#94a3b8" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1.3">WEST WING — NOODLES &amp; BAKERY</text>
+          <rect x="60" y="232" width="200" height="86" fill="url(#bldgGrad)" stroke="#475569" stroke-width="1.5" rx="3"/>
+          <!-- Storefront slots -->
+          <line x1="60"  y1="276" x2="260" y2="276" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
+          <line x1="115" y1="232" x2="115" y2="276" stroke="#475569" stroke-width="0.6" opacity="0.4"/>
+          <line x1="170" y1="232" x2="170" y2="276" stroke="#475569" stroke-width="0.6" opacity="0.4"/>
+          <line x1="215" y1="232" x2="215" y2="276" stroke="#475569" stroke-width="0.6" opacity="0.4"/>
+          <text x="160" y="252" fill="#94a3b8" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1.3">WEST WING</text>
+          <text x="160" y="266" fill="#64748b" text-anchor="middle" font-size="8" letter-spacing="0.8">noodles · congee · bakery</text>
         </g>
 
-        <!-- South arcade -->
+        <!-- SOUTH ARCADE — bakery, boba, dessert -->
         <g class="bldg-south">
-          <rect x="320" y="200" width="320" height="100" fill="#1f2a37" stroke="#475569" stroke-width="1.5" rx="3"/>
-          <line x1="320" y1="240" x2="640" y2="240" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
-          <line x1="320" y1="265" x2="640" y2="265" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
-          <text x="480" y="220" fill="#94a3b8" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1.3">SOUTH ARCADE — BAKERY · BOBA · DESSERT</text>
+          <rect x="270" y="232" width="240" height="86" fill="url(#bldgGrad)" stroke="#475569" stroke-width="1.5" rx="3"/>
+          <line x1="270" y1="276" x2="510" y2="276" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
+          <line x1="320" y1="232" x2="320" y2="276" stroke="#475569" stroke-width="0.6" opacity="0.4"/>
+          <line x1="370" y1="232" x2="370" y2="276" stroke="#475569" stroke-width="0.6" opacity="0.4"/>
+          <line x1="420" y1="232" x2="420" y2="276" stroke="#475569" stroke-width="0.6" opacity="0.4"/>
+          <line x1="465" y1="232" x2="465" y2="276" stroke="#475569" stroke-width="0.6" opacity="0.4"/>
+          <text x="390" y="252" fill="#94a3b8" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1.3">SOUTH ARCADE</text>
+          <text x="390" y="266" fill="#64748b" text-anchor="middle" font-size="8" letter-spacing="0.8">85°C · boba · dessert</text>
         </g>
 
-        <!-- North compass + corner labels -->
+        <!-- EAST WING — hot pot, tea, cafe -->
+        <g class="bldg-east">
+          <rect x="520" y="232" width="140" height="86" fill="url(#bldgGrad)" stroke="#475569" stroke-width="1.5" rx="3"/>
+          <line x1="520" y1="276" x2="660" y2="276" stroke="#475569" stroke-width="0.8" opacity="0.55"/>
+          <line x1="568" y1="232" x2="568" y2="276" stroke="#475569" stroke-width="0.6" opacity="0.4"/>
+          <line x1="615" y1="232" x2="615" y2="276" stroke="#475569" stroke-width="0.6" opacity="0.4"/>
+          <text x="590" y="252" fill="#94a3b8" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1.3">EAST WING</text>
+          <text x="590" y="266" fill="#64748b" text-anchor="middle" font-size="8" letter-spacing="0.8">hot pot · tea · cafe</text>
+        </g>
+
+        <!-- North-arrow compass + author note -->
         <g class="overlays" font-family="-apple-system, BlinkMacSystemFont, sans-serif">
-          <text x="46" y="54" fill="#fbbf24" font-size="9" font-weight="800" letter-spacing="0.8">N ↑</text>
-          <text x="676" y="312" fill="#94a3b8" text-anchor="end" font-size="9" font-style="italic" opacity="0.75">Milpitas Square · Justin's favorite</text>
+          <g transform="translate(50, 52)">
+            <path d="M 0 0 L 6 -10 L 12 0 L 6 -3 Z" fill="#fbbf24"/>
+            <text x="6" y="14" fill="#fbbf24" text-anchor="middle" font-size="9" font-weight="800" letter-spacing="0.8">N</text>
+          </g>
+          <text x="676" y="354" fill="#94a3b8" text-anchor="end" font-size="9" font-style="italic" opacity="0.75">Milpitas Square · Justin's favorite</text>
         </g>
       </svg>
     `;
