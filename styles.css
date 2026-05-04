@@ -1310,3 +1310,28 @@ a:hover { text-decoration: underline; }
     width: calc(100vw - 32px);
   }
 }
+
+/* ─── Cesium 3D viewer overrides ──────────────────────────── */
+/* Make the Cesium widget fill our #map container exactly. */
+.cesium-viewer { width: 100% !important; height: 100% !important; }
+.cesium-widget, .cesium-widget canvas { width: 100% !important; height: 100% !important; }
+
+/* Push the Cesium toolbar (home, baselayer, scene-mode etc.) clear of the
+   sidebar-toggle hamburger which sits top-left. */
+.cesium-viewer-toolbar {
+  top: 14px;
+  right: 14px;
+}
+
+/* Cesium info-box (popup) — restyle to match the dark UI */
+.cesium-infoBox {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.cesium-infoBox-title { background: rgba(0,0,0,0.4); color: var(--text); }
+.cesium-infoBox iframe { background: var(--panel); }
+
+/* Credit container — keep the OSM/Bing/Cesium attribution legible without
+   blocking too much of the bottom of the viewport. */
+.cesium-credit-lightbox-overlay { background: rgba(0,0,0,0.7); }

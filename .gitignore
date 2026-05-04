@@ -4,6 +4,14 @@
 # Local Windows power-management helpers
 *.bat
 
+# Dev-only: headless-Chrome test harness deps
+node_modules/
+package.json
+package-lock.json
+
+# Local screenshots / scratch
+*.local.png
+
 # OS junk
 .DS_Store
 Thumbs.db
