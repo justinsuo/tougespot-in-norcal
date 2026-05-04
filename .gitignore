@@ -1,0 +1,9 @@
+# Local Claude Code settings and memory — not for the public repo
+.claude/
+
+# Local Windows power-management helpers
+*.bat
+
+# OS junk
+.DS_Store
+Thumbs.db

@@ -441,13 +441,42 @@
 
   function renderPoi(poi, route) {
     const iconKind = poi.icon || "pin";
+    const labelText = poi.title || "";
+
+    if (poi.features_url) {
+      return renderAreaWithFeatures(poi, route, labelText, iconKind);
+    }
+
+    if (Array.isArray(poi.polygon) && poi.polygon.length >= 3) {
+      const fill = iconKind === "golf" ? "#16a34a" : "#22c55e";
+      const polygon = L.polygon(poi.polygon, {
+        color: fill,
+        weight: 2,
+        opacity: 0.9,
+        fillColor: fill,
+        fillOpacity: 0.45,
+        interactive: true,
+      }).addTo(map);
+      polygon.bindTooltip(labelText, { sticky: true, direction: "top", className: "poi-area-tooltip" });
+      const center = polygon.getBounds().getCenter();
+      const popupHtml = `
+        <strong>${escapeHtml(labelText)}</strong>
+        <div style="color:#8b96a3;font-size:11px;margin-bottom:6px;">
+          ${route ? `On <em>${escapeHtml(route.name)}</em>` : ""}
+        </div>
+        ${poi.description ? `<div style="font-size:12px;line-height:1.5;margin-bottom:10px;">${escapeHtml(poi.description)}</div>` : ""}
+        <a href="https://www.google.com/maps?q=${center.lat},${center.lng}" target="_blank" rel="noopener">Open in Google Maps ↗</a>
+      `;
+      polygon.bindPopup(popupHtml, { maxWidth: 280 });
+      return polygon;
+    }
+
     const glyph =
       iconKind === "crash" ? "💥"
       : iconKind === "vista" ? "📷"
       : iconKind === "donut" ? "🍩"
       : iconKind === "golf" ? "🏌"
       : "📍";
-    const labelText = poi.title || "";
 
     // Marker uses an HTML divIcon so we get the glyph + a permanent label
     // text alongside it. The label is always visible (not just on hover) so
@@ -493,6 +522,122 @@
     marker.bindPopup(popupHtml, { maxWidth: 280, className: poi.warning ? "popup-warning" : "" });
     marker.on("click", () => marker.openPopup());
     return marker;
+  }
+
+  // Cache so a feature file is fetched at most once per page load
+  const featureFileCache = new Map();
+
+  function renderAreaWithFeatures(poi, route, labelText, iconKind) {
+    const layer = L.featureGroup().addTo(map);
+
+    // Loading-state placeholder: show the perimeter polygon (if provided) right
+    // away so the user has something while the feature file fetches.
+    let placeholder = null;
+    if (Array.isArray(poi.polygon) && poi.polygon.length >= 3) {
+      placeholder = L.polygon(poi.polygon, {
+        color: "#16a34a",
+        weight: 2,
+        opacity: 0.6,
+        fillColor: "#16a34a",
+        fillOpacity: 0.2,
+        interactive: false,
+      }).addTo(layer);
+    }
+
+    const tooltipFor = (f) => {
+      const parts = [labelText];
+      if (f.ref) parts.push(`Hole ${f.ref}${f.par ? ` · par ${f.par}` : ""}`);
+      else if (f.name) parts.push(f.name);
+      else parts.push(f.kind.replace(/_/g, " "));
+      return parts.join(" — ");
+    };
+
+    const styleFor = (kind) => {
+      switch (kind) {
+        case "green":
+          return { color: "#14532d", weight: 1, fillColor: "#22c55e", fillOpacity: 0.95 };
+        case "fairway":
+          return { color: "#166534", weight: 0.5, fillColor: "#4ade80", fillOpacity: 0.7 };
+        case "tee":
+          return { color: "#15803d", weight: 0.5, fillColor: "#86efac", fillOpacity: 0.85 };
+        case "bunker":
+          return { color: "#a16207", weight: 0.5, fillColor: "#fde68a", fillOpacity: 0.95 };
+        case "driving_range":
+          return { color: "#65a30d", weight: 1, fillColor: "#bef264", fillOpacity: 0.5 };
+        case "clubhouse":
+          return { color: "#1f2937", weight: 1, fillColor: "#374151", fillOpacity: 0.9 };
+        case "rough":
+          return { color: "#3f6212", weight: 0.5, fillColor: "#65a30d", fillOpacity: 0.4 };
+        default:
+          return { color: "#16a34a", weight: 1, fillColor: "#16a34a", fillOpacity: 0.4 };
+      }
+    };
+
+    const lineStyleFor = (kind) => {
+      if (kind === "cartpath") {
+        return { color: "#a8a29e", weight: 1, opacity: 0.7, dashArray: "3,3", interactive: false };
+      }
+      // hole centerline
+      return { color: "#fde047", weight: 2, opacity: 0.85, dashArray: "6,4" };
+    };
+
+    fetch(poi.features_url)
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((data) => {
+        if (placeholder) layer.removeLayer(placeholder);
+        const features = data.features || [];
+        for (const f of features) {
+          if (!f.coords || f.coords.length < 2) continue;
+          let leafletLayer;
+          if (f.shape === "line") {
+            leafletLayer = L.polyline(f.coords, lineStyleFor(f.kind));
+          } else {
+            leafletLayer = L.polygon(f.coords, styleFor(f.kind));
+          }
+          if (leafletLayer.options.interactive !== false) {
+            leafletLayer.bindTooltip(tooltipFor(f), {
+              sticky: true,
+              direction: "top",
+              className: "poi-area-tooltip",
+            });
+          }
+          leafletLayer.addTo(layer);
+        }
+      })
+      .catch((err) => {
+        // If the fetch fails we keep the placeholder polygon as a graceful fallback
+        console.warn(`Failed to load features for "${labelText}":`, err);
+        if (placeholder) {
+          placeholder.bindTooltip(labelText, { sticky: true, direction: "top", className: "poi-area-tooltip" });
+        }
+      });
+
+    // Layer-level popup so clicking anywhere on the course works even before
+    // features have loaded.
+    const center = (() => {
+      if (Array.isArray(poi.polygon) && poi.polygon.length) {
+        const lats = poi.polygon.map((p) => p[0]);
+        const lons = poi.polygon.map((p) => p[1]);
+        return [
+          (Math.min(...lats) + Math.max(...lats)) / 2,
+          (Math.min(...lons) + Math.max(...lons)) / 2,
+        ];
+      }
+      return [0, 0];
+    })();
+    const popupHtml = `
+      <strong>${escapeHtml(labelText)}</strong>
+      <div style="color:#8b96a3;font-size:11px;margin-bottom:6px;">
+        ${route ? `On <em>${escapeHtml(route.name)}</em>` : ""}
+      </div>
+      ${poi.description ? `<div style="font-size:12px;line-height:1.5;margin-bottom:10px;">${escapeHtml(poi.description)}</div>` : ""}
+      <a href="https://www.google.com/maps?q=${center[0]},${center[1]}" target="_blank" rel="noopener">Open in Google Maps ↗</a>
+    `;
+    layer.bindPopup(popupHtml, { maxWidth: 280 });
+    return layer;
   }
 
   function escapeHtml(s) {
