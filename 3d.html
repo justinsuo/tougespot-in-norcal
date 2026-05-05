@@ -100,9 +100,21 @@
           <input type="range" id="exaggeration" min="1.0" max="3.0" step="0.1" value="1.5" />
           <span class="range-val" id="exaggeration-val">1.5×</span>
         </div>
+        <div class="range-row">
+          <label for="time-of-day">Sun position</label>
+          <input type="range" id="time-of-day" min="0" max="24" step="0.25" value="14" />
+          <span class="range-val" id="time-of-day-val">2pm</span>
+        </div>
         <div class="chip-row" style="margin-top: 6px;">
-          <button class="chip toggle" id="toggle-atmosphere" title="Sky/atmosphere haze">Sky haze</button>
+          <button class="chip toggle active" id="toggle-atmosphere" title="Sky/atmosphere haze">Sky haze</button>
           <button class="chip toggle" id="toggle-fog" title="Distance fog">Fog</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Tools</label>
+        <div class="chip-row">
+          <button class="chip toggle" id="tool-measure" title="Click two points on the map to measure distance">📏 Measure</button>
+          <button class="chip" id="tool-share" title="Copy a link to your current view">🔗 Share view</button>
         </div>
       </div>
     </section>
@@ -136,6 +148,16 @@
     <button id="reset-view" class="hud-btn" title="Fly back to the Bay Area overview (R)">⌖ Reset view</button>
     <button id="help-3d-btn" class="hud-btn" title="Show keyboard shortcuts (?)">? Shortcuts</button>
     <div id="hud-coords" class="hud-coords" aria-live="off">—</div>
+    <div id="hud-measure" class="hud-coords" style="display:none;"></div>
+  </div>
+
+  <!-- Compass — top-right of viewport, points to north -->
+  <div id="compass-3d" title="Compass — click to face north">
+    <div class="compass-ring">
+      <div class="compass-needle" id="compass-needle">
+        <span class="compass-n">N</span>
+      </div>
+    </div>
   </div>
   <div id="help-overlay" class="help-overlay" aria-hidden="true">
     <div class="help-card">
@@ -151,8 +173,12 @@
         <tr><td><kbd>Esc</kbd></td><td>Close detail panel</td></tr>
       </table>
       <p class="help-tip">
-        Click a route in the sidebar or on the map to fly along it.
-        Click a POI to zoom in.
+        Open a route from the sidebar, then hit <strong>▶ Fly this road</strong>
+        for a driver's-seat tour. Toggle <strong>Buildings</strong> +
+        <strong>Trees</strong> for a Google-Earth-style cityscape.
+        Use <strong>📏 Measure</strong> to get distance &amp; bearing
+        between any two points, or <strong>🔗 Share view</strong> to copy a
+        link that opens this exact camera view.
       </p>
     </div>
   </div>

@@ -1411,7 +1411,55 @@ a:hover { text-decoration: underline; }
 .range-row input[type="range"] {
   flex: 1; height: 4px; accent-color: var(--accent);
 }
-.range-val { font: 11px ui-monospace, monospace; color: var(--text); min-width: 28px; text-align: right; }
+.range-val { font: 11px ui-monospace, monospace; color: var(--text); min-width: 38px; text-align: right; }
+
+/* Compass — small N indicator that rotates with the camera heading */
+#compass-3d {
+  position: fixed;
+  top: 78px;
+  right: 18px;
+  width: 56px;
+  height: 56px;
+  z-index: 8;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.compass-ring {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: rgba(11, 16, 21, 0.7);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  display: grid; place-items: center;
+  position: relative;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+}
+.compass-needle {
+  width: 4px; height: 24px;
+  background: linear-gradient(to bottom, #ef4444 0%, #ef4444 50%, #cbd5e1 50%, #cbd5e1 100%);
+  border-radius: 2px;
+  position: relative;
+  transform-origin: center center;
+  transition: transform 0.18s ease-out;
+}
+.compass-n {
+  position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+  font: bold 11px system-ui; color: var(--text);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+}
+@media (max-width: 720px) { #compass-3d { top: 64px; right: 12px; width: 44px; height: 44px; } }
+
+/* Fly-route button in the detail panel */
+.btn.fly-route {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+}
+.btn.fly-route:hover { filter: brightness(1.1); }
+
+/* Measure mode cursor + tool active state */
+body.measure-mode .cesium-widget canvas { cursor: crosshair !important; }
+.chip.toggle.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 /* Push the Cesium toolbar (home, baselayer, scene-mode etc.) clear of the
    sidebar-toggle hamburger which sits top-left. */

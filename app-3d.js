@@ -1004,6 +1004,7 @@
           <p>${escapeHtml(route.watchouts || "")}</p>
         </div>
         <div class="detail-actions">
+          <button class="btn fly-route" id="detail-fly-btn" title="Animate the camera along this road">▶ Fly this road</button>
           <a class="btn" href="${route.google_maps_url}" target="_blank" rel="noopener">Directions ↗</a>
           <button class="btn secondary" id="detail-close-btn">Close</button>
         </div>
@@ -1012,6 +1013,7 @@
     document.getElementById("detail-panel").classList.add("open");
     document.getElementById("detail-panel").setAttribute("aria-hidden", "false");
     document.getElementById("detail-close-btn").addEventListener("click", closeDetail);
+    document.getElementById("detail-fly-btn")?.addEventListener("click", () => flyTheRoute(route));
   }
 
   function closeDetail() {
@@ -1316,6 +1318,242 @@
     });
   }
 
+  // ─── Time-of-day slider (sun position) ──────────────────────
+  function wireTimeOfDay() {
+    const slider = document.getElementById("time-of-day");
+    const val = document.getElementById("time-of-day-val");
+    if (!slider || !val) return;
+    const apply = (hours) => {
+      const fmt = (h) => {
+        const i = Math.floor(h);
+        const m = Math.round((h - i) * 60);
+        const ampm = i < 12 ? "am" : "pm";
+        const h12 = ((i + 11) % 12) + 1;
+        return m === 0 ? `${h12}${ampm}` : `${h12}:${String(m).padStart(2, "0")}${ampm}`;
+      };
+      val.textContent = fmt(hours);
+      // Set Cesium clock to today (locked) at the specified UTC hour. Offset
+      // for Pacific (UTC-7 PDT in May 2026) so 2pm input ≈ 2pm PDT.
+      const PDT_OFFSET_H = 7;
+      const utcH = (hours + PDT_OFFSET_H) % 24;
+      const now = new Date();
+      now.setUTCHours(Math.floor(utcH), Math.round((utcH - Math.floor(utcH)) * 60), 0, 0);
+      viewer.clock.currentTime = Cesium.JulianDate.fromDate(now);
+      viewer.scene.requestRender();
+    };
+    slider.addEventListener("input", () => apply(parseFloat(slider.value)));
+    apply(parseFloat(slider.value));
+  }
+
+  // ─── Compass widget ─────────────────────────────────────────
+  function wireCompass() {
+    const needle = document.getElementById("compass-needle");
+    const widget = document.getElementById("compass-3d");
+    if (!needle || !widget) return;
+    // Update on every camera change
+    viewer.camera.changed.addEventListener(() => {
+      const heading = Cesium.Math.toDegrees(viewer.camera.heading);
+      needle.style.transform = `rotate(${-heading}deg)`;
+    });
+    // Click compass → reset heading to north
+    widget.addEventListener("click", () => {
+      const camera = viewer.camera;
+      camera.flyTo({
+        destination: camera.positionWC,
+        orientation: { heading: 0, pitch: camera.pitch, roll: 0 },
+        duration: 0.6,
+      });
+    });
+    // Force one initial event so the needle settles right away
+    viewer.camera.percentageChanged = 0.005;
+  }
+
+  // ─── Share-view URL hash ────────────────────────────────────
+  // Encode camera position into the URL hash so users can copy/paste a link
+  // that opens the exact same view.
+  function wireShareView() {
+    const btn = document.getElementById("tool-share");
+    if (!btn) return;
+    btn.addEventListener("click", async () => {
+      const camera = viewer.camera;
+      const pos = camera.positionCartographic;
+      const lon = Cesium.Math.toDegrees(pos.longitude).toFixed(5);
+      const lat = Cesium.Math.toDegrees(pos.latitude).toFixed(5);
+      const alt = Math.round(pos.height);
+      const heading = Math.round(Cesium.Math.toDegrees(camera.heading));
+      const pitch = Math.round(Cesium.Math.toDegrees(camera.pitch));
+      const url = `${location.origin}${location.pathname}#v=${lat},${lon},${alt},${heading},${pitch}`;
+      try {
+        await navigator.clipboard.writeText(url);
+        btn.textContent = "✓ Copied!";
+        setTimeout(() => { btn.textContent = "🔗 Share view"; }, 1800);
+      } catch (e) {
+        // Clipboard requires HTTPS or localhost — fallback to prompt
+        prompt("Copy this URL:", url);
+      }
+    });
+  }
+
+  // On boot, if the URL hash has a #v=... fragment, fly to that camera
+  function applyHashView() {
+    const hash = location.hash;
+    if (!hash.startsWith("#v=")) return;
+    const parts = hash.slice(3).split(",").map(parseFloat);
+    if (parts.length < 5 || parts.some(isNaN)) return;
+    const [lat, lon, alt, heading, pitch] = parts;
+    setTimeout(() => {
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(lon, lat, alt),
+        orientation: {
+          heading: Cesium.Math.toRadians(heading),
+          pitch: Cesium.Math.toRadians(pitch),
+          roll: 0,
+        },
+        duration: 1.5,
+      });
+    }, 800);
+  }
+
+  // ─── Measure tool ───────────────────────────────────────────
+  // Click two ground points → draw a line between them and show the great-
+  // circle distance + bearing in the HUD readout.
+  let measureState = { active: false, points: [], entities: [] };
+  function wireMeasureTool() {
+    const btn = document.getElementById("tool-measure");
+    const hud = document.getElementById("hud-measure");
+    if (!btn || !hud) return;
+
+    function clearMeasure() {
+      for (const e of measureState.entities) viewer.entities.remove(e);
+      measureState.points = [];
+      measureState.entities = [];
+      hud.textContent = "";
+      hud.style.display = "none";
+    }
+
+    function fmtMeters(m) {
+      if (m < 1000) return `${m.toFixed(0)} m`;
+      const km = m / 1000;
+      const mi = m / 1609.344;
+      return `${km.toFixed(2)} km · ${mi.toFixed(2)} mi`;
+    }
+
+    function bearingDeg(lat1, lon1, lat2, lon2) {
+      const toR = Math.PI / 180, toD = 180 / Math.PI;
+      const φ1 = lat1 * toR, φ2 = lat2 * toR, λ1 = lon1 * toR, λ2 = lon2 * toR;
+      const y = Math.sin(λ2 - λ1) * Math.cos(φ2);
+      const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
+      return ((Math.atan2(y, x) * toD) + 360) % 360;
+    }
+
+    function compassDir(bearing) {
+      const dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+      return dirs[Math.round(bearing / 45) % 8];
+    }
+
+    function onMeasureClick(click) {
+      const pos = viewer.scene.pickPosition(click.position) ||
+                  viewer.camera.pickEllipsoid(click.position, viewer.scene.globe.ellipsoid);
+      if (!pos) return;
+      measureState.points.push(pos);
+      // Add point dot
+      const dot = viewer.entities.add({
+        position: pos,
+        point: {
+          pixelSize: 10,
+          color: Cesium.Color.fromCssColorString("#fbbf24"),
+          outlineColor: Cesium.Color.BLACK,
+          outlineWidth: 2,
+          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+      });
+      measureState.entities.push(dot);
+      if (measureState.points.length === 2) {
+        const [a, b] = measureState.points;
+        const line = viewer.entities.add({
+          polyline: {
+            positions: [a, b],
+            width: 3,
+            clampToGround: true,
+            material: Cesium.Color.fromCssColorString("#fbbf24"),
+          },
+        });
+        measureState.entities.push(line);
+        const carto1 = Cesium.Cartographic.fromCartesian(a);
+        const carto2 = Cesium.Cartographic.fromCartesian(b);
+        const lat1 = Cesium.Math.toDegrees(carto1.latitude);
+        const lon1 = Cesium.Math.toDegrees(carto1.longitude);
+        const lat2 = Cesium.Math.toDegrees(carto2.latitude);
+        const lon2 = Cesium.Math.toDegrees(carto2.longitude);
+        const dist = Cesium.Cartesian3.distance(a, b); // straight-line through Earth approx
+        // Use surface (great-circle) distance for accuracy
+        const ellipsoid = viewer.scene.globe.ellipsoid;
+        const geodesic = new Cesium.EllipsoidGeodesic(carto1, carto2, ellipsoid);
+        const surfaceDist = geodesic.surfaceDistance;
+        const brg = bearingDeg(lat1, lon1, lat2, lon2);
+        hud.textContent = `📏 ${fmtMeters(surfaceDist)}  ·  ${brg.toFixed(0)}° ${compassDir(brg)}`;
+        hud.style.display = "block";
+        // Reset for next pair after a moment
+        setTimeout(() => {
+          if (!measureState.active) return;
+          measureState.points = [];
+        }, 100);
+      }
+    }
+
+    let measureHandler = null;
+    btn.addEventListener("click", () => {
+      measureState.active = !measureState.active;
+      btn.classList.toggle("active", measureState.active);
+      document.body.classList.toggle("measure-mode", measureState.active);
+      if (measureState.active) {
+        clearMeasure();
+        measureHandler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+        measureHandler.setInputAction(onMeasureClick, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        hud.textContent = "📏 Click two points to measure";
+        hud.style.display = "block";
+      } else {
+        if (measureHandler) { measureHandler.destroy(); measureHandler = null; }
+        clearMeasure();
+      }
+    });
+  }
+
+  // ─── Fly-the-route animation ────────────────────────────────
+  // Animates the camera along a route's coordinates so it feels like driving.
+  let flyAbort = null;
+  async function flyTheRoute(route) {
+    if (flyAbort) { flyAbort(); flyAbort = null; }
+    const coords = route?._geom?.coordinates;
+    if (!coords || coords.length < 2) return;
+    let cancelled = false;
+    flyAbort = () => { cancelled = true; };
+    // Sample ~80 points along the route for a smooth animation
+    const N = Math.min(80, coords.length);
+    const step = coords.length / N;
+    for (let i = 0; i < N; i++) {
+      if (cancelled) return;
+      const idx = Math.min(coords.length - 1, Math.floor(i * step));
+      const [lon, lat] = coords[idx];
+      // Look down the road by aiming at the next point
+      const nextIdx = Math.min(coords.length - 1, idx + 5);
+      const [nLon, nLat] = coords[nextIdx];
+      const heading = Math.atan2(nLon - lon, nLat - lat);
+      await new Promise((resolve) => {
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(lon, lat, 350),
+          orientation: { heading, pitch: Cesium.Math.toRadians(-18), roll: 0 },
+          duration: 0.4,
+          easingFunction: Cesium.EasingFunction.LINEAR_NONE,
+          complete: resolve,
+          cancel: resolve,
+        });
+      });
+    }
+    flyAbort = null;
+  }
+
   function wireHelpOverlay() {
     const btn = document.getElementById("help-3d-btn");
     const overlay = document.getElementById("help-overlay");
@@ -1366,6 +1604,10 @@
     wireHelpOverlay();
     wireBuildingsToggle();
     wireTreesToggle();
+    wireTimeOfDay();
+    wireCompass();
+    wireShareView();
+    wireMeasureTool();
 
     try {
       await loadRoutes();
@@ -1374,5 +1616,8 @@
       document.getElementById("loading").textContent =
         "Failed to load routes. Check console.";
     }
+
+    // After routes are loaded, honor any #v=lat,lon,alt,heading,pitch in the URL
+    applyHashView();
   });
 })();
