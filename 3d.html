@@ -17,6 +17,8 @@
     The two link/script tags below will then resolve to ./vendor/cesium/...
   -->
   <link rel="stylesheet" href="https://unpkg.com/cesium@1.123/Build/Cesium/Widgets/widgets.css" id="cesium-css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='14'%3E%F0%9F%8C%90%3C/text%3E%3C/svg%3E" />
 
@@ -116,6 +118,9 @@
           <button class="chip toggle" id="tool-measure" title="Click two points on the map to measure distance">📏 Measure</button>
           <button class="chip" id="tool-share" title="Copy a link to your current view">🔗 Share view</button>
         </div>
+        <div class="chip-row" style="margin-top: 6px;">
+          <button class="chip" id="tool-tour" title="Auto-fly through every visible route">🎬 Tour all routes</button>
+        </div>
       </div>
     </section>
 
@@ -159,6 +164,18 @@
       </div>
     </div>
   </div>
+
+  <!-- Mini-map — small 2D Leaflet map showing where the 3D camera looks -->
+  <div id="minimap-wrap">
+    <div id="minimap"></div>
+    <button id="minimap-toggle" class="hud-btn" title="Show / hide mini-map">⌖</button>
+  </div>
+
+  <!-- Tour mode controls -->
+  <div id="tour-controls" class="tour-controls" aria-hidden="true">
+    <span id="tour-label">Touring…</span>
+    <button id="tour-stop" class="hud-btn">■ Stop tour</button>
+  </div>
   <div id="help-overlay" class="help-overlay" aria-hidden="true">
     <div class="help-card">
       <button class="help-close" id="help-close" aria-label="Close shortcuts">×</button>
@@ -183,6 +200,8 @@
     </div>
   </div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
     // If a local Cesium build is present at ./vendor/cesium, use it. Otherwise
     // fall back to unpkg's npm mirror (more reliable than cesium.com's CDN).
@@ -192,7 +211,6 @@
         ? "vendor/cesium/Build/Cesium/"
         : "https://unpkg.com/cesium@1.123/Build/Cesium/";
       window.CESIUM_BASE_URL = base;
-      // Replace the widgets.css link if local
       if (useLocal) {
         const link = document.getElementById("cesium-css");
         if (link) link.href = base + "Widgets/widgets.css";
@@ -201,8 +219,6 @@
       s.src = base + "Cesium.js";
       s.onload = () => {
         const app = document.createElement("script");
-        // Tie cache-key to the page query string so a hard reload via
-        // ?v=... busts app-3d.js too, not just the HTML.
         const q = new URL(window.location.href).searchParams.get("v");
         app.src = q ? `app-3d.js?v=${q}` : "app-3d.js";
         document.body.appendChild(app);

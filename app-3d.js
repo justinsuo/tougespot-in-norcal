@@ -1318,6 +1318,164 @@
     });
   }
 
+  // ─── Mini-map (Leaflet 2D overview) ─────────────────────────
+  // Shows where the 3D camera is currently looking with an orange footprint.
+  let miniMap = null, miniRoutesLayer = null, miniFootprint = null, miniMarker = null;
+  function wireMiniMap() {
+    if (typeof L === "undefined") {
+      console.warn("Leaflet not loaded — mini-map disabled");
+      return;
+    }
+    miniMap = L.map("minimap", {
+      attributionControl: false,
+      zoomControl: false,
+      boxZoom: false,
+      doubleClickZoom: false,
+      keyboard: false,
+    }).setView([37.8, -122.2], 9);
+    window.__miniMap__ = miniMap;
+    L.tileLayer(
+      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+      { maxZoom: 16 }
+    ).addTo(miniMap);
+
+    // Draw all routes as thin lines
+    miniRoutesLayer = L.layerGroup().addTo(miniMap);
+    if (routesData) {
+      for (const r of routesData.routes) {
+        if (!r._geom) continue;
+        const pts = r._geom.coordinates.map(([lon, lat]) => [lat, lon]);
+        L.polyline(pts, {
+          color: "#facc15",
+          weight: 1.5,
+          opacity: 0.7,
+          interactive: false,
+        }).addTo(miniRoutesLayer);
+      }
+    }
+
+    // Camera position dot + footprint polygon — updated each tick
+    miniMarker = L.circleMarker([37.8, -122.2], {
+      radius: 4,
+      color: "#f97316",
+      fillColor: "#f97316",
+      fillOpacity: 1,
+      weight: 2,
+    }).addTo(miniMap);
+    miniFootprint = L.polygon([], { className: "minimap-footprint" }).addTo(miniMap);
+
+    // Update on every camera change AND on a steady tick (camera.changed
+    // can miss settling moves after a flyTo)
+    viewer.camera.changed.addEventListener(updateMiniMap);
+    viewer.camera.percentageChanged = 0.001;
+    setInterval(updateMiniMap, 400);
+    updateMiniMap();
+
+    // Toggle button
+    const toggle = document.getElementById("minimap-toggle");
+    const wrap = document.getElementById("minimap-wrap");
+    if (toggle && wrap) {
+      toggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        wrap.classList.toggle("collapsed");
+        if (!wrap.classList.contains("collapsed")) {
+          setTimeout(() => miniMap.invalidateSize(), 250);
+        }
+      });
+    }
+  }
+
+  function updateMiniMap() {
+    if (!miniMap || !miniMarker || !miniFootprint) return;
+    const pos = viewer.camera.positionCartographic;
+    const camLon = Cesium.Math.toDegrees(pos.longitude);
+    const camLat = Cesium.Math.toDegrees(pos.latitude);
+    const camAlt = Math.max(100, pos.height);
+    miniMarker.setLatLng([camLat, camLon]);
+
+    // Center mini-map directly on the camera position, with zoom scaled to
+    // altitude. (Earlier we tried picking the viewport-center ground point,
+    // but at high altitudes pickEllipsoid sometimes returns the far horizon.)
+    let zoom;
+    if (camAlt < 800) zoom = 14;
+    else if (camAlt < 2000) zoom = 13;
+    else if (camAlt < 6000) zoom = 11;
+    else if (camAlt < 20000) zoom = 9;
+    else if (camAlt < 80000) zoom = 8;
+    else zoom = 6;
+    miniMap.setView([camLat, camLon], zoom, { animate: false });
+
+    const canvas = viewer.canvas;
+    const ellipsoid = viewer.scene.globe.ellipsoid;
+
+    // Footprint polygon — cap at a sensible diagonal so far-horizon points
+    // don't blow up the polygon
+    const corners = [
+      [canvas.clientWidth * 0.15, canvas.clientHeight * 0.15],
+      [canvas.clientWidth * 0.85, canvas.clientHeight * 0.15],
+      [canvas.clientWidth * 0.85, canvas.clientHeight * 0.85],
+      [canvas.clientWidth * 0.15, canvas.clientHeight * 0.85],
+    ];
+    const ground = corners.map(([x, y]) => {
+      const cart = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(x, y), ellipsoid);
+      if (!cart) return null;
+      const c = Cesium.Cartographic.fromCartesian(cart);
+      return [Cesium.Math.toDegrees(c.latitude), Cesium.Math.toDegrees(c.longitude)];
+    }).filter(Boolean);
+    if (ground.length >= 3) {
+      miniFootprint.setLatLngs(ground);
+    } else {
+      miniFootprint.setLatLngs([]);
+    }
+  }
+
+  // ─── Tour mode (auto-fly through visible routes) ────────────
+  let tourState = { running: false, abort: null };
+  function wireTourMode() {
+    const btn = document.getElementById("tool-tour");
+    const stop = document.getElementById("tour-stop");
+    const banner = document.getElementById("tour-controls");
+    const label = document.getElementById("tour-label");
+    if (!btn || !stop || !banner) return;
+
+    function showBanner(text) {
+      label.textContent = text;
+      banner.classList.add("open");
+    }
+    function hideBanner() { banner.classList.remove("open"); }
+
+    async function runTour() {
+      const visible = visibleRoutes();
+      if (!visible.length) return;
+      tourState.running = true;
+      let cancelled = false;
+      tourState.abort = () => { cancelled = true; };
+      for (let i = 0; i < visible.length; i++) {
+        if (cancelled) break;
+        const r = visible[i];
+        showBanner(`🎬 Tour ${i + 1}/${visible.length}: ${r.name}`);
+        openDetail(r.id); // also flies the camera
+        // Hold on each route for ~5 seconds before flying to the next
+        for (let t = 0; t < 50; t++) {
+          if (cancelled) break;
+          await new Promise((r) => setTimeout(r, 100));
+        }
+      }
+      hideBanner();
+      tourState.running = false;
+      tourState.abort = null;
+    }
+
+    btn.addEventListener("click", () => {
+      if (tourState.running) return;
+      runTour();
+    });
+    stop.addEventListener("click", () => {
+      if (tourState.abort) tourState.abort();
+      hideBanner();
+    });
+  }
+
   // ─── Time-of-day slider (sun position) ──────────────────────
   function wireTimeOfDay() {
     const slider = document.getElementById("time-of-day");
@@ -1608,6 +1766,7 @@
     wireCompass();
     wireShareView();
     wireMeasureTool();
+    wireTourMode();
 
     try {
       await loadRoutes();
@@ -1617,7 +1776,9 @@
         "Failed to load routes. Check console.";
     }
 
-    // After routes are loaded, honor any #v=lat,lon,alt,heading,pitch in the URL
+    // Mini-map needs routesData populated, so we wire it after loadRoutes
+    wireMiniMap();
+    // Honor any #v=lat,lon,alt,heading,pitch in the URL
     applyHashView();
   });
 })();

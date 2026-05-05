@@ -1461,6 +1461,61 @@ a:hover { text-decoration: underline; }
 body.measure-mode .cesium-widget canvas { cursor: crosshair !important; }
 .chip.toggle.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
+/* Mini-map — small Leaflet 2D map showing the camera footprint */
+#minimap-wrap {
+  position: fixed;
+  bottom: 36px;
+  right: 18px;
+  z-index: 8;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+  background: rgba(11,16,21,0.85);
+  transition: width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
+  width: 220px; height: 180px;
+}
+#minimap-wrap.collapsed { width: 36px; height: 36px; }
+#minimap-wrap.collapsed #minimap { display: none; }
+#minimap { width: 100%; height: 100%; }
+#minimap-toggle {
+  position: absolute; top: 4px; right: 4px;
+  z-index: 9; padding: 2px 8px; font-size: 14px;
+  background: rgba(11,16,21,0.85);
+}
+#minimap-wrap.collapsed #minimap-toggle { top: 4px; right: 4px; }
+@media (max-width: 720px) { #minimap-wrap { display: none; } }
+
+/* Camera-footprint polygon style on the mini-map */
+.minimap-footprint {
+  fill: #f97316;
+  fill-opacity: 0.18;
+  stroke: #f97316;
+  stroke-width: 1.5;
+}
+
+/* Tour mode banner */
+.tour-controls {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  background: rgba(11,16,21,0.92);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 8px 16px;
+  font: 600 12px system-ui;
+  color: var(--text);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+}
+.tour-controls.open { display: flex; }
+#tour-label { white-space: nowrap; }
+
 /* Push the Cesium toolbar (home, baselayer, scene-mode etc.) clear of the
    sidebar-toggle hamburger which sits top-left. */
 .cesium-viewer-toolbar {
