@@ -1051,6 +1051,13 @@
           <h3>Watch out for</h3>
           <p>${escapeHtml(route.watchouts || "")}</p>
         </div>
+        <div class="detail-section" id="elevation-profile-wrap">
+          <h3>Elevation profile</h3>
+          <div id="elevation-profile" style="position:relative;height:90px;background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:6px;padding:6px;">
+            <div style="color:var(--text-dim);font-size:11px;text-align:center;padding-top:30px;">Sampling terrain…</div>
+          </div>
+          <div id="elevation-stats" style="font-size:11px;color:var(--text-dim);margin-top:6px;"></div>
+        </div>
         <div class="detail-actions">
           <button class="btn fly-route" id="detail-fly-btn" title="Animate the camera along this road">▶ Fly this road</button>
           <a class="btn" href="${route.google_maps_url}" target="_blank" rel="noopener">Directions ↗</a>
@@ -1062,6 +1069,76 @@
     document.getElementById("detail-panel").setAttribute("aria-hidden", "false");
     document.getElementById("detail-close-btn").addEventListener("click", closeDetail);
     document.getElementById("detail-fly-btn")?.addEventListener("click", () => flyTheRoute(route));
+
+    // Sample terrain elevations along the route and draw a small SVG profile
+    sampleAndDrawElevation(route);
+  }
+
+  // ─── Elevation profile (sampled from the active terrain) ────
+  async function sampleAndDrawElevation(route) {
+    const wrap = document.getElementById("elevation-profile");
+    const stats = document.getElementById("elevation-stats");
+    if (!wrap || !route._geom) return;
+    const coords = route._geom.coordinates;
+    if (!coords.length) return;
+
+    // Pick ~60 evenly-spaced points along the route
+    const N = Math.min(60, coords.length);
+    const step = coords.length / N;
+    const samplePts = [];
+    for (let i = 0; i < N; i++) {
+      const idx = Math.min(coords.length - 1, Math.floor(i * step));
+      const [lon, lat] = coords[idx];
+      samplePts.push(Cesium.Cartographic.fromDegrees(lon, lat));
+    }
+
+    let elevations;
+    try {
+      // sampleTerrainMostDetailed only works with real terrain providers
+      const sampled = await Cesium.sampleTerrainMostDetailed(viewer.terrainProvider, samplePts);
+      elevations = sampled.map((c) => c.height || 0);
+    } catch (e) {
+      wrap.innerHTML = `<div style="color:var(--text-dim);font-size:11px;text-align:center;padding-top:30px;">Elevation unavailable on this terrain</div>`;
+      return;
+    }
+
+    const min = Math.min(...elevations);
+    const max = Math.max(...elevations);
+    const range = Math.max(1, max - min);
+    const totalGain = elevations.reduce((sum, e, i) =>
+      i === 0 ? 0 : sum + Math.max(0, e - elevations[i - 1]), 0);
+    const totalLoss = elevations.reduce((sum, e, i) =>
+      i === 0 ? 0 : sum + Math.max(0, elevations[i - 1] - e), 0);
+
+    // Build SVG path
+    const w = wrap.clientWidth - 12;
+    const h = 78;
+    const xStep = w / (N - 1);
+    let d = `M 0 ${h}`;
+    for (let i = 0; i < N; i++) {
+      const x = i * xStep;
+      const y = h - ((elevations[i] - min) / range) * (h - 8) - 2;
+      d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
+    }
+    d += ` L ${w} ${h} Z`;
+
+    const colorHex = colorForRoute(route).toCssColorString();
+    wrap.innerHTML = `
+      <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block;">
+        <defs>
+          <linearGradient id="elev-grad-${route.id}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${colorHex}" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="${colorHex}" stop-opacity="0.05"/>
+          </linearGradient>
+        </defs>
+        <path d="${d}" fill="url(#elev-grad-${route.id})" stroke="${colorHex}" stroke-width="1.5" stroke-linejoin="round" />
+      </svg>
+    `;
+    stats.innerHTML =
+      `Low <strong style="color:var(--text);">${Math.round(min * 3.281)} ft</strong> · ` +
+      `High <strong style="color:var(--text);">${Math.round(max * 3.281)} ft</strong> · ` +
+      `Climb <strong style="color:var(--text);">+${Math.round(totalGain * 3.281)} ft</strong> · ` +
+      `Descent <strong style="color:var(--text);">−${Math.round(totalLoss * 3.281)} ft</strong>`;
   }
 
   function closeDetail() {
