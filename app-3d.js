@@ -930,7 +930,14 @@
           ${diffBadge}
         </div>
       `;
-      card.addEventListener("click", () => openDetail(r.id));
+      card.addEventListener("click", (e) => {
+        // Shift-click → add to comparison set instead of opening detail
+        if (e.shiftKey) {
+          toggleCompare(r.id);
+          return;
+        }
+        openDetail(r.id);
+      });
       // Hover-preview: gently widen the route polyline to draw the eye to it
       card.addEventListener("mouseenter", () => {
         const layer = routeLayers[r.id];
@@ -1451,6 +1458,70 @@
       } else if (treesLayer) {
         treesLayer.show = false;
       }
+    });
+  }
+
+  // ─── Route compare mode ──────────────────────────────────────
+  // Shift-click a route card to add to the comparison set. When 2+ routes
+  // are selected, a floating panel shows their stats side-by-side.
+  const compareSet = new Set();
+  function toggleCompare(id) {
+    if (compareSet.has(id)) compareSet.delete(id);
+    else compareSet.add(id);
+    document.querySelectorAll(".route-card").forEach((c) => {
+      c.classList.toggle("compare-selected", compareSet.has(c.dataset.id));
+    });
+    renderComparePanel();
+  }
+
+  function renderComparePanel() {
+    let panel = document.getElementById("compare-panel");
+    if (compareSet.size < 2) {
+      if (panel) panel.remove();
+      return;
+    }
+    if (!panel) {
+      panel = document.createElement("div");
+      panel.id = "compare-panel";
+      panel.className = "compare-panel";
+      document.body.appendChild(panel);
+    }
+    const rows = [...compareSet].map((id) => {
+      const r = routesData.routes.find((x) => x.id === id);
+      if (!r) return "";
+      const dist = r._distance ? fmtDistance(r._distance) : "—";
+      const dur = r._duration ? fmtDuration(r._duration) : "—";
+      const fromB = r._fromBerkeley ? fmtDuration(r._fromBerkeley) : "—";
+      const colorHex = colorForRoute(r).toCssColorString();
+      const ratingChip = isDragStrip(r)
+        ? `<span style="color:${colorHex};">${dragStripLabel(r)}</span>`
+        : `<span style="color:${colorHex};">${r.rating}/5</span>`;
+      return `
+        <tr>
+          <td><span class="compare-color" style="background:${colorHex};"></span> ${escapeHtml(r.name)}</td>
+          <td>${ratingChip}</td>
+          <td>${escapeHtml(r.region)}</td>
+          <td>${dist}</td>
+          <td>${dur}</td>
+          <td>${fromB}</td>
+        </tr>
+      `;
+    }).join("");
+    panel.innerHTML = `
+      <div class="compare-head">
+        <strong>Compare ${compareSet.size} routes</strong>
+        <button id="compare-close" title="Close">×</button>
+      </div>
+      <table class="compare-table">
+        <thead><tr><th>Road</th><th>Rating</th><th>Region</th><th>Length</th><th>Drive time</th><th>From Berkeley</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="compare-tip">Shift-click a route in the sidebar to add or remove it.</div>
+    `;
+    document.getElementById("compare-close").addEventListener("click", () => {
+      compareSet.clear();
+      document.querySelectorAll(".route-card").forEach((c) => c.classList.remove("compare-selected"));
+      panel.remove();
     });
   }
 

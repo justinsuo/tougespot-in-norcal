@@ -1510,6 +1510,53 @@ body.measure-mode .cesium-widget canvas { cursor: crosshair !important; }
 .route-search:focus { border-color: var(--accent); }
 .route-search::placeholder { color: var(--text-dim); }
 
+/* Compare panel — appears when 2+ routes are shift-clicked */
+.compare-panel {
+  position: fixed;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 16;
+  background: rgba(11,16,21,0.95);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 14px 18px;
+  color: var(--text);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  max-width: calc(100vw - 80px);
+  overflow-x: auto;
+}
+.compare-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px; font-size: 13px;
+}
+.compare-head button {
+  background: none; border: none; color: var(--text-dim);
+  font-size: 18px; cursor: pointer;
+}
+.compare-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.compare-table th, .compare-table td {
+  padding: 6px 12px;
+  font-size: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.compare-table th { color: var(--text-dim); font-weight: 600; }
+.compare-color {
+  display: inline-block; width: 8px; height: 8px;
+  border-radius: 2px; margin-right: 6px; vertical-align: middle;
+}
+.compare-tip { margin-top: 8px; font-size: 11px; color: var(--text-dim); }
+
+.route-card.compare-selected {
+  border-left: 3px solid var(--accent);
+  background: rgba(249, 115, 22, 0.08);
+}
+
 /* Cinematic mode — hide every overlay so the 3D view fills the screen */
 body.cinematic #sidebar,
 body.cinematic #app-tabs,
