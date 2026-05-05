@@ -1510,6 +1510,26 @@ body.measure-mode .cesium-widget canvas { cursor: crosshair !important; }
 .route-search:focus { border-color: var(--accent); }
 .route-search::placeholder { color: var(--text-dim); }
 
+/* Cinematic mode — hide every overlay so the 3D view fills the screen */
+body.cinematic #sidebar,
+body.cinematic #app-tabs,
+body.cinematic #hud-3d,
+body.cinematic #compass-3d,
+body.cinematic #minimap-wrap,
+body.cinematic #detail-panel,
+body.cinematic #sidebar-toggle,
+body.cinematic .cesium-viewer-toolbar,
+body.cinematic .cesium-credit-textContainer { display: none !important; }
+body.cinematic #map { left: 0 !important; top: 0 !important; }
+body.cinematic::after {
+  content: "Press H to exit cinematic mode";
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+  background: rgba(11,16,21,0.85); color: var(--text-dim);
+  padding: 6px 14px; border-radius: 6px; font: 11px system-ui;
+  border: 1px solid var(--border); z-index: 100;
+  pointer-events: none;
+}
+
 /* Tour mode banner */
 .tour-controls {
   position: fixed;

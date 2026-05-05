@@ -1454,6 +1454,50 @@
     });
   }
 
+  // ─── Cinematic mode ──────────────────────────────────────────
+  // Hide every overlay/sidebar so the 3D view fills the screen. Press H or
+  // click the chip to toggle.
+  let cinematic = false;
+  function setCinematic(on) {
+    cinematic = on;
+    document.body.classList.toggle("cinematic", on);
+    const btn = document.getElementById("tool-cinematic");
+    if (btn) btn.classList.toggle("active", on);
+  }
+  function wireCinematic() {
+    const btn = document.getElementById("tool-cinematic");
+    if (btn) btn.addEventListener("click", () => setCinematic(!cinematic));
+    document.addEventListener("keydown", (e) => {
+      if (e.target.matches("input, textarea, select")) return;
+      if (e.key === "h" || e.key === "H") setCinematic(!cinematic);
+    });
+  }
+
+  // ─── Day cycle (animated sun position) ───────────────────────
+  let dayCycleHandle = null;
+  function wireDayCycle() {
+    const btn = document.getElementById("tool-day-cycle");
+    const slider = document.getElementById("time-of-day");
+    if (!btn || !slider) return;
+    btn.addEventListener("click", () => {
+      if (dayCycleHandle) {
+        clearInterval(dayCycleHandle);
+        dayCycleHandle = null;
+        btn.classList.remove("active");
+        btn.textContent = "🌗 Day cycle";
+        return;
+      }
+      btn.classList.add("active");
+      btn.textContent = "■ Stop cycle";
+      dayCycleHandle = setInterval(() => {
+        let v = parseFloat(slider.value) + 0.25;
+        if (v > 24) v = 0;
+        slider.value = String(v);
+        slider.dispatchEvent(new Event("input"));
+      }, 80);
+    });
+  }
+
   // ─── Right-click drop pin ────────────────────────────────────
   // Right-click anywhere to drop a custom yellow marker at that location.
   // Useful for "I want to remember this spot." Right-click on the marker to
@@ -2035,6 +2079,8 @@
     wireSearch();
     wireLocateMe();
     wireDropPin();
+    wireCinematic();
+    wireDayCycle();
 
     try {
       await loadRoutes();
