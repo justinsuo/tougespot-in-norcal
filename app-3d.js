@@ -110,30 +110,39 @@
 
   // ─── Cesium init ─────────────────────────────────────────────
   async function initViewer() {
-    // Terrain stack:
-    //   1. Cesium World Terrain (needs Ion quota; best quality, has water mask)
-    //   2. Esri World Elevation 3D (free, no key needed; gives real heights)
+    // Terrain stack — with hard timeouts so a slow CDN can't block boot:
+    //   1. Cesium World Terrain (Ion; best quality)
+    //   2. Esri World Elevation 3D (free, no key)
     //   3. Flat ellipsoid (last resort)
+    const withTimeout = (p, ms, label) => Promise.race([
+      p,
+      new Promise((_, reject) => setTimeout(() => reject(new Error(label + " timed out after " + ms + "ms")), ms)),
+    ]);
     let terrainProvider;
     let usingRealTerrain = false;
     let terrainSource = "flat";
     try {
-      terrainProvider = await Cesium.createWorldTerrainAsync({
-        requestVertexNormals: true,
-        requestWaterMask: true,
-      });
+      terrainProvider = await withTimeout(
+        Cesium.createWorldTerrainAsync({ requestVertexNormals: true, requestWaterMask: true }),
+        4000,
+        "Cesium World Terrain"
+      );
       usingRealTerrain = true;
       terrainSource = "Cesium World Terrain";
     } catch (eIon) {
-      console.warn("Cesium World Terrain unavailable, trying Esri…", eIon);
+      console.warn("Cesium World Terrain unavailable, trying Esri…", eIon.message || eIon);
       try {
-        terrainProvider = await Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(
-          "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer"
+        terrainProvider = await withTimeout(
+          Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(
+            "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer"
+          ),
+          5000,
+          "Esri World Elevation"
         );
         usingRealTerrain = true;
         terrainSource = "Esri World Elevation";
       } catch (eEsri) {
-        console.warn("Esri terrain also unavailable, using flat globe.", eEsri);
+        console.warn("Esri terrain unavailable, using flat globe:", eEsri.message || eEsri);
         terrainProvider = new Cesium.EllipsoidTerrainProvider();
       }
     }
@@ -188,7 +197,7 @@
       geocoder: false,
       homeButton: true,
       infoBox: true,
-      navigationHelpButton: true,
+      navigationHelpButton: false, // we have our own help overlay
       sceneModePicker: true,
       selectionIndicator: true,
       shadows: false,
@@ -196,10 +205,10 @@
       contextOptions: { webgl: { preserveDrawingBuffer: false } },
     });
 
-    // Default to gray base — lightweight, road-focused, plays well as a
-    // backdrop for the colored polylines.
+    // Default to satellite — gives the realistic terrain texture so the 3D
+    // depth reads visually. Gray/dark are alternatives via the sidebar toggle.
     function applyBasemap(name) {
-      const b = BASEMAPS[name] || BASEMAPS.gray;
+      const b = BASEMAPS[name] || BASEMAPS.satellite;
       viewer.imageryLayers.removeAll();
       viewer.imageryLayers.addImageryProvider(b.base());
       if (b.ref) viewer.imageryLayers.addImageryProvider(b.ref());
@@ -207,7 +216,7 @@
     }
     window.__applyBasemap__ = applyBasemap;
     window.__BASEMAPS__ = BASEMAPS;
-    applyBasemap("gray");
+    applyBasemap("satellite");
 
     // Expose viewer so devtools / scripts can drive the camera
     window.__viewer__ = viewer;
@@ -228,17 +237,29 @@
       viewer.scene.verticalExaggeration = 1.5;
     }
 
-    // Hide the Cesium logo credit overlay's expandable container — the
-    // attribution is still shown but no longer occupies prime screen real
-    // estate. (We respect the on-screen credits requirement by leaving
-    // the visible logo intact.)
-    viewer.cesiumWidget.creditContainer.style.color = "#cbd5e1";
+    // We're using Esri imagery + Esri terrain, NOT Cesium Ion services, so
+    // the Cesium ion branding/logo does not legally need to be displayed.
+    // Hide the logo container while keeping the Esri credit text visible.
+    const creditCont = viewer.cesiumWidget.creditContainer;
+    creditCont.style.color = "#cbd5e1";
+    // Apply CSS belt-and-braces in case the logo container is recreated later.
+    const style = document.createElement("style");
+    style.textContent = `
+      .cesium-credit-logoContainer { display: none !important; }
+      .cesium-credit-textContainer { font-size: 10px; color: rgba(229,231,235,0.7) !important; }
+    `;
+    document.head.appendChild(style);
 
-    // Dim the sky/atmosphere a touch so the dark UI doesn't blow out at sunrise
-    viewer.scene.skyAtmosphere.show = true;
+    // Atmosphere / fog / lighting defaults — start subtle, the user can
+    // toggle them on/off from the sidebar.
+    viewer.scene.skyAtmosphere.show = true;  // gentle horizon haze
     viewer.scene.fog.enabled = true;
-    viewer.scene.globe.enableLighting = false;
+    // Enable lighting so buildings get directional shading (more 3D-feeling)
+    viewer.scene.globe.enableLighting = true;
     viewer.scene.globe.depthTestAgainstTerrain = true;
+    // Brighten ambient so shadowed building faces stay readable
+    viewer.scene.light = new Cesium.SunLight();
+    viewer.scene.globe.atmosphereLightIntensity = 5.0;
 
     // Default camera: tilted overhead view of the Bay Area
     viewer.camera.flyTo({
@@ -266,11 +287,42 @@
         "<strong>UC Berkeley</strong><br>Origin point — drive times measured from here.",
     });
 
-    // Click handler for routes / POIs
+    // Click handler for routes / POIs.
+    //   - Click a route polyline or its start pin → open detail panel
+    //   - Click a POI billboard or polygon → fly camera in close, show description
+    //   - Click empty space → close detail
     viewer.screenSpaceEventHandler.setInputAction((click) => {
       const picked = viewer.scene.pick(click.position);
-      if (picked && picked.id && picked.id._routeId) {
-        openDetail(picked.id._routeId);
+      if (picked && picked.id) {
+        const id = picked.id;
+        if (id._routeId) {
+          openDetail(id._routeId);
+          return;
+        }
+        // Generic entity click — Cesium's selectionIndicator + InfoBox handle
+        // the popup; here we add a fly-in for non-route POIs/polygons so the
+        // user gets a guided zoom.
+        if (id.position) {
+          const pos = id.position.getValue ? id.position.getValue(viewer.clock.currentTime) : id.position;
+          if (pos) {
+            const carto = Cesium.Cartographic.fromCartesian(pos);
+            viewer.camera.flyTo({
+              destination: Cesium.Cartesian3.fromDegrees(
+                Cesium.Math.toDegrees(carto.longitude),
+                Cesium.Math.toDegrees(carto.latitude) - 0.003,
+                900
+              ),
+              orientation: { heading: 0, pitch: Cesium.Math.toRadians(-35), roll: 0 },
+              duration: 1.4,
+            });
+          }
+        } else if (id.polygon) {
+          // Polygon (golf feature, area POI) — fly to centroid
+          viewer.flyTo(id, {
+            duration: 1.4,
+            offset: new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-35), 1500),
+          });
+        }
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
@@ -863,27 +915,38 @@
       }
     });
 
-    // Fly camera to this route, with terrain tilt
+    // Fly camera to this route with a dramatic oblique angle. We compute the
+    // route's bearing so the camera lines up looking down the road, which
+    // shows off the 3D terrain better than a top-down view.
     const layer = routeLayers[id];
     if (layer) {
+      const coords = route._geom.coordinates;
       let lonMin = 180, lonMax = -180, latMin = 90, latMax = -90;
-      for (const [lon, lat] of route._geom.coordinates) {
+      for (const [lon, lat] of coords) {
         if (lon < lonMin) lonMin = lon;
         if (lon > lonMax) lonMax = lon;
         if (lat < latMin) latMin = lat;
         if (lat > latMax) latMax = lat;
       }
+      const cLon = (lonMin + lonMax) / 2;
+      const cLat = (latMin + latMax) / 2;
+      // Bearing from route start → end → orient camera tangent to it
+      const start = coords[0];
+      const end = coords[coords.length - 1];
+      const dLon = end[0] - start[0];
+      const dLat = end[1] - start[1];
+      const heading = Math.atan2(dLon, dLat); // radians, north = 0
+      // Estimate altitude from route bbox so the whole road fits in view
+      const span = Math.max(lonMax - lonMin, latMax - latMin);
+      const alt = Math.max(2500, span * 111000 * 1.5);
       viewer.camera.flyTo({
-        destination: Cesium.Rectangle.fromDegrees(
-          lonMin - 0.01, latMin - 0.01,
-          lonMax + 0.01, latMax + 0.01
-        ),
+        destination: Cesium.Cartesian3.fromDegrees(cLon, cLat - span * 0.6, alt),
         orientation: {
-          heading: 0,
-          pitch: Cesium.Math.toRadians(-50),
+          heading,
+          pitch: Cesium.Math.toRadians(-38), // shallower → more dramatic 3D
           roll: 0,
         },
-        duration: 1.4,
+        duration: 2.0,
       });
     }
 
@@ -1069,18 +1132,218 @@
       if (e.key === "r" || e.key === "R") {
         document.getElementById("reset-view")?.click();
       } else if (e.key === "g" || e.key === "G") {
-        // cycle basemap
         const chips = [...document.querySelectorAll("#basemap-chips .chip")];
         const i = chips.findIndex((c) => c.classList.contains("active"));
         chips[(i + 1) % chips.length]?.click();
       } else if (e.key === "p" || e.key === "P") {
         document.getElementById("toggle-pois")?.click();
+      } else if (e.key === "?" || e.key === "/") {
+        document.getElementById("help-3d-btn")?.click();
+      }
+    });
+  }
+
+  function wireExaggerationSlider() {
+    const slider = document.getElementById("exaggeration");
+    const val = document.getElementById("exaggeration-val");
+    if (!slider || !val) return;
+    slider.addEventListener("input", () => {
+      const v = parseFloat(slider.value);
+      val.textContent = v.toFixed(1) + "×";
+      if (viewer && viewer.scene) viewer.scene.verticalExaggeration = v;
+    });
+  }
+
+  function wireAtmosphereToggle() {
+    const btn = document.getElementById("toggle-atmosphere");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      const on = !btn.classList.contains("active");
+      btn.classList.toggle("active", on);
+      if (viewer) viewer.scene.skyAtmosphere.show = on;
+    });
+  }
+
+  function wireFogToggle() {
+    const btn = document.getElementById("toggle-fog");
+    if (!btn) return;
+    // Fog defaults to on; reflect that in the chip
+    btn.classList.add("active");
+    btn.addEventListener("click", () => {
+      const on = !btn.classList.contains("active");
+      btn.classList.toggle("active", on);
+      if (viewer) viewer.scene.fog.enabled = on;
+    });
+  }
+
+  // ─── 3D Buildings (OSM extruded) ─────────────────────────────
+  // Loads bay_buildings.json (pre-baked from OSM via Overpass) and renders
+  // each building as an extruded polygon with the OSM-tagged height. Free
+  // alternative to Cesium OSM Buildings (which would need a Cesium Ion token).
+  let buildingsLayer = null;
+  let buildingsLoaded = false;
+  let buildingsLoading = false;
+
+  async function loadBuildings() {
+    if (buildingsLoaded || buildingsLoading) return;
+    buildingsLoading = true;
+    const btn = document.getElementById("toggle-buildings");
+    if (btn) btn.textContent = "Loading buildings…";
+    try {
+      const res = await fetch("bay_buildings.json");
+      if (!res.ok) throw new Error(`bay_buildings.json ${res.status}`);
+      const data = await res.json();
+
+      // Build one entity collection so we can show/hide all together
+      buildingsLayer = new Cesium.CustomDataSource("buildings");
+      viewer.dataSources.add(buildingsLayer);
+
+      // Color buildings by height. Pale concrete tones with subtle warmth so
+      // shorter buildings still pop. Outlined for crisp edges in 3D.
+      const colorFor = (h) => {
+        if (h >= 80) return Cesium.Color.fromCssColorString("#cbd5e1"); // skyscraper
+        if (h >= 40) return Cesium.Color.fromCssColorString("#e2e8f0"); // tower
+        if (h >= 20) return Cesium.Color.fromCssColorString("#f1f5f9"); // mid-rise
+        if (h >= 10) return Cesium.Color.fromCssColorString("#f5f5f4"); // low-rise
+        return Cesium.Color.fromCssColorString("#fafaf9"); // residential
+      };
+      const outlineColor = Cesium.Color.fromCssColorString("#475569").withAlpha(0.35);
+
+      for (const f of data.features) {
+        if (!f.c || f.c.length < 3) continue;
+        const positions = Cesium.Cartesian3.fromDegreesArray(
+          f.c.flatMap(([lat, lon]) => [lon, lat])
+        );
+        buildingsLayer.entities.add({
+          polygon: {
+            hierarchy: positions,
+            material: colorFor(f.h),
+            height: 0,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+            extrudedHeight: f.h,
+            extrudedHeightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+            outline: true,
+            outlineColor,
+            outlineWidth: 1,
+          },
+        });
+      }
+      buildingsLoaded = true;
+      if (btn) btn.textContent = `Buildings (${data.count.toLocaleString()})`;
+    } catch (e) {
+      console.warn("Buildings load failed:", e);
+      if (btn) btn.textContent = "Buildings (failed)";
+    } finally {
+      buildingsLoading = false;
+    }
+  }
+
+  function wireBuildingsToggle() {
+    const btn = document.getElementById("toggle-buildings");
+    if (!btn) return;
+    let visible = false;
+    btn.addEventListener("click", async () => {
+      visible = !visible;
+      btn.classList.toggle("active", visible);
+      if (visible) {
+        await loadBuildings();
+        if (buildingsLayer) buildingsLayer.show = true;
+      } else if (buildingsLayer) {
+        buildingsLayer.show = false;
+      }
+    });
+  }
+
+  // ─── Trees / forest blobs ────────────────────────────────────
+  // We don't have realistic individual trees, but we can visualise OSM's
+  // forest / wood / scrub polygons as low-extrusion green slabs to give a
+  // wooded feel. This is a "cheap trees" effect — turn it on with the toggle.
+  let treesLayer = null;
+  let treesLoaded = false;
+  let treesLoading = false;
+
+  async function loadTrees() {
+    if (treesLoaded || treesLoading) return;
+    treesLoading = true;
+    const btn = document.getElementById("toggle-trees");
+    if (btn) btn.textContent = "Loading forest…";
+    try {
+      const res = await fetch("bay_forest.json");
+      if (!res.ok) throw new Error(`bay_forest.json ${res.status}`);
+      const data = await res.json();
+      treesLayer = new Cesium.CustomDataSource("trees");
+      viewer.dataSources.add(treesLayer);
+      for (const f of data.features) {
+        if (!f.c || f.c.length < 3) continue;
+        const positions = Cesium.Cartesian3.fromDegreesArray(
+          f.c.flatMap(([lat, lon]) => [lon, lat])
+        );
+        treesLayer.entities.add({
+          polygon: {
+            hierarchy: positions,
+            material: Cesium.Color.fromCssColorString("#15803d").withAlpha(0.55),
+            height: 0,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+            extrudedHeight: 8,
+            extrudedHeightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+            outline: false,
+          },
+        });
+      }
+      treesLoaded = true;
+      if (btn) btn.textContent = `Trees (${data.count.toLocaleString()})`;
+    } catch (e) {
+      console.warn("Trees load failed:", e);
+      if (btn) btn.textContent = "Trees (n/a)";
+    } finally {
+      treesLoading = false;
+    }
+  }
+
+  function wireTreesToggle() {
+    const btn = document.getElementById("toggle-trees");
+    if (!btn) return;
+    let visible = false;
+    btn.addEventListener("click", async () => {
+      visible = !visible;
+      btn.classList.toggle("active", visible);
+      if (visible) {
+        await loadTrees();
+        if (treesLayer) treesLayer.show = true;
+      } else if (treesLayer) {
+        treesLayer.show = false;
+      }
+    });
+  }
+
+  function wireHelpOverlay() {
+    const btn = document.getElementById("help-3d-btn");
+    const overlay = document.getElementById("help-overlay");
+    const close = document.getElementById("help-close");
+    if (!btn || !overlay || !close) return;
+    btn.addEventListener("click", () => overlay.classList.add("open"));
+    close.addEventListener("click", () => overlay.classList.remove("open"));
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) overlay.classList.remove("open");
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("open")) {
+        overlay.classList.remove("open");
+        e.stopPropagation();
       }
     });
   }
 
   // ─── Boot ───────────────────────────────────────────────────
-  document.addEventListener("DOMContentLoaded", async () => {
+  function onReady(fn) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", fn);
+    } else {
+      // DOM already parsed (e.g. when app-3d.js is appended after Cesium.js)
+      fn();
+    }
+  }
+  onReady(async () => {
     try {
       await initViewer();
     } catch (e) {
@@ -1097,6 +1360,12 @@
     wirePoiToggle();
     wireResetView();
     wireKeyboardShortcuts();
+    wireExaggerationSlider();
+    wireAtmosphereToggle();
+    wireFogToggle();
+    wireHelpOverlay();
+    wireBuildingsToggle();
+    wireTreesToggle();
 
     try {
       await loadRoutes();

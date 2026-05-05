@@ -9,7 +9,14 @@
   <meta property="og:description" content="3D interactive driving-roads map with real terrain and satellite imagery." />
   <meta property="og:type" content="website" />
 
-  <link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/Widgets/widgets.css" />
+  <!--
+    Cesium is loaded from unpkg (npm mirror) by default. To use a local copy:
+      1. Download Cesium 1.123 from cesium.com or `npm pack cesium@1.123`
+      2. Unpack into ./vendor/cesium/Build/Cesium/
+      3. Set window.CESIUM_LOCAL = true at the top of <body>
+    The two link/script tags below will then resolve to ./vendor/cesium/...
+  -->
+  <link rel="stylesheet" href="https://unpkg.com/cesium@1.123/Build/Cesium/Widgets/widgets.css" id="cesium-css" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='14'%3E%F0%9F%8C%90%3C/text%3E%3C/svg%3E" />
 
@@ -72,16 +79,30 @@
       <div class="filter-group">
         <label class="filter-label">Basemap</label>
         <div class="chip-row" id="basemap-chips">
-          <button class="chip active" data-basemap="gray">B&amp;W light</button>
+          <button class="chip" data-basemap="gray">B&amp;W light</button>
           <button class="chip" data-basemap="dark">B&amp;W dark</button>
-          <button class="chip" data-basemap="satellite">Satellite</button>
+          <button class="chip active" data-basemap="satellite">Satellite</button>
         </div>
       </div>
       <div class="filter-group">
         <label class="filter-label">Layers</label>
         <div class="chip-row">
           <button class="chip toggle active" id="toggle-pois" title="Show or hide POI pins">POIs</button>
+          <button class="chip toggle" id="toggle-buildings" title="Extruded OSM buildings (Bay Area)">Buildings</button>
+          <button class="chip toggle" id="toggle-trees" title="OSM forest / wood polygons extruded as canopy">Trees</button>
           <button class="chip toggle" id="toggle-heatmap" title="Heatmap is currently 2D-only">My runs heatmap</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Visual</label>
+        <div class="range-row">
+          <label for="exaggeration">Hill exag.</label>
+          <input type="range" id="exaggeration" min="1.0" max="3.0" step="0.1" value="1.5" />
+          <span class="range-val" id="exaggeration-val">1.5×</span>
+        </div>
+        <div class="chip-row" style="margin-top: 6px;">
+          <button class="chip toggle" id="toggle-atmosphere" title="Sky/atmosphere haze">Sky haze</button>
+          <button class="chip toggle" id="toggle-fog" title="Distance fog">Fog</button>
         </div>
       </div>
     </section>
@@ -112,15 +133,60 @@
 
   <!-- 3D-only HUD: live coords + reset/help buttons -->
   <div id="hud-3d" aria-hidden="false">
-    <button id="reset-view" class="hud-btn" title="Fly back to the Bay Area overview">⌖ Reset view</button>
+    <button id="reset-view" class="hud-btn" title="Fly back to the Bay Area overview (R)">⌖ Reset view</button>
+    <button id="help-3d-btn" class="hud-btn" title="Show keyboard shortcuts (?)">? Shortcuts</button>
     <div id="hud-coords" class="hud-coords" aria-live="off">—</div>
+  </div>
+  <div id="help-overlay" class="help-overlay" aria-hidden="true">
+    <div class="help-card">
+      <button class="help-close" id="help-close" aria-label="Close shortcuts">×</button>
+      <h3>3D viewer controls</h3>
+      <table class="help-table">
+        <tr><td><kbd>Drag</kbd></td><td>Pan the camera</td></tr>
+        <tr><td><kbd>Right-drag</kbd></td><td>Tilt &amp; rotate</td></tr>
+        <tr><td><kbd>Scroll</kbd></td><td>Zoom in / out</td></tr>
+        <tr><td><kbd>R</kbd></td><td>Reset to Bay Area overview</td></tr>
+        <tr><td><kbd>G</kbd></td><td>Cycle basemap (B&amp;W → dark → satellite)</td></tr>
+        <tr><td><kbd>P</kbd></td><td>Toggle POI pins</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Close detail panel</td></tr>
+      </table>
+      <p class="help-tip">
+        Click a route in the sidebar or on the map to fly along it.
+        Click a POI to zoom in.
+      </p>
+    </div>
   </div>
 
   <script>
-    // Cesium needs to know its own asset/worker base URL.
-    window.CESIUM_BASE_URL = "https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/";
+    // If a local Cesium build is present at ./vendor/cesium, use it. Otherwise
+    // fall back to unpkg's npm mirror (more reliable than cesium.com's CDN).
+    (function () {
+      const useLocal = window.CESIUM_LOCAL === true;
+      const base = useLocal
+        ? "vendor/cesium/Build/Cesium/"
+        : "https://unpkg.com/cesium@1.123/Build/Cesium/";
+      window.CESIUM_BASE_URL = base;
+      // Replace the widgets.css link if local
+      if (useLocal) {
+        const link = document.getElementById("cesium-css");
+        if (link) link.href = base + "Widgets/widgets.css";
+      }
+      const s = document.createElement("script");
+      s.src = base + "Cesium.js";
+      s.onload = () => {
+        const app = document.createElement("script");
+        // Tie cache-key to the page query string so a hard reload via
+        // ?v=... busts app-3d.js too, not just the HTML.
+        const q = new URL(window.location.href).searchParams.get("v");
+        app.src = q ? `app-3d.js?v=${q}` : "app-3d.js";
+        document.body.appendChild(app);
+      };
+      s.onerror = () => {
+        document.getElementById("loading").textContent =
+          "Cesium failed to load. Check your network connection.";
+      };
+      document.body.appendChild(s);
+    })();
   </script>
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/Cesium.js"></script>
-  <script src="app-3d.js"></script>
 </body>
 </html>
