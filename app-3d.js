@@ -106,7 +106,28 @@
   /** id → { polyline: Entity, marker: Entity, poiEntities: Entity[], route } */
   const routeLayers = {};
   let activeId = null;
-  const filters = { rating: 0, region: "all", type: "all", search: "" };
+  const filters = { rating: 0, region: "all", type: "all", search: "", favoritesOnly: false };
+
+  // ─── Favorites (persisted in localStorage) ──────────────────
+  const FAV_KEY = "tougespot_favorites_v1";
+  function loadFavorites() {
+    try {
+      const raw = localStorage.getItem(FAV_KEY);
+      if (!raw) return new Set();
+      return new Set(JSON.parse(raw));
+    } catch { return new Set(); }
+  }
+  function saveFavorites(set) {
+    try { localStorage.setItem(FAV_KEY, JSON.stringify([...set])); } catch {}
+  }
+  const favorites = loadFavorites();
+  function toggleFavorite(id) {
+    if (favorites.has(id)) favorites.delete(id);
+    else favorites.add(id);
+    saveFavorites(favorites);
+    renderRouteList();
+    if (filters.favoritesOnly) applyFilters();
+  }
 
   // ─── Cesium init ─────────────────────────────────────────────
   async function initViewer() {
@@ -843,6 +864,7 @@
         const hay = `${r.name || ""} ${r.region || ""} ${r.summary || ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
+      if (filters.favoritesOnly && !favorites.has(r.id)) return false;
       return true;
     });
   }
@@ -918,9 +940,12 @@
       const diffBadge = r.difficulty
         ? `<span class="diff-badge diff-${r.difficulty}">${r.difficulty}</span>`
         : "";
+      const isFav = favorites.has(r.id);
+      const favIcon = `<button class="fav-btn ${isFav ? "fav" : ""}" data-fav="${r.id}" title="${isFav ? "Unfavorite" : "Favorite"}">${isFav ? "♥" : "♡"}</button>`;
       card.innerHTML = `
         <div class="row">
           <h3 class="name">${escapeHtml(r.name)}</h3>
+          ${favIcon}
           ${ratingChip}
         </div>
         <div class="meta">
@@ -930,6 +955,14 @@
           ${diffBadge}
         </div>
       `;
+      // Wire heart click before card click so it doesn't bubble
+      const favBtn = card.querySelector(".fav-btn");
+      if (favBtn) {
+        favBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleFavorite(r.id);
+        });
+      }
       card.addEventListener("click", (e) => {
         // Shift-click → add to comparison set instead of opening detail
         if (e.shiftKey) {
@@ -1522,6 +1555,107 @@
       compareSet.clear();
       document.querySelectorAll(".route-card").forEach((c) => c.classList.remove("compare-selected"));
       panel.remove();
+    });
+  }
+
+  // ─── Favorites-only filter chip ──────────────────────────────
+  function wireFavoritesFilter() {
+    const btn = document.getElementById("toggle-favorites");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      filters.favoritesOnly = !filters.favoritesOnly;
+      btn.classList.toggle("active", filters.favoritesOnly);
+      applyFilters();
+    });
+  }
+
+  // ─── Drive-time rings around UC Berkeley ────────────────────
+  // Concentric circles at 30/60/90/120 minutes assuming a rough average
+  // speed of 50 km/h on Bay Area roads. Decorative — gives a quick spatial
+  // sense of how far each route is from campus.
+  let driveRingsLayer = null;
+  function ensureDriveRings() {
+    if (driveRingsLayer) return;
+    driveRingsLayer = new Cesium.CustomDataSource("drive-rings");
+    viewer.dataSources.add(driveRingsLayer);
+    const center = Cesium.Cartesian3.fromDegrees(-122.2585, 37.8719);
+    const ringSpec = [
+      { mins: 30, color: "#22c55e" },
+      { mins: 60, color: "#84cc16" },
+      { mins: 90, color: "#eab308" },
+      { mins: 120, color: "#f97316" },
+    ];
+    const speedKmh = 50;
+    for (const s of ringSpec) {
+      const radiusM = (speedKmh * 1000 * (s.mins / 60));
+      driveRingsLayer.entities.add({
+        position: center,
+        ellipse: {
+          semiMajorAxis: radiusM,
+          semiMinorAxis: radiusM,
+          material: Cesium.Color.fromCssColorString(s.color).withAlpha(0.06),
+          outline: true,
+          outlineColor: Cesium.Color.fromCssColorString(s.color).withAlpha(0.85),
+          outlineWidth: 2,
+          height: 0,
+          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+          classificationType: Cesium.ClassificationType.TERRAIN,
+        },
+      });
+      // Time label at the north edge of each ring
+      const labelLat = 37.8719 + (radiusM / 111000);
+      driveRingsLayer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(-122.2585, labelLat),
+        label: {
+          text: `${s.mins} min`,
+          font: "bold 11px system-ui",
+          fillColor: Cesium.Color.WHITE,
+          outlineColor: Cesium.Color.BLACK,
+          outlineWidth: 3,
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+          showBackground: true,
+          backgroundColor: Cesium.Color.fromCssColorString(s.color).withAlpha(0.85),
+          backgroundPadding: new Cesium.Cartesian2(7, 4),
+          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+      });
+    }
+  }
+  function wireDriveRings() {
+    const btn = document.getElementById("toggle-rings");
+    if (!btn) return;
+    let visible = false;
+    btn.addEventListener("click", () => {
+      visible = !visible;
+      btn.classList.toggle("active", visible);
+      ensureDriveRings();
+      driveRingsLayer.show = visible;
+    });
+  }
+
+  // ─── Arrow-key route navigation ─────────────────────────────
+  function wireArrowNavigation() {
+    document.addEventListener("keydown", (e) => {
+      if (e.target.matches("input, textarea, select")) return;
+      if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "Enter") return;
+      const cards = [...document.querySelectorAll(".route-card")];
+      if (!cards.length) return;
+      let i = cards.findIndex((c) => c.classList.contains("active"));
+      if (e.key === "ArrowDown") i = (i + 1) % cards.length;
+      else if (e.key === "ArrowUp") i = i <= 0 ? cards.length - 1 : i - 1;
+      else if (e.key === "Enter" && i >= 0) {
+        // re-trigger current selection
+        cards[i].click();
+        return;
+      }
+      const card = cards[i];
+      if (card) {
+        cards.forEach((c) => c.classList.remove("keyboard-focus"));
+        card.classList.add("keyboard-focus");
+        card.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        e.preventDefault();
+      }
     });
   }
 
@@ -2172,6 +2306,9 @@
     wireDropPin();
     wireCinematic();
     wireDayCycle();
+    wireFavoritesFilter();
+    wireDriveRings();
+    wireArrowNavigation();
 
     try {
       await loadRoutes();

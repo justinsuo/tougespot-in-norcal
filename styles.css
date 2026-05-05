@@ -1494,6 +1494,23 @@ body.measure-mode .cesium-widget canvas { cursor: crosshair !important; }
   stroke-width: 1.5;
 }
 
+/* Heart favorite button on each route card */
+.fav-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  margin-right: 4px;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+.fav-btn:hover { color: #f87171; transform: scale(1.15); }
+.fav-btn.fav { color: #ef4444; }
+.route-card .row { display: flex; align-items: center; gap: 6px; }
+.route-card .row .name { flex: 1; }
+
 /* Search box at the top of the sidebar */
 .route-search {
   width: 100%;
@@ -1555,6 +1572,10 @@ body.measure-mode .cesium-widget canvas { cursor: crosshair !important; }
 .route-card.compare-selected {
   border-left: 3px solid var(--accent);
   background: rgba(249, 115, 22, 0.08);
+}
+.route-card.keyboard-focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 /* Cinematic mode — hide every overlay so the 3D view fills the screen */
