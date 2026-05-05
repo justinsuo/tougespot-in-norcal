@@ -510,6 +510,18 @@
     });
     polylineEntity._routeId = route.id;
 
+    // Invisible thick "click target" polyline so the route is easy to pick
+    // even on touch devices where pointer accuracy is poor.
+    const pickTarget = viewer.entities.add({
+      polyline: {
+        positions,
+        width: 22,
+        clampToGround: true,
+        material: Cesium.Color.TRANSPARENT,
+      },
+    });
+    pickTarget._routeId = route.id;
+
     // Start-point billboard
     const start = route._geom.coordinates[0];
     const markerEntity = viewer.entities.add({
@@ -566,6 +578,7 @@
 
     routeLayers[route.id] = {
       polyline: polylineEntity,
+      pickTarget,
       marker: markerEntity,
       poiEntities,
       distanceLabel,
@@ -875,6 +888,7 @@
       const show = visibleIds.has(id);
       layer.polyline.show = show;
       layer.marker.show = show;
+      if (layer.pickTarget) layer.pickTarget.show = show;
       if (layer.distanceLabel) layer.distanceLabel.show = show;
       (layer.poiEntities || []).forEach((e) => { if (e) e.show = show; });
     });
@@ -921,8 +935,30 @@
       return (b.rating || 0) - (a.rating || 0);
     });
     if (!sorted.length) {
-      container.innerHTML =
-        '<p style="color:var(--text-dim);font-size:12px;padding:12px;text-align:center;">No routes match these filters.</p>';
+      container.innerHTML = `
+        <div class="route-list-empty">
+          <div>No routes match these filters.</div>
+          <button class="clear-filters" id="clear-filters-btn">Clear filters</button>
+        </div>
+      `;
+      document.getElementById("clear-filters-btn")?.addEventListener("click", () => {
+        // Reset all filter chips to "All", clear search, drop favorites-only
+        document.querySelectorAll("#rating-chips .chip").forEach((c) =>
+          c.classList.toggle("active", c.dataset.rating === "0"));
+        document.querySelectorAll("#region-chips .chip").forEach((c) =>
+          c.classList.toggle("active", c.dataset.region === "all"));
+        document.querySelectorAll("#type-chips .chip").forEach((c) =>
+          c.classList.toggle("active", c.dataset.type === "all"));
+        document.getElementById("toggle-favorites")?.classList.remove("active");
+        const search = document.getElementById("route-search");
+        if (search) search.value = "";
+        filters.rating = 0;
+        filters.region = "all";
+        filters.type = "all";
+        filters.search = "";
+        filters.favoritesOnly = false;
+        applyFilters();
+      });
       return;
     }
     for (const r of sorted) {

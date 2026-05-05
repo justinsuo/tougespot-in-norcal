@@ -1587,6 +1587,46 @@ body.measure-mode .cesium-widget canvas { cursor: crosshair !important; }
   outline-offset: -2px;
 }
 
+/* Empty-state when no routes match filters */
+.route-list-empty {
+  padding: 18px 12px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+.route-list-empty .clear-filters {
+  display: inline-block;
+  margin-top: 8px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.route-list-empty .clear-filters:hover { filter: brightness(1.1); }
+
+/* Mobile-only refinements for the 3D viewer */
+@media (max-width: 720px) {
+  .compare-panel {
+    bottom: 60vh;
+    max-width: calc(100vw - 24px);
+    padding: 10px 12px;
+    font-size: 11px;
+  }
+  .compare-table th, .compare-table td { padding: 4px 6px; }
+  #hud-3d {
+    flex-wrap: wrap;
+    bottom: calc(55vh + 10px);
+    left: 14px;
+    right: 14px;
+    pointer-events: none;
+  }
+  #hud-coords, #hud-measure { font-size: 10px; padding: 4px 8px; }
+  .hud-btn { padding: 5px 10px; font-size: 11px; }
+}
+
 /* Cinematic mode — hide every overlay so the 3D view fills the screen */
 body.cinematic #sidebar,
 body.cinematic #app-tabs,
