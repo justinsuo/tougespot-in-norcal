@@ -515,10 +515,39 @@
       }
     }
 
+    // Distance label at the route midpoint — small floating chip
+    let distanceLabel = null;
+    const geomCoords = route._geom.coordinates;
+    if (route._distance && geomCoords.length > 1) {
+      const midIdx = Math.floor(geomCoords.length / 2);
+      const [mLon, mLat] = geomCoords[midIdx];
+      const distMi = (route._distance / 1609.344).toFixed(1);
+      distanceLabel = viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(mLon, mLat),
+        label: {
+          text: `${distMi} mi`,
+          font: "bold 11px system-ui",
+          fillColor: Cesium.Color.WHITE,
+          outlineColor: Cesium.Color.BLACK,
+          outlineWidth: 3,
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+          showBackground: true,
+          backgroundColor: color.withAlpha(0.85),
+          backgroundPadding: new Cesium.Cartesian2(7, 4),
+          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+          pixelOffset: new Cesium.Cartesian2(0, -8),
+          // Only show distance labels at moderate zoom to avoid clutter
+          distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 50000),
+        },
+      });
+    }
+
     routeLayers[route.id] = {
       polyline: polylineEntity,
       marker: markerEntity,
       poiEntities,
+      distanceLabel,
       route,
     };
   }
@@ -819,6 +848,7 @@
       const show = visibleIds.has(id);
       layer.polyline.show = show;
       layer.marker.show = show;
+      if (layer.distanceLabel) layer.distanceLabel.show = show;
       (layer.poiEntities || []).forEach((e) => { if (e) e.show = show; });
     });
     renderRouteList();
@@ -896,6 +926,19 @@
         </div>
       `;
       card.addEventListener("click", () => openDetail(r.id));
+      // Hover-preview: gently widen the route polyline to draw the eye to it
+      card.addEventListener("mouseenter", () => {
+        const layer = routeLayers[r.id];
+        if (layer && layer.polyline.polyline && r.id !== activeId) {
+          layer.polyline.polyline.width = 9;
+        }
+      });
+      card.addEventListener("mouseleave", () => {
+        const layer = routeLayers[r.id];
+        if (layer && layer.polyline.polyline && r.id !== activeId) {
+          layer.polyline.polyline.width = 5;
+        }
+      });
       container.appendChild(card);
     }
   }
