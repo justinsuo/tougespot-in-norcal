@@ -1447,6 +1447,15 @@ a:hover { text-decoration: underline; }
   font: bold 11px system-ui; color: var(--text);
   text-shadow: 0 1px 2px rgba(0,0,0,0.6);
 }
+.compass-sun {
+  position: absolute;
+  top: 50%; left: 50%;
+  font-size: 13px;
+  pointer-events: none;
+  /* set via inline transform from JS — orbits at radius ~22px */
+  transition: transform 0.18s ease-out, opacity 0.18s ease-out;
+  text-shadow: 0 0 4px rgba(0,0,0,0.7);
+}
 @media (max-width: 720px) { #compass-3d { top: 64px; right: 12px; width: 44px; height: 44px; } }
 
 /* Fly-route button in the detail panel */

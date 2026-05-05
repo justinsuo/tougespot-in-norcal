@@ -2123,13 +2123,65 @@
   // ─── Compass widget ─────────────────────────────────────────
   function wireCompass() {
     const needle = document.getElementById("compass-needle");
+    const sun = document.getElementById("compass-sun");
     const widget = document.getElementById("compass-3d");
     if (!needle || !widget) return;
-    // Update on every camera change
-    viewer.camera.changed.addEventListener(() => {
+
+    // Approximate solar position (NOAA basic algo) → azimuth + elevation
+    function sunPosition(date, lat, lon) {
+      const rad = Math.PI / 180;
+      // Day of year
+      const start = Date.UTC(date.getUTCFullYear(), 0, 0);
+      const N = Math.floor((date.getTime() - start) / 86400000);
+      const fracHr = date.getUTCHours() + date.getUTCMinutes() / 60;
+      // Solar declination
+      const decl = 23.44 * Math.sin(((360 / 365) * (N - 81)) * rad);
+      // Equation of time (approx, in minutes)
+      const B = (360 / 365) * (N - 81) * rad;
+      const eqt = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+      // Solar time
+      const solarTime = fracHr + (4 * lon + eqt) / 60;
+      const HRA = (solarTime - 12) * 15; // hour angle, degrees
+      const elev = Math.asin(
+        Math.sin(decl * rad) * Math.sin(lat * rad) +
+        Math.cos(decl * rad) * Math.cos(lat * rad) * Math.cos(HRA * rad)
+      ) / rad;
+      const az = Math.atan2(
+        Math.sin(HRA * rad),
+        Math.cos(HRA * rad) * Math.sin(lat * rad) - Math.tan(decl * rad) * Math.cos(lat * rad)
+      ) / rad;
+      const azimuth = (180 + az + 360) % 360;
+      return { azimuth, elevation: elev };
+    }
+
+    function updateCompass() {
       const heading = Cesium.Math.toDegrees(viewer.camera.heading);
       needle.style.transform = `rotate(${-heading}deg)`;
-    });
+      if (sun) {
+        // Sun azimuth in real-world degrees; rotate by camera heading too
+        const date = Cesium.JulianDate.toDate(viewer.clock.currentTime);
+        const cam = viewer.camera.positionCartographic;
+        const { azimuth, elevation } = sunPosition(
+          date,
+          Cesium.Math.toDegrees(cam.latitude),
+          Cesium.Math.toDegrees(cam.longitude)
+        );
+        const screenAz = (azimuth - heading + 360) % 360;
+        const r = 20; // orbit radius (px)
+        const rad = (screenAz - 90) * Math.PI / 180;
+        const x = r * Math.cos(rad);
+        const y = r * Math.sin(rad);
+        sun.style.transform = `translate(calc(-50% + ${x.toFixed(1)}px), calc(-50% + ${y.toFixed(1)}px))`;
+        // Fade when sun is below horizon
+        sun.style.opacity = elevation > 0 ? "1" : "0.25";
+      }
+    }
+
+    viewer.camera.changed.addEventListener(updateCompass);
+    viewer.clock.onTick.addEventListener(updateCompass);
+    setInterval(updateCompass, 800);
+    updateCompass();
+
     // Click compass → reset heading to north
     widget.addEventListener("click", () => {
       const camera = viewer.camera;
@@ -2139,7 +2191,6 @@
         duration: 0.6,
       });
     });
-    // Force one initial event so the needle settles right away
     viewer.camera.percentageChanged = 0.005;
   }
 
@@ -2429,5 +2480,10 @@
     applySavedSettings();
     // Honor any #v=lat,lon,alt,heading,pitch in the URL (overrides camera)
     applyHashView();
+    // Register service worker for offline-first PWA behavior
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js").catch((e) =>
+        console.warn("SW registration failed:", e));
+    }
   });
 })();
