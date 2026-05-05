@@ -49,6 +49,9 @@
 
     <section class="filters" aria-label="Filters">
       <div class="filter-group">
+        <input type="search" id="route-search" class="route-search" placeholder="Search routes…" />
+      </div>
+      <div class="filter-group">
         <label class="filter-label">Min rating</label>
         <div class="chip-row" id="rating-chips">
           <button class="chip active" data-rating="0">All</button>
@@ -120,6 +123,7 @@
         </div>
         <div class="chip-row" style="margin-top: 6px;">
           <button class="chip" id="tool-tour" title="Auto-fly through every visible route">🎬 Tour all routes</button>
+          <button class="chip" id="tool-locate" title="Fly to your current GPS location">📍 Locate me</button>
         </div>
       </div>
     </section>

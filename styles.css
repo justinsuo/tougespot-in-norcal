@@ -1494,6 +1494,22 @@ body.measure-mode .cesium-widget canvas { cursor: crosshair !important; }
   stroke-width: 1.5;
 }
 
+/* Search box at the top of the sidebar */
+.route-search {
+  width: 100%;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 8px 12px;
+  font: 13px system-ui;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.18s ease;
+}
+.route-search:focus { border-color: var(--accent); }
+.route-search::placeholder { color: var(--text-dim); }
+
 /* Tour mode banner */
 .tour-controls {
   position: fixed;

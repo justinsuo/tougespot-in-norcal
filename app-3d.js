@@ -106,7 +106,7 @@
   /** id → { polyline: Entity, marker: Entity, poiEntities: Entity[], route } */
   const routeLayers = {};
   let activeId = null;
-  const filters = { rating: 0, region: "all", type: "all" };
+  const filters = { rating: 0, region: "all", type: "all", search: "" };
 
   // ─── Cesium init ─────────────────────────────────────────────
   async function initViewer() {
@@ -827,6 +827,7 @@
   // ─── Visibility / filtering ─────────────────────────────────
   function visibleRoutes() {
     if (!routesData) return [];
+    const q = (filters.search || "").trim().toLowerCase();
     return routesData.routes.filter((r) => {
       const ds = isDragStrip(r);
       const roll = isRollRacing(r);
@@ -838,6 +839,10 @@
       if (filters.type === "roll-racing" && !roll) return false;
       if (filters.type === "dig-racing" && !dig) return false;
       if (filters.type === "drag-strip" && !ds) return false;
+      if (q) {
+        const hay = `${r.name || ""} ${r.region || ""} ${r.summary || ""}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
       return true;
     });
   }
@@ -1361,6 +1366,80 @@
     });
   }
 
+  // ─── Search box ─────────────────────────────────────────────
+  function wireSearch() {
+    const input = document.getElementById("route-search");
+    if (!input) return;
+    let debounce = null;
+    input.addEventListener("input", () => {
+      clearTimeout(debounce);
+      debounce = setTimeout(() => {
+        filters.search = input.value;
+        applyFilters();
+      }, 150);
+    });
+  }
+
+  // ─── Locate me (geolocation) ────────────────────────────────
+  let userLocationEntity = null;
+  function wireLocateMe() {
+    const btn = document.getElementById("tool-locate");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        alert("Geolocation is not supported by this browser.");
+        return;
+      }
+      btn.textContent = "📍 Locating…";
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          if (userLocationEntity) viewer.entities.remove(userLocationEntity);
+          // Place a pulsing green pin at the user's location
+          const canvas = document.createElement("canvas");
+          canvas.width = 36; canvas.height = 36;
+          const ctx = canvas.getContext("2d");
+          ctx.fillStyle = "#22c55e";
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(18, 18, 12, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = "#fff";
+          ctx.font = "16px system-ui";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("📍", 18, 18);
+          userLocationEntity = viewer.entities.add({
+            name: "You are here",
+            position: Cesium.Cartesian3.fromDegrees(longitude, latitude),
+            billboard: {
+              image: canvas.toDataURL(),
+              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
+              scale: 1.1,
+            },
+            description: `<strong>You are here</strong><br>${latitude.toFixed(5)}, ${longitude.toFixed(5)}`,
+          });
+          // Fly to user location
+          viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(longitude, latitude - 0.005, 1500),
+            orientation: { heading: 0, pitch: Cesium.Math.toRadians(-40), roll: 0 },
+            duration: 2,
+          });
+          btn.textContent = "📍 Locate me";
+        },
+        (err) => {
+          btn.textContent = "📍 Locate me";
+          alert("Could not get your location: " + (err.message || err.code));
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    });
+  }
+
   // ─── Mini-map (Leaflet 2D overview) ─────────────────────────
   // Shows where the 3D camera is currently looking with an orange footprint.
   let miniMap = null, miniRoutesLayer = null, miniFootprint = null, miniMarker = null;
@@ -1810,6 +1889,8 @@
     wireShareView();
     wireMeasureTool();
     wireTourMode();
+    wireSearch();
+    wireLocateMe();
 
     try {
       await loadRoutes();
