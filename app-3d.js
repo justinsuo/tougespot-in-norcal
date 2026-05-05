@@ -954,10 +954,21 @@
     if (!route) return;
     activeId = id;
 
-    // Highlight on map
+    // Highlight on map — animate the active route from thin → thick for a
+    // satisfying "selected" pulse, then fade non-selected routes back.
     Object.entries(routeLayers).forEach(([rid, layer]) => {
       if (rid === id) {
-        layer.polyline.polyline.width = 8;
+        // Animate width from 4 to 9 over ~600ms
+        const start = performance.now();
+        const dur = 600;
+        const tick = (t) => {
+          const p = Math.min(1, (t - start) / dur);
+          // ease-out
+          const eased = 1 - Math.pow(1 - p, 3);
+          layer.polyline.polyline.width = 4 + eased * 5;
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
       } else {
         layer.polyline.polyline.width = 3;
       }
@@ -1441,6 +1452,61 @@
         treesLayer.show = false;
       }
     });
+  }
+
+  // ─── Right-click drop pin ────────────────────────────────────
+  // Right-click anywhere to drop a custom yellow marker at that location.
+  // Useful for "I want to remember this spot." Right-click on the marker to
+  // remove it.
+  const dropPins = [];
+  function wireDropPin() {
+    if (!viewer) return;
+    const handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+    handler.setInputAction((click) => {
+      const picked = viewer.scene.pick(click.position);
+      // If user right-clicked a drop pin we previously placed, remove it
+      if (picked && picked.id && picked.id._dropPin) {
+        viewer.entities.remove(picked.id);
+        const idx = dropPins.indexOf(picked.id);
+        if (idx >= 0) dropPins.splice(idx, 1);
+        return;
+      }
+      const pos = viewer.scene.pickPosition(click.position) ||
+                  viewer.camera.pickEllipsoid(click.position, viewer.scene.globe.ellipsoid);
+      if (!pos) return;
+      const c = Cesium.Cartographic.fromCartesian(pos);
+      const lat = Cesium.Math.toDegrees(c.latitude);
+      const lon = Cesium.Math.toDegrees(c.longitude);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 36; canvas.height = 36;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#fbbf24";
+      ctx.strokeStyle = "#0b1015";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(18, 18, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.font = "16px system-ui";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "#0b1015";
+      ctx.fillText("📌", 18, 19);
+
+      const ent = viewer.entities.add({
+        position: pos,
+        billboard: {
+          image: canvas.toDataURL(),
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+        description: `<strong>Dropped pin</strong><br>${lat.toFixed(5)}, ${lon.toFixed(5)}<br><em style="font-size:11px;color:#9ca3af;">Right-click pin to remove</em>`,
+      });
+      ent._dropPin = true;
+      dropPins.push(ent);
+    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
 
   // ─── Search box ─────────────────────────────────────────────
@@ -1968,6 +2034,7 @@
     wireTourMode();
     wireSearch();
     wireLocateMe();
+    wireDropPin();
 
     try {
       await loadRoutes();
