@@ -1,0 +1,23 @@
+{
+  "name": "NorCal Touge Spots",
+  "short_name": "Touge Spots",
+  "description": "3D interactive map of NorCal driving roads with real terrain.",
+  "start_url": "./3d.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b1015",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%230b1015'/%3E%3Ctext x='96' y='128' font-size='128' text-anchor='middle' fill='%23f97316'%3E%F0%9F%97%BB%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%230b1015'/%3E%3Ctext x='256' y='340' font-size='340' text-anchor='middle' fill='%23f97316'%3E%F0%9F%97%BB%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

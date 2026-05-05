@@ -1558,6 +1558,109 @@
     });
   }
 
+  // ─── Performance preset ──────────────────────────────────────
+  function applyPerformancePreset(name) {
+    if (!viewer) return;
+    if (name === "fast") {
+      viewer.scene.skyAtmosphere.show = false;
+      viewer.scene.fog.enabled = false;
+      viewer.scene.globe.enableLighting = false;
+      viewer.scene.globe.maximumScreenSpaceError = 4; // less detail per tile
+      viewer.scene.requestRenderMode = true; // only render when something changes
+      viewer.scene.maximumRenderTimeChange = 0.3;
+      // Reflect in the toggle chips
+      document.getElementById("toggle-atmosphere")?.classList.remove("active");
+      document.getElementById("toggle-fog")?.classList.remove("active");
+    } else {
+      viewer.scene.skyAtmosphere.show = true;
+      viewer.scene.fog.enabled = true;
+      viewer.scene.globe.enableLighting = true;
+      viewer.scene.globe.maximumScreenSpaceError = 2; // default-ish
+      viewer.scene.requestRenderMode = false;
+      document.getElementById("toggle-atmosphere")?.classList.add("active");
+      document.getElementById("toggle-fog")?.classList.add("active");
+    }
+    saveSettings();
+  }
+  function wirePerformanceChips() {
+    document.querySelectorAll("#perf-chips .chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        document.querySelectorAll("#perf-chips .chip")
+          .forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
+        applyPerformancePreset(chip.dataset.perf);
+      });
+    });
+  }
+
+  // ─── Persisted settings (basemap / exag / time / perf) ──────
+  const SETTINGS_KEY = "tougespot_3d_settings_v1";
+  function loadSettings() {
+    try {
+      const raw = localStorage.getItem(SETTINGS_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  }
+  function saveSettings() {
+    try {
+      const s = {
+        basemap: window.__currentBasemap__,
+        exaggeration: parseFloat(document.getElementById("exaggeration")?.value || "1.5"),
+        timeOfDay: parseFloat(document.getElementById("time-of-day")?.value || "14"),
+        perf: document.querySelector("#perf-chips .chip.active")?.dataset.perf || "high",
+        atmosphere: document.getElementById("toggle-atmosphere")?.classList.contains("active"),
+        fog: document.getElementById("toggle-fog")?.classList.contains("active"),
+      };
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+    } catch {}
+  }
+  function applySavedSettings() {
+    const s = loadSettings();
+    if (!s) return;
+    if (s.basemap && window.__applyBasemap__) {
+      window.__applyBasemap__(s.basemap);
+      document.querySelectorAll("#basemap-chips .chip").forEach((c) => {
+        c.classList.toggle("active", c.dataset.basemap === s.basemap);
+      });
+    }
+    if (typeof s.exaggeration === "number") {
+      const slider = document.getElementById("exaggeration");
+      if (slider) {
+        slider.value = String(s.exaggeration);
+        slider.dispatchEvent(new Event("input"));
+      }
+    }
+    if (typeof s.timeOfDay === "number") {
+      const slider = document.getElementById("time-of-day");
+      if (slider) {
+        slider.value = String(s.timeOfDay);
+        slider.dispatchEvent(new Event("input"));
+      }
+    }
+    if (s.perf) {
+      document.querySelectorAll("#perf-chips .chip").forEach((c) => {
+        c.classList.toggle("active", c.dataset.perf === s.perf);
+      });
+      applyPerformancePreset(s.perf);
+    }
+    if (s.atmosphere === false && document.getElementById("toggle-atmosphere")?.classList.contains("active")) {
+      document.getElementById("toggle-atmosphere").click();
+    }
+    if (s.fog === false && document.getElementById("toggle-fog")?.classList.contains("active")) {
+      document.getElementById("toggle-fog").click();
+    }
+  }
+
+  // Hook persistence to common UI changes
+  function wireSettingsPersistence() {
+    document.querySelectorAll("#basemap-chips .chip").forEach((c) =>
+      c.addEventListener("click", saveSettings));
+    document.getElementById("exaggeration")?.addEventListener("input", saveSettings);
+    document.getElementById("time-of-day")?.addEventListener("input", saveSettings);
+    document.getElementById("toggle-atmosphere")?.addEventListener("click", saveSettings);
+    document.getElementById("toggle-fog")?.addEventListener("click", saveSettings);
+  }
+
   // ─── Favorites-only filter chip ──────────────────────────────
   function wireFavoritesFilter() {
     const btn = document.getElementById("toggle-favorites");
@@ -2309,6 +2412,8 @@
     wireFavoritesFilter();
     wireDriveRings();
     wireArrowNavigation();
+    wirePerformanceChips();
+    wireSettingsPersistence();
 
     try {
       await loadRoutes();
@@ -2320,7 +2425,9 @@
 
     // Mini-map needs routesData populated, so we wire it after loadRoutes
     wireMiniMap();
-    // Honor any #v=lat,lon,alt,heading,pitch in the URL
+    // Restore per-user settings (basemap, sliders, perf preset, etc.)
+    applySavedSettings();
+    // Honor any #v=lat,lon,alt,heading,pitch in the URL (overrides camera)
     applyHashView();
   });
 })();
