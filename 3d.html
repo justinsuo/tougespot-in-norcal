@@ -84,6 +84,20 @@
         </div>
       </div>
       <div class="filter-group">
+        <label class="filter-label">Max length</label>
+        <div class="range-row">
+          <input type="range" id="max-length" min="5" max="100" step="5" value="100" />
+          <span class="range-val" id="max-length-val">∞</span>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Max time from Berkeley</label>
+        <div class="range-row">
+          <input type="range" id="max-from-berkeley" min="15" max="240" step="15" value="240" />
+          <span class="range-val" id="max-from-berkeley-val">∞</span>
+        </div>
+      </div>
+      <div class="filter-group">
         <label class="filter-label">Basemap</label>
         <div class="chip-row" id="basemap-chips">
           <button class="chip" data-basemap="gray">B&amp;W light</button>

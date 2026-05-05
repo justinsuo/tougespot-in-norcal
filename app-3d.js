@@ -106,7 +106,15 @@
   /** id → { polyline: Entity, marker: Entity, poiEntities: Entity[], route } */
   const routeLayers = {};
   let activeId = null;
-  const filters = { rating: 0, region: "all", type: "all", search: "", favoritesOnly: false };
+  const filters = {
+    rating: 0,
+    region: "all",
+    type: "all",
+    search: "",
+    favoritesOnly: false,
+    maxLengthMi: Infinity,
+    maxFromBerkeleyMin: Infinity,
+  };
 
   // ─── Favorites (persisted in localStorage) ──────────────────
   const FAV_KEY = "tougespot_favorites_v1";
@@ -878,6 +886,14 @@
         if (!hay.includes(q)) return false;
       }
       if (filters.favoritesOnly && !favorites.has(r.id)) return false;
+      if (filters.maxLengthMi !== Infinity && r._distance) {
+        const mi = r._distance / 1609.344;
+        if (mi > filters.maxLengthMi) return false;
+      }
+      if (filters.maxFromBerkeleyMin !== Infinity && r._fromBerkeley) {
+        const min = r._fromBerkeley / 60;
+        if (min > filters.maxFromBerkeleyMin) return false;
+      }
       return true;
     });
   }
@@ -942,7 +958,7 @@
         </div>
       `;
       document.getElementById("clear-filters-btn")?.addEventListener("click", () => {
-        // Reset all filter chips to "All", clear search, drop favorites-only
+        // Reset all filter chips, sliders, and search input
         document.querySelectorAll("#rating-chips .chip").forEach((c) =>
           c.classList.toggle("active", c.dataset.rating === "0"));
         document.querySelectorAll("#region-chips .chip").forEach((c) =>
@@ -952,11 +968,19 @@
         document.getElementById("toggle-favorites")?.classList.remove("active");
         const search = document.getElementById("route-search");
         if (search) search.value = "";
+        const lenSlider = document.getElementById("max-length");
+        const lenVal = document.getElementById("max-length-val");
+        if (lenSlider && lenVal) { lenSlider.value = lenSlider.max; lenVal.textContent = "∞"; }
+        const fromSlider = document.getElementById("max-from-berkeley");
+        const fromVal = document.getElementById("max-from-berkeley-val");
+        if (fromSlider && fromVal) { fromSlider.value = fromSlider.max; fromVal.textContent = "∞"; }
         filters.rating = 0;
         filters.region = "all";
         filters.type = "all";
         filters.search = "";
         filters.favoritesOnly = false;
+        filters.maxLengthMi = Infinity;
+        filters.maxFromBerkeleyMin = Infinity;
         applyFilters();
       });
       return;
@@ -1897,6 +1921,32 @@
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
 
+  // ─── Length / drive-time-from-Berkeley sliders ──────────────
+  function wireRangeFilters() {
+    const lenSlider = document.getElementById("max-length");
+    const lenVal = document.getElementById("max-length-val");
+    const fromSlider = document.getElementById("max-from-berkeley");
+    const fromVal = document.getElementById("max-from-berkeley-val");
+    if (lenSlider && lenVal) {
+      lenSlider.addEventListener("input", () => {
+        const v = parseFloat(lenSlider.value);
+        const isMax = v >= parseFloat(lenSlider.max);
+        filters.maxLengthMi = isMax ? Infinity : v;
+        lenVal.textContent = isMax ? "∞" : `${v} mi`;
+        applyFilters();
+      });
+    }
+    if (fromSlider && fromVal) {
+      fromSlider.addEventListener("input", () => {
+        const v = parseFloat(fromSlider.value);
+        const isMax = v >= parseFloat(fromSlider.max);
+        filters.maxFromBerkeleyMin = isMax ? Infinity : v;
+        fromVal.textContent = isMax ? "∞" : `${v} min`;
+        applyFilters();
+      });
+    }
+  }
+
   // ─── Search box ─────────────────────────────────────────────
   function wireSearch() {
     const input = document.getElementById("route-search");
@@ -2521,6 +2571,7 @@
     wireFavoritesFilter();
     wireDriveRings();
     wireArrowNavigation();
+    wireRangeFilters();
     wirePerformanceChips();
     wireSettingsPersistence();
     wireWelcomeOverlay();
