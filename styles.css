@@ -1587,6 +1587,23 @@ body.measure-mode .cesium-widget canvas { cursor: crosshair !important; }
   outline-offset: -2px;
 }
 
+/* Stats summary above the route list */
+.route-stats {
+  padding: 8px 14px;
+  font-size: 11px;
+  color: var(--text-dim);
+  background: rgba(0,0,0,0.18);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.route-stats .stat strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
 /* Empty-state when no routes match filters */
 .route-list-empty {
   padding: 18px 12px;

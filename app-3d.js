@@ -948,6 +948,22 @@
   }
 
   // ─── Sidebar list ───────────────────────────────────────────
+  function renderRouteStats(routes) {
+    const el = document.getElementById("route-stats");
+    if (!el) return;
+    if (!routes.length) { el.innerHTML = ""; return; }
+    const totalMi = routes.reduce((s, r) => s + (r._distance || 0), 0) / 1609.344;
+    const ratings = routes.filter((r) => !isDragStrip(r) && r.rating).map((r) => r.rating);
+    const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : null;
+    const totalDriveMin = routes.reduce((s, r) => s + (r._duration || 0), 0) / 60;
+    el.innerHTML = `
+      <span class="stat"><strong>${routes.length}</strong> route${routes.length === 1 ? "" : "s"}</span>
+      <span class="stat"><strong>${Math.round(totalMi)}</strong> mi total</span>
+      ${avgRating ? `<span class="stat"><strong>${avgRating.toFixed(1)}</strong> avg ★</span>` : ""}
+      <span class="stat"><strong>${Math.round(totalDriveMin)}</strong> min driving</span>
+    `;
+  }
+
   function renderRouteList() {
     const container = document.getElementById("route-list");
     container.innerHTML = "";
@@ -956,6 +972,7 @@
       if (aDs !== bDs) return aDs ? 1 : -1;
       return (b.rating || 0) - (a.rating || 0);
     });
+    renderRouteStats(sorted);
     if (!sorted.length) {
       container.innerHTML = `
         <div class="route-list-empty">
