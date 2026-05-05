@@ -2454,6 +2454,28 @@
     });
   }
 
+  // ─── Welcome overlay (first visit only) ─────────────────────
+  const WELCOME_KEY = "tougespot_3d_welcome_v1";
+  function wireWelcomeOverlay() {
+    const overlay = document.getElementById("welcome-overlay");
+    const close = document.getElementById("welcome-close");
+    const start = document.getElementById("welcome-start");
+    if (!overlay || !close || !start) return;
+    const seen = (() => { try { return localStorage.getItem(WELCOME_KEY) === "1"; } catch { return false; }})();
+    if (!seen) {
+      overlay.style.display = "flex";
+      overlay.classList.add("open");
+    }
+    const dismiss = () => {
+      overlay.classList.remove("open");
+      overlay.style.display = "none";
+      try { localStorage.setItem(WELCOME_KEY, "1"); } catch {}
+    };
+    close.addEventListener("click", dismiss);
+    start.addEventListener("click", dismiss);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) dismiss(); });
+  }
+
   // ─── Boot ───────────────────────────────────────────────────
   function onReady(fn) {
     if (document.readyState === "loading") {
@@ -2501,6 +2523,7 @@
     wireArrowNavigation();
     wirePerformanceChips();
     wireSettingsPersistence();
+    wireWelcomeOverlay();
 
     try {
       await loadRoutes();

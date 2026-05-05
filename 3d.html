@@ -169,6 +169,27 @@
 
   <div id="loading" class="loading" aria-live="polite">Loading 3D map and routes…</div>
 
+  <!-- First-visit welcome overlay -->
+  <div id="welcome-overlay" class="help-overlay" aria-hidden="true" style="display:none;">
+    <div class="help-card">
+      <button class="help-close" id="welcome-close" aria-label="Close">×</button>
+      <h3>Welcome to NorCal Touge Spots — 3D 🌐</h3>
+      <p style="font-size:13px;line-height:1.6;color:var(--text-dim);">
+        21 hand-picked driving roads across the Bay Area, rendered on a
+        live 3D globe with real terrain, satellite imagery, and an entire
+        golf course mapped hole-by-hole.
+      </p>
+      <ul style="font-size:12px;line-height:1.7;color:var(--text);padding-left:18px;margin:12px 0;">
+        <li><strong>Pick a road</strong> from the sidebar (or search ↗) to fly there.</li>
+        <li><strong>▶ Fly this road</strong> takes the camera on a tour.</li>
+        <li><strong>Right-click</strong> to drop a custom pin anywhere.</li>
+        <li><strong>♥</strong> a route to save it. <strong>Shift-click</strong> to compare 2+.</li>
+        <li><strong>H</strong> for cinematic mode. <strong>?</strong> for shortcuts.</li>
+      </ul>
+      <button class="btn fly-route" id="welcome-start" style="width:100%;margin-top:6px;">Got it — explore the map</button>
+    </div>
+  </div>
+
   <!-- 3D-only HUD: live coords + reset/help buttons -->
   <div id="hud-3d" aria-hidden="false">
     <button id="reset-view" class="hud-btn" title="Fly back to the Bay Area overview (R)">⌖ Reset view</button>
