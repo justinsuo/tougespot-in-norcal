@@ -1316,6 +1316,45 @@ a:hover { text-decoration: underline; }
 .cesium-viewer { width: 100% !important; height: 100% !important; }
 .cesium-widget, .cesium-widget canvas { width: 100% !important; height: 100% !important; }
 
+/* HUD — coords readout + reset button overlaid on the 3D viewport */
+#hud-3d {
+  position: fixed;
+  bottom: 36px;
+  left: calc(var(--sidebar-w) + 14px);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+  transition: left 0.25s ease;
+}
+#sidebar.collapsed ~ #hud-3d { left: 14px; }
+.hud-btn {
+  pointer-events: auto;
+  background: rgba(11, 16, 21, 0.85);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font: 600 12px system-ui;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+.hud-btn:hover { background: rgba(11, 16, 21, 0.95); border-color: var(--accent); }
+.hud-coords {
+  background: rgba(11, 16, 21, 0.7);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: 11px ui-monospace, "SF Mono", monospace;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(8px);
+}
+@media (max-width: 720px) {
+  #hud-3d { bottom: auto; top: calc(var(--tabs-h) + 60px); left: 14px; }
+}
+
 /* Push the Cesium toolbar (home, baselayer, scene-mode etc.) clear of the
    sidebar-toggle hamburger which sits top-left. */
 .cesium-viewer-toolbar {

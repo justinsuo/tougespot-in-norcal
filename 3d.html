@@ -70,8 +70,17 @@
         </div>
       </div>
       <div class="filter-group">
+        <label class="filter-label">Basemap</label>
+        <div class="chip-row" id="basemap-chips">
+          <button class="chip active" data-basemap="gray">B&amp;W light</button>
+          <button class="chip" data-basemap="dark">B&amp;W dark</button>
+          <button class="chip" data-basemap="satellite">Satellite</button>
+        </div>
+      </div>
+      <div class="filter-group">
         <label class="filter-label">Layers</label>
         <div class="chip-row">
+          <button class="chip toggle active" id="toggle-pois" title="Show or hide POI pins">POIs</button>
           <button class="chip toggle" id="toggle-heatmap" title="Heatmap is currently 2D-only">My runs heatmap</button>
         </div>
       </div>
@@ -100,6 +109,12 @@
   </aside>
 
   <div id="loading" class="loading" aria-live="polite">Loading 3D map and routes…</div>
+
+  <!-- 3D-only HUD: live coords + reset/help buttons -->
+  <div id="hud-3d" aria-hidden="false">
+    <button id="reset-view" class="hud-btn" title="Fly back to the Bay Area overview">⌖ Reset view</button>
+    <div id="hud-coords" class="hud-coords" aria-live="off">—</div>
+  </div>
 
   <script>
     // Cesium needs to know its own asset/worker base URL.

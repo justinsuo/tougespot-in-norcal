@@ -138,16 +138,47 @@
       }
     }
 
-    // Esri World Imagery — free, no API key needed, full global coverage at
-    // up to ~zoom 19. Used as our base layer when Ion's Bing Aerial isn't
-    // available.
-    const esriWorldImagery = new Cesium.UrlTemplateImageryProvider({
-      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-      maximumLevel: 19,
-      credit: "Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community",
-    });
+    // Multiple free imagery providers, all from Esri (no API key required).
+    // We default to the gray canvas because:
+    //   - way smaller payloads → loads faster on slow machines
+    //   - the gray base makes our colored route polylines pop visually
+    //   - it's the "simplified, roads-focused" look the project goals call for
+    const BASEMAPS = {
+      gray: {
+        label: "B&W (light)",
+        base: () => new Cesium.UrlTemplateImageryProvider({
+          url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+          maximumLevel: 16,
+          credit: "Esri Light Gray Canvas",
+        }),
+        // Reference layer = labels + bold road network drawn over the base
+        ref: () => new Cesium.UrlTemplateImageryProvider({
+          url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+          maximumLevel: 16,
+        }),
+      },
+      dark: {
+        label: "B&W (dark)",
+        base: () => new Cesium.UrlTemplateImageryProvider({
+          url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+          maximumLevel: 16,
+          credit: "Esri Dark Gray Canvas",
+        }),
+        ref: () => new Cesium.UrlTemplateImageryProvider({
+          url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+          maximumLevel: 16,
+        }),
+      },
+      satellite: {
+        label: "Satellite",
+        base: () => new Cesium.UrlTemplateImageryProvider({
+          url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          maximumLevel: 19,
+          credit: "Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+        }),
+      },
+    };
 
-    // Expose viewer for debugging / external camera control. Harmless in prod.
     viewer = new Cesium.Viewer("map", {
       terrainProvider,
       baseLayerPicker: false, // we set our own imagery below
@@ -165,9 +196,18 @@
       contextOptions: { webgl: { preserveDrawingBuffer: false } },
     });
 
-    // Replace the default imagery layer with Esri World Imagery.
-    viewer.imageryLayers.removeAll();
-    viewer.imageryLayers.addImageryProvider(esriWorldImagery);
+    // Default to gray base — lightweight, road-focused, plays well as a
+    // backdrop for the colored polylines.
+    function applyBasemap(name) {
+      const b = BASEMAPS[name] || BASEMAPS.gray;
+      viewer.imageryLayers.removeAll();
+      viewer.imageryLayers.addImageryProvider(b.base());
+      if (b.ref) viewer.imageryLayers.addImageryProvider(b.ref());
+      window.__currentBasemap__ = name;
+    }
+    window.__applyBasemap__ = applyBasemap;
+    window.__BASEMAPS__ = BASEMAPS;
+    applyBasemap("gray");
 
     // Expose viewer so devtools / scripts can drive the camera
     window.__viewer__ = viewer;
@@ -233,6 +273,40 @@
         openDetail(picked.id._routeId);
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+    // Hover handler — when the cursor enters a route polyline, beef it up;
+    // when it leaves, restore. Also drives the live coords HUD readout.
+    let hoverEntity = null;
+    const coordsEl = document.getElementById("hud-coords");
+    const ellipsoid = viewer.scene.globe.ellipsoid;
+    viewer.screenSpaceEventHandler.setInputAction((move) => {
+      // Coords HUD
+      if (coordsEl) {
+        const cartesian = viewer.camera.pickEllipsoid(move.endPosition, ellipsoid);
+        if (cartesian) {
+          const c = Cesium.Cartographic.fromCartesian(cartesian);
+          coordsEl.textContent =
+            `${Cesium.Math.toDegrees(c.latitude).toFixed(5)}, ${Cesium.Math.toDegrees(c.longitude).toFixed(5)}`;
+        }
+      }
+      // Hover highlight on routes
+      const picked = viewer.scene.pick(move.endPosition);
+      const newHover = picked && picked.id && picked.id._routeId ? picked.id : null;
+      if (newHover === hoverEntity) return;
+      // Reset previous
+      if (hoverEntity && hoverEntity.polyline) {
+        const id = hoverEntity._routeId;
+        const wasActive = id === activeId;
+        hoverEntity.polyline.width = wasActive ? 9 : 5;
+      }
+      hoverEntity = newHover;
+      if (hoverEntity && hoverEntity.polyline) {
+        hoverEntity.polyline.width = 11;
+        document.body.style.cursor = "pointer";
+      } else {
+        document.body.style.cursor = "";
+      }
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
   }
 
   // Origin pin as data-URL canvas — Cesium billboards take an image
@@ -336,18 +410,29 @@
       route._geom.coordinates.flat()
     );
 
+    // PolylineGlowMaterial gives a soft halo around each route — really pops
+    // on the gray basemap and reads cleanly on satellite too.
+    const baseWidth = dragStrip ? 6 : 5;
+    const glowMaterial = dragStrip
+      ? new Cesium.PolylineDashMaterialProperty({ color, dashLength: 16 })
+      : new Cesium.PolylineGlowMaterialProperty({
+          glowPower: 0.22,
+          taperPower: 1,
+          color,
+        });
     const polylineEntity = viewer.entities.add({
       name: route.name,
       polyline: {
         positions,
-        width: dragStrip ? 6 : 5,
+        width: baseWidth,
         clampToGround: true,
-        material: dragStrip
-          ? new Cesium.PolylineDashMaterialProperty({ color, dashLength: 16 })
-          : color,
-        depthFailMaterial: dragStrip
-          ? new Cesium.PolylineDashMaterialProperty({ color: color.withAlpha(0.5), dashLength: 16 })
-          : color.withAlpha(0.5),
+        material: glowMaterial,
+        // depthFailMaterial keeps the line readable when it dips behind a
+        // ridge in 3D oblique view
+        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+          color: color.withAlpha(0.55),
+          dashLength: 12,
+        }),
       },
     });
     polylineEntity._routeId = route.id;
@@ -551,36 +636,38 @@
                 name: poi.title,
                 polyline: {
                   positions: linePositions,
-                  width: 2,
+                  width: 2.5,
                   clampToGround: true,
                   material: new Cesium.PolylineDashMaterialProperty({
-                    color: Cesium.Color.fromCssColorString("#fde047"),
-                    dashLength: 12,
+                    color: Cesium.Color.fromCssColorString("#facc15"),
+                    dashLength: 14,
                   }),
                 },
                 description: golfFeatureDesc(poi, f),
               });
-              // Add hole-number label at midpoint
+              // Add hole-number label at midpoint with high contrast (works on
+              // both gray and satellite basemaps).
               const mid = f.coords[Math.floor(f.coords.length / 2)];
               if (mid && f.ref) {
-                viewer.entities.add({
+                const lblEnt = viewer.entities.add({
                   position: Cesium.Cartesian3.fromDegrees(mid[1], mid[0]),
                   label: {
                     text: String(f.ref),
-                    font: "bold 14px system-ui",
+                    font: "bold 13px system-ui",
                     fillColor: Cesium.Color.WHITE,
-                    outlineColor: Cesium.Color.fromCssColorString("#0b1015"),
-                    outlineWidth: 3,
+                    outlineColor: Cesium.Color.BLACK,
+                    outlineWidth: 4,
                     style: Cesium.LabelStyle.FILL_AND_OUTLINE,
                     showBackground: true,
-                    backgroundColor: Cesium.Color.fromCssColorString("#0b1015").withAlpha(0.6),
-                    backgroundPadding: new Cesium.Cartesian2(6, 4),
+                    backgroundColor: Cesium.Color.fromCssColorString("#0b1015").withAlpha(0.75),
+                    backgroundPadding: new Cesium.Cartesian2(6, 3),
                     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
                     disableDepthTestDistance: Number.POSITIVE_INFINITY,
                     pixelOffset: new Cesium.Cartesian2(0, -10),
                     distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 6000),
                   },
                 });
+                ents.push(lblEnt);
               }
               ents.push(ent);
             } else if (f.kind === "cartpath") {
@@ -930,6 +1017,68 @@
     btn.style.opacity = "0.55";
   }
 
+  function wireBasemapChips() {
+    document.querySelectorAll("#basemap-chips .chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        document.querySelectorAll("#basemap-chips .chip")
+          .forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
+        const name = chip.dataset.basemap;
+        if (typeof window.__applyBasemap__ === "function") {
+          window.__applyBasemap__(name);
+        }
+      });
+    });
+  }
+
+  function wirePoiToggle() {
+    const btn = document.getElementById("toggle-pois");
+    if (!btn) return;
+    let visible = true;
+    btn.addEventListener("click", () => {
+      visible = !visible;
+      btn.classList.toggle("active", visible);
+      Object.values(routeLayers).forEach((layer) => {
+        (layer.poiEntities || []).forEach((e) => {
+          if (e) e.show = visible && (layer.polyline.show !== false);
+        });
+      });
+    });
+  }
+
+  function wireResetView() {
+    const btn = document.getElementById("reset-view");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(-122.2, 37.6, 65000),
+        orientation: {
+          heading: 0,
+          pitch: Cesium.Math.toRadians(-55),
+          roll: 0,
+        },
+        duration: 1.5,
+      });
+    });
+  }
+
+  function wireKeyboardShortcuts() {
+    document.addEventListener("keydown", (e) => {
+      // ignore when user is typing in a form field
+      if (e.target.matches("input, textarea, select")) return;
+      if (e.key === "r" || e.key === "R") {
+        document.getElementById("reset-view")?.click();
+      } else if (e.key === "g" || e.key === "G") {
+        // cycle basemap
+        const chips = [...document.querySelectorAll("#basemap-chips .chip")];
+        const i = chips.findIndex((c) => c.classList.contains("active"));
+        chips[(i + 1) % chips.length]?.click();
+      } else if (e.key === "p" || e.key === "P") {
+        document.getElementById("toggle-pois")?.click();
+      }
+    });
+  }
+
   // ─── Boot ───────────────────────────────────────────────────
   document.addEventListener("DOMContentLoaded", async () => {
     try {
@@ -944,6 +1093,10 @@
     wireSidebarToggle();
     wireDetailClose();
     wireHeatmapStub();
+    wireBasemapChips();
+    wirePoiToggle();
+    wireResetView();
+    wireKeyboardShortcuts();
 
     try {
       await loadRoutes();
