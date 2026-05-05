@@ -1355,6 +1355,64 @@ a:hover { text-decoration: underline; }
   #hud-3d { bottom: auto; top: calc(var(--tabs-h) + 60px); left: 14px; }
 }
 
+/* Help overlay (3D shortcut sheet) */
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 16, 21, 0.7);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+.help-overlay.open { display: flex; }
+.help-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px 28px;
+  max-width: 460px;
+  width: calc(100vw - 32px);
+  position: relative;
+  color: var(--text);
+}
+.help-card h3 { margin: 0 0 14px 0; font-size: 16px; }
+.help-close {
+  position: absolute; top: 10px; right: 14px;
+  background: none; border: none; color: var(--text-dim);
+  font-size: 22px; cursor: pointer;
+}
+.help-table { width: 100%; font-size: 13px; border-collapse: collapse; }
+.help-table td { padding: 6px 4px; vertical-align: middle; }
+.help-table td:first-child { width: 130px; color: var(--text-dim); }
+.help-table kbd {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font: 11px ui-monospace, monospace;
+  color: var(--text);
+}
+.help-tip { margin-top: 14px; font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+
+/* Hide the Cesium ion credit/logo — legally OK because we're using Esri
+   imagery and Esri terrain, not Cesium Ion services. Esri's attribution is
+   kept in the credit text bar. */
+.cesium-credit-logoContainer { display: none !important; }
+.cesium-credit-textContainer { color: rgba(229, 231, 235, 0.7); }
+.cesium-widget-credits { font-size: 10px; }
+
+/* Customization slider in the sidebar */
+.range-row {
+  display: flex; align-items: center; gap: 10px; padding: 4px 0;
+}
+.range-row label { font-size: 11px; color: var(--text-dim); min-width: 90px; }
+.range-row input[type="range"] {
+  flex: 1; height: 4px; accent-color: var(--accent);
+}
+.range-val { font: 11px ui-monospace, monospace; color: var(--text); min-width: 28px; text-align: right; }
+
 /* Push the Cesium toolbar (home, baselayer, scene-mode etc.) clear of the
    sidebar-toggle hamburger which sits top-left. */
 .cesium-viewer-toolbar {
