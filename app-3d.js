@@ -2086,6 +2086,19 @@
         }
       });
     }
+
+    // Click anywhere on the mini-map to fly the 3D camera there
+    miniMap.on("click", (e) => {
+      const { lat, lng } = e.latlng;
+      // Pick a reasonable altitude based on current camera height
+      const currentAlt = viewer.camera.positionCartographic.height;
+      const targetAlt = Math.min(Math.max(currentAlt, 1500), 30000);
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(lng, lat - 0.005, targetAlt),
+        orientation: { heading: 0, pitch: Cesium.Math.toRadians(-50), roll: 0 },
+        duration: 1.4,
+      });
+    });
   }
 
   function updateMiniMap() {
