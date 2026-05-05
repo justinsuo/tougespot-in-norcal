@@ -1055,20 +1055,21 @@
     activeId = id;
 
     // Highlight on map — animate the active route from thin → thick for a
-    // satisfying "selected" pulse, then fade non-selected routes back.
+    // satisfying "selected" pulse, plus a Strava-style "draw the polyline
+    // from start to finish" reveal effect via a partial-positions overlay.
     Object.entries(routeLayers).forEach(([rid, layer]) => {
       if (rid === id) {
-        // Animate width from 4 to 9 over ~600ms
         const start = performance.now();
         const dur = 600;
         const tick = (t) => {
           const p = Math.min(1, (t - start) / dur);
-          // ease-out
           const eased = 1 - Math.pow(1 - p, 3);
           layer.polyline.polyline.width = 4 + eased * 5;
           if (p < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
+        // Strava-replay: bright white "head" travels along the route once
+        playRouteReveal(route);
       } else {
         layer.polyline.polyline.width = 3;
       }
@@ -2445,6 +2446,65 @@
     });
   }
 
+  // ─── Route reveal animation (Strava-style) ──────────────────
+  // When a route is selected, draw a bright white polyline that grows from
+  // the start to the end of the road, then fades out. Layered on top of the
+  // permanent rating-colored line.
+  let revealLayer = null;
+  let revealAbort = null;
+  function playRouteReveal(route) {
+    if (revealAbort) revealAbort();
+    if (revealLayer) viewer.entities.remove(revealLayer);
+    revealLayer = null;
+    const coords = route?._geom?.coordinates;
+    if (!coords || coords.length < 2) return;
+
+    let cancelled = false;
+    revealAbort = () => { cancelled = true; };
+
+    const allFlat = coords.flat();
+    const allPositions = Cesium.Cartesian3.fromDegreesArray(allFlat);
+    const ent = viewer.entities.add({
+      polyline: {
+        positions: new Cesium.CallbackProperty(() => currentPositions, false),
+        width: 5,
+        clampToGround: true,
+        material: Cesium.Color.fromCssColorString("#ffffff"),
+      },
+    });
+    revealLayer = ent;
+    let currentPositions = [allPositions[0]];
+
+    const totalMs = 1400;
+    const start = performance.now();
+    const tick = (t) => {
+      if (cancelled) return;
+      const p = Math.min(1, (t - start) / totalMs);
+      const eased = 1 - Math.pow(1 - p, 2);
+      const upTo = Math.max(2, Math.floor(eased * allPositions.length));
+      currentPositions = allPositions.slice(0, upTo);
+      if (p < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        // Fade out: set polyline color to transparent over ~500ms then remove
+        const fadeStart = performance.now();
+        const fadeDur = 500;
+        const fadeTick = (ft) => {
+          if (cancelled) return;
+          const fp = Math.min(1, (ft - fadeStart) / fadeDur);
+          ent.polyline.material = Cesium.Color.fromCssColorString("#ffffff").withAlpha(1 - fp);
+          if (fp < 1) requestAnimationFrame(fadeTick);
+          else {
+            viewer.entities.remove(ent);
+            if (revealLayer === ent) revealLayer = null;
+          }
+        };
+        requestAnimationFrame(fadeTick);
+      }
+    };
+    requestAnimationFrame(tick);
+  }
+
   // ─── Fly-the-route animation ────────────────────────────────
   // Animates the camera along a route, following terrain elevation so it
   // really feels like a low-altitude flyover (or driving up the hills).
@@ -2603,6 +2663,11 @@
     applySavedSettings();
     // Honor any #v=lat,lon,alt,heading,pitch in the URL (overrides camera)
     applyHashView();
+    // Honor ?route=<id> in the query string — opens that route's detail panel
+    const routeQ = new URL(window.location.href).searchParams.get("route");
+    if (routeQ && routesData?.routes.find((r) => r.id === routeQ)) {
+      setTimeout(() => openDetail(routeQ), 1200);
+    }
     // Register service worker for offline-first PWA behavior
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("sw.js").catch((e) =>
