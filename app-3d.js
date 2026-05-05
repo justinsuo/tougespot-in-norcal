@@ -231,7 +231,13 @@
       selectionIndicator: true,
       shadows: false,
       shouldAnimate: false,
-      contextOptions: { webgl: { preserveDrawingBuffer: false } },
+      // ?snap=1 enables preserveDrawingBuffer so the snapshot tool can read
+      // pixels back. Slight perf cost — off by default.
+      contextOptions: {
+        webgl: {
+          preserveDrawingBuffer: new URL(window.location.href).searchParams.get("snap") === "1",
+        },
+      },
     });
 
     // Default to satellite — gives the realistic terrain texture so the 3D
@@ -1823,6 +1829,42 @@
     });
   }
 
+  // ─── Snapshot button ─────────────────────────────────────────
+  // Captures the Cesium canvas to a PNG and triggers a download. The
+  // canvas's preserveDrawingBuffer flag is normally false for performance,
+  // so we force a fresh render before reading pixels.
+  function wireSnapshot() {
+    const btn = document.getElementById("tool-snapshot");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      // Need preserveDrawingBuffer to actually read the canvas. Render once
+      // synchronously, then snapshot.
+      viewer.scene.requestRender();
+      // Read after the next render tick
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        try {
+          const dataUrl = viewer.canvas.toDataURL("image/png");
+          if (!dataUrl || dataUrl === "data:,") {
+            // Fallback: re-create viewer with preserveDrawingBuffer? That's a
+            // big change. Tell the user to enable it via the URL.
+            alert("Snapshot failed: WebGL preserveDrawingBuffer is off. Add ?snap=1 to the URL and reload to enable.");
+            return;
+          }
+          const a = document.createElement("a");
+          const date = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+          a.href = dataUrl;
+          a.download = `tougespot-3d-${date}.png`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } catch (e) {
+          console.warn("Snapshot failed:", e);
+          alert("Snapshot failed: " + e.message);
+        }
+      }));
+    });
+  }
+
   // ─── Cinematic mode ──────────────────────────────────────────
   // Hide every overlay/sidebar so the 3D view fills the screen. Press H or
   // click the chip to toggle.
@@ -2648,6 +2690,7 @@
     wirePerformanceChips();
     wireSettingsPersistence();
     wireWelcomeOverlay();
+    wireSnapshot();
 
     try {
       await loadRoutes();
