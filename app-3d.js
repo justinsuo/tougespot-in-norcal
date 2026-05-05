@@ -2059,7 +2059,8 @@
   }
 
   // ─── Fly-the-route animation ────────────────────────────────
-  // Animates the camera along a route's coordinates so it feels like driving.
+  // Animates the camera along a route, following terrain elevation so it
+  // really feels like a low-altitude flyover (or driving up the hills).
   let flyAbort = null;
   async function flyTheRoute(route) {
     if (flyAbort) { flyAbort(); flyAbort = null; }
@@ -2067,22 +2068,41 @@
     if (!coords || coords.length < 2) return;
     let cancelled = false;
     flyAbort = () => { cancelled = true; };
-    // Sample ~80 points along the route for a smooth animation
+
+    // Sample ~80 points + their terrain heights up front
     const N = Math.min(80, coords.length);
     const step = coords.length / N;
+    const samplePts = [];
+    const sampleIdx = [];
+    for (let i = 0; i < N; i++) {
+      const idx = Math.min(coords.length - 1, Math.floor(i * step));
+      sampleIdx.push(idx);
+      const [lon, lat] = coords[idx];
+      samplePts.push(Cesium.Cartographic.fromDegrees(lon, lat));
+    }
+    let heights;
+    try {
+      const sampled = await Cesium.sampleTerrainMostDetailed(viewer.terrainProvider, samplePts);
+      heights = sampled.map((c) => c.height || 0);
+    } catch {
+      heights = samplePts.map(() => 0);
+    }
+
     for (let i = 0; i < N; i++) {
       if (cancelled) return;
-      const idx = Math.min(coords.length - 1, Math.floor(i * step));
+      const idx = sampleIdx[i];
       const [lon, lat] = coords[idx];
+      const groundH = heights[i];
+      const camH = groundH + 280; // ~280m above ground — low chase
       // Look down the road by aiming at the next point
       const nextIdx = Math.min(coords.length - 1, idx + 5);
       const [nLon, nLat] = coords[nextIdx];
       const heading = Math.atan2(nLon - lon, nLat - lat);
       await new Promise((resolve) => {
         viewer.camera.flyTo({
-          destination: Cesium.Cartesian3.fromDegrees(lon, lat, 350),
-          orientation: { heading, pitch: Cesium.Math.toRadians(-18), roll: 0 },
-          duration: 0.4,
+          destination: Cesium.Cartesian3.fromDegrees(lon, lat, camH),
+          orientation: { heading, pitch: Cesium.Math.toRadians(-15), roll: 0 },
+          duration: 0.45,
           easingFunction: Cesium.EasingFunction.LINEAR_NONE,
           complete: resolve,
           cancel: resolve,
